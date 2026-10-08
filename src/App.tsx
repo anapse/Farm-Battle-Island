@@ -97,7 +97,7 @@ export default function App() {
   const [tacticalToast, setTacticalToast] = useState<{ id: number; text: string; type: 'info' | 'success' | 'warn' } | null>(null);
 
   // Timers calculated from timestamps
-  const [turnTimerRemaining, setTurnTimerRemaining] = useState(45);
+  const [turnTimerRemaining, setTurnTimerRemaining] = useState(40);
   const [matchTimerRemaining, setMatchTimerRemaining] = useState(300);
 
   // Canvas Reference & Engine
@@ -245,7 +245,7 @@ export default function App() {
     const interval = setInterval(() => {
       // Calculate remaining turn seconds based on turnStartedAt
       const elapsedTurnMs = Date.now() - onlineMatch.gameState.turnStartedAt;
-      const turnRem = Math.max(0, Math.ceil((45000 - elapsedTurnMs) / 1000));
+      const turnRem = Math.max(0, Math.ceil((40000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
       // If turn timer expired and it was MY turn, pass turn automatically!
@@ -308,15 +308,40 @@ export default function App() {
       !matchResult
     ) {
       const aiTimer = setTimeout(() => {
-        const aiAngle = Math.floor(Math.random() * 25) + 32;
-        const aiPower = Math.floor(Math.random() * 25) + 55;
-        if (engineRef.current) {
-          engineRef.current.updateConfig({
-            player2Angle: aiAngle,
-            player2Power: aiPower
-          });
-          engineRef.current.fireShot('player2');
+        if (!engineRef.current || !onlineMatchRef.current) return;
+        const match = onlineMatchRef.current;
+        const shooter = engineRef.current.getEngine().players.getPlayer('player2');
+        const target = engineRef.current.getEngine().players.getPlayer('player1');
+
+        // AI busca una combinación ángulo/fuerza que acerque la parábola
+        // al objetivo, teniendo en cuenta gravedad y viento.
+        let best = { angle: 45, power: 80, error: Number.POSITIVE_INFINITY };
+        for (let angle = 20; angle <= 80; angle += 2) {
+          for (let power = 45; power <= 100; power += 5) {
+            const rad = angle * Math.PI / 180;
+            const speed = 1250 * (0.4 + 0.85 * (power / 100));
+            let vx = Math.cos(rad) * speed * shooter.facing;
+            let vy = -Math.sin(rad) * speed;
+            let x = shooter.x;
+            let y = shooter.y - 18;
+            for (let step = 0; step < 140; step++) {
+              vx += (match.gameState.wind.speed * 6 * match.gameState.wind.direction) * 0.04;
+              vy += 720 * 0.04;
+              if (Math.sign(vx) !== shooter.facing) vx = 0;
+              x += vx * 0.04;
+              y += vy * 0.04;
+              const distance = Math.hypot(x - target.x, y - target.y);
+              if (distance < best.error) best = { angle, power, error: distance };
+              if (y > target.y + 80 || x < -100 || x > 2300) break;
+            }
+          }
         }
+
+        engineRef.current.updateConfig({
+          player2Angle: best.angle,
+          player2Power: best.power
+        });
+        engineRef.current.fireShot('player2');
       }, 1500);
 
       return () => clearTimeout(aiTimer);
