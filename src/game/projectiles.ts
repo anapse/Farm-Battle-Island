@@ -102,6 +102,7 @@ export class ProjectileManager {
       spriteId,
       grenadeRolling: false,
       grenadeRollTime: 0,
+      grenadeBounceTimer: 0,
       rotation: 0,
       trail: []
     };
@@ -119,7 +120,22 @@ export class ProjectileManager {
       p.previousX = p.x;
       p.previousY = p.y;
 
-      if (p.grenadeRolling && getGroundYAt) {
+      if (p.spriteId === 'grenade' && (p.grenadeBounceTimer ?? 0) > 0) {
+        // Small physical bounce after first contact.
+        p.grenadeBounceTimer = Math.max(0, (p.grenadeBounceTimer ?? 0) - dt);
+        p.vx += windAcceleration * dt;
+        p.vy += WorldConfig.GRAVITY * dt;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.rotation = (p.rotation ?? 0) + (p.vx * dt) / Math.max(1, p.radius);
+
+        if ((p.grenadeBounceTimer ?? 0) <= 0 && getGroundYAt) {
+          p.grenadeRolling = true;
+          p.grenadeRollTime = 0;
+          p.vy = 0;
+          p.y = getGroundYAt(p.x) - p.radius - 1;
+        }
+      } else if (p.grenadeRolling && getGroundYAt) {
         // Grenade stays on the terrain instead of falling through it.
         const groundY = getGroundYAt(p.x);
         p.grenadeRollTime = (p.grenadeRollTime ?? 0) + dt;
