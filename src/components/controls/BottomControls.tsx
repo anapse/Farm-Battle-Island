@@ -112,7 +112,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 z-30 select-none bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t-2 border-amber-500/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-1.5 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 select-none box-border overflow-hidden bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t-2 border-amber-500/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-1.5 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
       <div className="max-w-5xl mx-auto flex items-center justify-between gap-2 sm:gap-4 w-full h-[64px] sm:h-[72px]">
