@@ -749,7 +749,7 @@ export async function concludeMatchOnline(params: {
   }
 
   let finalMatch: OnlineMatch | null = localBeforeFinish;
-  let finishClaimed = false;
+  let finishClaimed = true;
 
   if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
