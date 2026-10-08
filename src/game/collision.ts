@@ -20,6 +20,8 @@ export class CollisionSystem {
     players: PlayerEntity[]
   ): CollisionResult {
     const { x, y, radius, shooterRole } = projectile;
+    const previousX = projectile.previousX ?? x;
+    const previousY = projectile.previousY ?? y;
 
     // 1. Water collision
     if (y >= WorldConfig.WATER_Y) {
@@ -56,20 +58,44 @@ export class CollisionSystem {
     for (const b of blocks) {
       if (b.isDestroyed) continue;
 
-      // Circle vs AABB collision
-      const closestX = Math.max(b.x, Math.min(x, b.x + b.width));
-      const closestY = Math.max(b.y, Math.min(y, b.y + b.height));
+      // Swept circle vs AABB: checks the whole movement segment,
+      // preventing fast projectiles from tunneling through thin terrain gaps.
+      const minX = b.x - radius;
+      const maxX = b.x + b.width + radius;
+      const minY = b.y - radius;
+      const maxY = b.y + b.height + radius;
 
-      const dx = x - closestX;
-      const dy = y - closestY;
-      const distanceSquared = dx * dx + dy * dy;
+      const segmentIntersects = (
+        x1: number, y1: number, x2: number, y2: number
+      ): boolean => {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        let t0 = 0;
+        let t1 = 1;
+        const clip = (p: number, q: number): boolean => {
+          if (Math.abs(p) < 1e-9) return q >= 0;
+          const r = q / p;
+          if (p < 0) {
+            if (r > t1) return false;
+            if (r > t0) t0 = r;
+          } else {
+            if (r < t0) return false;
+            if (r < t1) t1 = r;
+          }
+          return true;
+        };
+        return clip(-dx, x1 - minX) &&
+          clip(dx, maxX - x1) &&
+          clip(-dy, y1 - minY) &&
+          clip(dy, maxY - y1);
+      };
 
-      if (distanceSquared <= radius * radius) {
+      if (segmentIntersects(previousX, previousY, x, y)) {
         return {
           hit: true,
           type: 'terrain',
-          hitX: closestX,
-          hitY: closestY,
+          hitX: x,
+          hitY: y,
           hitBlock: b
         };
       }
