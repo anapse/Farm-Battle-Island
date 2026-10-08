@@ -382,9 +382,22 @@ export class GameEngine {
       !this.projectileResolutionPending
     ) {
       const p = this.projectiles.activeProjectile;
-      this.projectileResolutionPending = true;
-      const fellIntoWater = p.y >= WorldConfig.WATER_Y;
-      this.handleProjectileImpact(p.x, p.y, fellIntoWater);
+
+      // Exiting the world is a miss, not an impact. Do not explode or
+      // destroy terrain when the shot leaves through the top or sides.
+      const exitsSide = p.x < -120 || p.x > WorldConfig.WORLD_WIDTH + 120;
+      const exitsTop = p.y < -240;
+
+      if (exitsSide || exitsTop) {
+        this.projectileResolutionPending = true;
+        this.projectiles.activeProjectile = null;
+        this.isFiringSequence = false;
+        if (this.onTurnComplete) this.onTurnComplete();
+      } else {
+        this.projectileResolutionPending = true;
+        const fellIntoWater = p.y >= WorldConfig.WATER_Y;
+        this.handleProjectileImpact(p.x, p.y, fellIntoWater);
+      }
     }
 
     // 3. Update Falling & Grounded Supply Crates
