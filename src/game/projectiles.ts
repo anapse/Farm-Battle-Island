@@ -168,7 +168,7 @@ export class ProjectileManager {
 
     const dt = 0.04;
     const windAcceleration = (windSpeed * 18 * windDirection) / mass;
-    const totalSteps = extendedSteps ? 65 : 40;
+    const totalSteps = extendedSteps ? 28 : 24;
 
     for (let step = 0; step < totalSteps; step++) {
       vx += windAcceleration * dt;
