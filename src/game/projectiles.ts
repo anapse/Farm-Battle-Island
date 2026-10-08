@@ -47,6 +47,8 @@ export class ProjectileManager {
       id: `proj_${Date.now()}`,
       x: originX + facing * 28,
       y: originY - 18,
+      previousX: originX + facing * 28,
+      previousY: originY - 18,
       vx,
       vy,
       launchDirection: facing,
@@ -87,6 +89,8 @@ export class ProjectileManager {
       p.vx = 0;
     }
 
+    p.previousX = p.x;
+    p.previousY = p.y;
     p.x += p.vx * dt;
     p.y += p.vy * dt;
 
