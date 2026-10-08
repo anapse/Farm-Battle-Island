@@ -499,7 +499,7 @@ export async function sendShotOnline(params: {
     timestamp: Date.now()
   };
 
-  if (db && isConfigured) {
+  if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', params.matchId);
       await updateDoc(matchDocRef, {
@@ -611,7 +611,7 @@ export async function changeTurnOnline(
     updatedAt: Date.now()
   };
 
-  if (db && isConfigured) {
+  if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
       await updateDoc(matchDocRef, updatePayload);
@@ -646,7 +646,7 @@ export async function concludeMatchOnline(params: {
 }): Promise<OnlineMatch | null> {
   let finalMatch: OnlineMatch | null = null;
 
-  if (db && isConfigured) {
+  if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', params.matchId);
       finalMatch = await runTransaction(db, async (transaction) => {
@@ -759,7 +759,7 @@ export async function surrenderMatchOnline(matchId: string, surrenderingPlayerId
  * Presence Heartbeat to detect real disconnects
  */
 export async function sendPresenceHeartbeat(matchId: string, playerId: string): Promise<void> {
-  if (db && isConfigured) {
+  if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const presenceDocRef = doc(db, 'presence', playerId);
       await setDoc(presenceDocRef, {
