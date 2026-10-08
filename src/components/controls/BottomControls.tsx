@@ -115,7 +115,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     <footer className="absolute bottom-0 left-0 right-0 z-30 h-[18%] select-none box-border overflow-hidden bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t-2 border-amber-500/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
-      <div className="w-full h-full min-h-0 grid grid-rows-[1fr_auto] items-center gap-1 px-1 sm:px-2">
+      <div className="w-full h-full min-h-0 grid grid-cols-[auto_minmax(0,1fr)_auto_auto] grid-rows-[1fr_auto] items-center gap-1 px-0.5 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
         <div className="flex flex-col justify-center shrink-0 justify-self-start">
