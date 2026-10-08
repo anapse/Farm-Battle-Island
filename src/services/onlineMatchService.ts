@@ -166,8 +166,8 @@ export async function createOnlineMatch(params: {
     characterSelected: false,
     hp: 100,
     maxHp: 100,
-    lives: params.lives,
-    maxLives: params.lives,
+    lives: params.lives === 'INFINITE' ? 999999 : params.lives,
+    maxLives: params.lives === 'INFINITE' ? 999999 : params.lives,
     score: 0,
     position: { x: 380, y: 440 },
     isReady: false
@@ -287,8 +287,8 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
           characterSelected: false,
           hp: 100,
           maxHp: 100,
-          lives: data.settings.lives,
-          maxLives: data.settings.lives,
+          lives: data.settings.lives === 'INFINITE' ? 999999 : data.settings.lives,
+          maxLives: data.settings.lives === 'INFINITE' ? 999999 : data.settings.lives,
           score: 0,
           position: { x: 1720, y: 440 },
           isReady: false
@@ -330,8 +330,8 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
     characterSelected: false,
     hp: 100,
     maxHp: 100,
-    lives: match.settings.lives,
-    maxLives: match.settings.lives,
+    lives: match.settings.lives === 'INFINITE' ? 999999 : match.settings.lives,
+    maxLives: match.settings.lives === 'INFINITE' ? 999999 : match.settings.lives,
     score: 0,
     position: { x: 1720, y: 440 },
     isReady: false
