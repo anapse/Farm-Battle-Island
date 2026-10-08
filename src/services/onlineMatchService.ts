@@ -142,7 +142,7 @@ export async function createOnlineMatch(params: {
   const initialGameState: OnlineGameState = {
     currentTurnPlayerId: playerId,
     turnStartedAt: Date.now(),
-    turnDuration: 45,
+    turnDuration: 25,
     matchStartedAt: Date.now(),
     matchEndAt: params.timeLimitSeconds ? Date.now() + params.timeLimitSeconds * 1000 : null,
     wind: {
@@ -595,7 +595,7 @@ export async function registerImpactOnline(params: {
 }
 
 /**
- * Change turn atomically with 45s turn timestamp
+ * Change turn atomically with 25s turn timestamp
  */
 export async function changeTurnOnline(
   matchId: string, 
