@@ -380,7 +380,7 @@ export class TerrainManager {
     const groundTile = spriteManager.getGroundTile(tileId);
     if (groundTile) {
       // Official Sliced Sprite Render - strictly preserves textures, colors, original design
-      ctx.drawImage(groundTile, x, y, width + 1.5, height);
+      ctx.drawImage(groundTile, x - 2, y, width + 4, height);
       return;
     }
 
@@ -410,8 +410,8 @@ export class TerrainManager {
     const sprite = spriteManager.getDecoration(decoId);
     if (sprite) {
       // Official Sliced Decoration Render placed squarely on top of the supporting ground block
-      const dw = decoId === 'hut' ? 104 : (decoId === 'palm' ? 96 : (decoId === 'rocks' ? 68 : 58));
-      const dh = decoId === 'hut' ? 84 : (decoId === 'palm' ? 138 : (decoId === 'rocks' ? 46 : 54));
+      const dw = decoId === 'hut' ? 104 : (decoId === 'palm' ? 240 : (decoId === 'rocks' ? 170 : 145));
+      const dh = decoId === 'hut' ? 210 : (decoId === 'palm' ? 345 : (decoId === 'rocks' ? 115 : 135));
       ctx.drawImage(sprite, x - dw / 2, y - dh + 2, dw, dh);
     }
   }
