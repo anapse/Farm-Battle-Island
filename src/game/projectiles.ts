@@ -112,10 +112,13 @@ export class ProjectileManager {
     }
 
     // Check bounds
+    // Resolve any shot that leaves the playable world. This prevents a
+    // projectile that misses every object from keeping the turn locked.
     if (
-      p.x < -200 ||
-      p.x > WorldConfig.WORLD_WIDTH + 200 ||
-      p.y > WorldConfig.WORLD_HEIGHT + 200
+      p.x < -120 ||
+      p.x > WorldConfig.WORLD_WIDTH + 120 ||
+      p.y > WorldConfig.WORLD_HEIGHT + 80 ||
+      p.y < -240
     ) {
       p.isAlive = false;
     }
