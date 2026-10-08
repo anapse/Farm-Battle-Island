@@ -49,6 +49,7 @@ export class ProjectileManager {
       y: originY - 18,
       vx,
       vy,
+      launchDirection: facing,
       radius: Math.round(5 * mass),
       mass,
       power: powerPercent,
@@ -75,7 +76,7 @@ export class ProjectileManager {
     // Wind Force: lighter projectiles affected more, heavier projectiles affected less
     // windForce = (windSpeed * direction * factor) / mass
     const windAcceleration = (windSpeed * 18 * windDirection) / p.mass;
-    const horizontalDirection = Math.sign(p.vx) || 1;
+    const horizontalDirection = p.launchDirection;
 
     p.vx += windAcceleration * dt;
     p.vy += WorldConfig.GRAVITY * dt;
