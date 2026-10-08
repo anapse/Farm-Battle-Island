@@ -808,7 +808,7 @@ export default function App() {
           )}
 
           {/* Canvas Game World */}
-          <div ref={canvasContainerRef} className="absolute inset-0 z-10 w-full h-full">
+          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[18%] z-10 w-full">
             <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />
           </div>
 
