@@ -100,11 +100,14 @@ export class ProjectileManager {
       isDoubleImpact,
       isFireShot,
       spriteId,
+      grenadeRolling: false,
+      grenadeRollTime: 0,
+      rotation: 0,
       trail: []
     };
   }
 
-  public update(dt: number, windDirection: -1 | 1, windSpeed: number) {
+  public update(dt: number, windDirection: -1 | 1, windSpeed: number, getGroundYAt?: (x: number) => number) {
     if (this.activeProjectiles.length === 0) return;
 
     for (const p of this.activeProjectiles) {
@@ -113,17 +116,35 @@ export class ProjectileManager {
       const windAcceleration = (windSpeed * 6 * windDirection) / p.mass;
       const horizontalDirection = p.launchDirection;
 
-      p.vx += windAcceleration * dt;
-      p.vy += WorldConfig.GRAVITY * dt;
-
-      if (p.vx !== 0 && Math.sign(p.vx) !== horizontalDirection) {
-        p.vx = 0;
-      }
-
       p.previousX = p.x;
       p.previousY = p.y;
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
+
+      if (p.grenadeRolling && getGroundYAt) {
+        // Grenade stays on the terrain instead of falling through it.
+        const groundY = getGroundYAt(p.x);
+        p.grenadeRollTime = (p.grenadeRollTime ?? 0) + dt;
+        p.vy = 0;
+        p.vx += windAcceleration * 0.15 * dt;
+        p.vx *= Math.max(0, 1 - 1.15 * dt);
+        p.x += p.vx * dt;
+        p.y = groundY - p.radius - 1;
+        p.rotation = (p.rotation ?? 0) + p.vx * dt / Math.max(1, p.radius);
+
+        if (Math.abs(p.vx) < 18 || (p.grenadeRollTime ?? 0) >= 2.8) {
+          p.vx = 0;
+        }
+      } else {
+        p.vx += windAcceleration * dt;
+        p.vy += WorldConfig.GRAVITY * dt;
+
+        if (p.vx !== 0 && Math.sign(p.vx) !== horizontalDirection) {
+          p.vx = 0;
+        }
+
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.rotation = (p.rotation ?? 0) + (p.vx * dt) / Math.max(1, p.radius);
+      }
 
       p.trail.unshift({
         x: p.x,
