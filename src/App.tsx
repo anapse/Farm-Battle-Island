@@ -268,17 +268,18 @@ export default function App() {
       const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
-      // If the 25s turn expires, pass it immediately.
-      // For a human match, only the player whose turn it is advances it.
-      // For an AI match, the local client also advances the AI turn.
+      // When the 25s turn expires, ANY connected client can advance it.
+      // Both clients calculate the same next player from the authoritative
+      // current turn, so the game does not depend on the shooter browser
+      // remaining open or responding.
       const turnKey = onlineMatch.matchId + ':' + onlineMatch.gameState.currentTurnPlayerId + ':' + onlineMatch.gameState.turnStartedAt;
-      const isMyTurn = onlineMatch.gameState.currentTurnPlayerId === myPlayerId;
-      const isAiTurn = onlineMatch.isAiMatch && !isMyTurn;
-      if (turnRem === 0 && (isMyTurn || isAiTurn) && lastExpiredTurnRef.current !== turnKey) {
+      const currentPlayerIsP1 = onlineMatch.gameState.currentTurnPlayerId === onlineMatch.player1.id;
+      const nextPlayerId = currentPlayerIsP1
+        ? (onlineMatch.player2?.id || 'bot')
+        : onlineMatch.player1.id;
+
+      if (turnRem === 0 && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
         lastExpiredTurnRef.current = turnKey;
-        const nextPlayerId = isAiTurn
-          ? myPlayerId
-          : (playerRole === 'player1' ? (onlineMatch.player2?.id || 'bot') : onlineMatch.player1.id);
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
         changeTurnOnline(onlineMatch.matchId, nextPlayerId, newSpeed, newDir).then((updated) => {
