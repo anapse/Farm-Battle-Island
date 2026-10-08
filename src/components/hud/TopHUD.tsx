@@ -38,7 +38,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 pointer-events-none select-none p-2 sm:p-3">
+    <header className="absolute top-0 left-0 right-0 z-30 pointer-events-none select-none p-2 sm:p-3 box-border overflow-hidden">
       {/* Top Banner Row */}
       <div className="flex items-start justify-between gap-1 sm:gap-2 max-w-5xl mx-auto">
         
