@@ -664,7 +664,7 @@ export default function App() {
 
     if (item === 'corazon') {
       engineRef.current?.applyPowerUp(playerRole, 'heal_20');
-      showTacticalToast('+20 Salud Restaurada ❤️', 'success');
+      showTacticalToast('+20% de vida restaurada ❤️', 'success');
       setPowerUpSlots(prev => {
         const next = [...prev];
         next[index] = null;
@@ -686,9 +686,9 @@ export default function App() {
       // Map to game power-up type for physics
       let pt: PowerUpType = 'mega_bomb';
       if (item === 'bala_doble') pt = 'double_hit';
-      else if (item === 'bala_triple') pt = 'double_hit';
+      else if (item === 'bala_triple') pt = 'triple_hit';
       else if (item === 'bala_explosiva') pt = 'mega_bomb';
-      else if (item === 'granada') pt = 'bounce';
+      else if (item === 'granada') pt = 'grenade';
       setActivePowerUp(pt);
       showTacticalToast(`Power-up Activado para disparo`, 'warn');
     }
