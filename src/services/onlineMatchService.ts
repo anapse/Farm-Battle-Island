@@ -92,6 +92,57 @@ function saveLocalMatch(match: OnlineMatch): void {
 }
 
 /**
+ * Firestore stores only lobby/match-control data for active matches.
+ * Combat state (HP, lives and damage score) stays local to the running match.
+ */
+function toPersistentPlayer(player: OnlinePlayer) {
+  const {
+    hp: _hp,
+    maxHp: _maxHp,
+    lives: _lives,
+    maxLives: _maxLives,
+    score: _score,
+    ...persistent
+  } = player;
+  return persistent;
+}
+
+function hydratePlayer(
+  player: Partial<OnlinePlayer>,
+  defaultLives: number,
+  cached?: OnlinePlayer | null
+): OnlinePlayer {
+  return {
+    ...player,
+    id: player.id || cached?.id || '',
+    name: player.name || cached?.name || 'Comandante',
+    characterId: player.characterId ?? cached?.characterId ?? null,
+    characterSelected: player.characterSelected ?? cached?.characterSelected ?? false,
+    hp: cached?.hp ?? 100,
+    maxHp: cached?.maxHp ?? 100,
+    lives: cached?.lives ?? defaultLives,
+    maxLives: cached?.maxLives ?? defaultLives,
+    score: cached?.score ?? 0,
+    position: player.position || cached?.position || { x: 0, y: 440 },
+    isReady: player.isReady ?? cached?.isReady ?? false
+  } as OnlinePlayer;
+}
+
+function hydrateMatch(data: OnlineMatch, cached?: OnlineMatch | null): OnlineMatch {
+  return {
+    ...data,
+    player1: hydratePlayer(
+      data.player1,
+      data.settings.lives,
+      cached?.player1
+    ),
+    player2: data.player2
+      ? hydratePlayer(data.player2, data.settings.lives, cached?.player2)
+      : null
+  };
+}
+
+/**
  * Create a new match in Firestore / Local Cache
  */
 export async function createOnlineMatch(params: {
@@ -183,7 +234,11 @@ export async function createOnlineMatch(params: {
   if (db && isConfigured) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
-      await setDoc(matchDocRef, newMatch);
+      await setDoc(matchDocRef, {
+        ...newMatch,
+        player1: toPersistentPlayer(player1),
+        player2: player2 ? toPersistentPlayer(player2) : null
+      });
     } catch (e) {
       console.warn('Firestore createDoc warning, falling back to local sync:', e);
     }
@@ -244,8 +299,12 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
           updatedAt: Date.now()
         };
 
-        transaction.update(matchDocRef, updated);
-        const merged = { ...data, ...updated, player2 } as OnlineMatch;
+        transaction.update(matchDocRef, {
+          player2: toPersistentPlayer(player2),
+          status: 'starting',
+          updatedAt: updated.updatedAt
+        });
+        const merged = hydrateMatch({ ...data, ...updated, player2 } as OnlineMatch);
         saveLocalMatch(merged);
         return merged;
       });
@@ -299,7 +358,9 @@ export async function selectCharacterOnline(
         const snap = await transaction.get(matchDocRef);
         if (!snap.exists()) throw new Error('Partida no encontrada');
 
-        const match = snap.data() as OnlineMatch;
+        const remoteMatch = snap.data() as OnlineMatch;
+        const cachedMatch = getLocalMatches().find(m => m.matchId === matchId) || null;
+        const match = hydrateMatch(remoteMatch, cachedMatch);
         const isP1 = match.player1.id === playerId;
         const isP2 = match.player2?.id === playerId;
 
@@ -335,7 +396,28 @@ export async function selectCharacterOnline(
         }
 
         match.updatedAt = Date.now();
-        transaction.update(matchDocRef, match);
+
+        const updates: Record<string, unknown> = isP1
+          ? {
+              'player1.characterId': match.player1.characterId,
+              'player1.characterSelected': match.player1.characterSelected
+            }
+          : {
+              'player2.characterId': match.player2?.characterId || null,
+              'player2.characterSelected': match.player2?.characterSelected || false
+            };
+
+        if (p1Ready && p2Ready) {
+          updates.status = 'playing';
+          updates['gameState.matchStartedAt'] = match.gameState.matchStartedAt;
+          updates['gameState.turnStartedAt'] = match.gameState.turnStartedAt;
+          if (match.settings.timeLimit) {
+            updates['gameState.matchEndAt'] = match.gameState.matchEndAt;
+          }
+        }
+
+        updates.updatedAt = match.updatedAt;
+        transaction.update(matchDocRef, updates);
         saveLocalMatch(match);
         return match;
       });
@@ -390,7 +472,9 @@ export function subscribeToOnlineMatch(
       const matchDocRef = doc(db, 'matches', matchId);
       unsubFirestore = onSnapshot(matchDocRef, (snap) => {
         if (snap.exists()) {
-          const match = snap.data() as OnlineMatch;
+          const remote = snap.data() as OnlineMatch;
+          const cached = getLocalMatches().find(m => m.matchId === matchId) || null;
+          const match = hydrateMatch(remote, cached);
           saveLocalMatch(match);
           callback(match);
         } else {
@@ -446,7 +530,8 @@ export function subscribeToAvailableMatches(
       unsubFirestore = onSnapshot(q, (snapshot) => {
         const matches: OnlineMatch[] = [];
         snapshot.forEach((doc) => {
-          matches.push(doc.data() as OnlineMatch);
+          const remote = doc.data() as OnlineMatch;
+          matches.push(hydrateMatch(remote));
         });
         callback(matches);
       }, (err) => {
@@ -673,15 +758,6 @@ export async function concludeMatchOnline(params: {
         // Protection: If already finished, return as-is to prevent duplicate calculations
         if (match.status === 'finished' || match.gameState.processedForRanking) {
           return match;
-        }
-
-        const isWinnerP1 = match.player1.id === params.winnerPlayerId;
-        const winner = isWinnerP1 ? match.player1 : match.player2;
-        const loser = isWinnerP1 ? match.player2 : match.player1;
-
-        if (winner) {
-          // Add 50% max HP victory bonus (+50 points)
-          winner.score += 50;
         }
 
         match.status = 'finished';
