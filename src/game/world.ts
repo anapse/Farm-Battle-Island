@@ -13,15 +13,15 @@ export class WorldConfig {
   public static readonly BASE_PROJECTILE_SPEED = 1250; // px / sec
 
   // Block Geometry
-  public static readonly BLOCK_WIDTH = 44;
-  public static readonly BLOCK_HEIGHT = 44;
+  public static readonly BLOCK_WIDTH = 48;
+  public static readonly BLOCK_HEIGHT = 48;
   public static readonly COLUMNS_PER_ISLAND = 20;
 
   // Island Column Spans in Virtual Coordinates
   public static readonly LEFT_ISLAND_START_COL = 0;
-  public static readonly LEFT_ISLAND_END_COL = 19;
+  public static readonly LEFT_ISLAND_END_COL = 20;
 
-  public static readonly RIGHT_ISLAND_START_COL = 30;
+  public static readonly RIGHT_ISLAND_START_COL = 29;
   public static readonly RIGHT_ISLAND_END_COL = 49;
 
   public static readonly TOTAL_COLUMNS = 50;
