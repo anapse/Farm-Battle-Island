@@ -115,7 +115,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     <footer className="absolute bottom-0 left-0 right-0 z-30 select-none box-border overflow-hidden bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t-2 border-amber-500/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-1.5 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
-      <div className="max-w-5xl mx-auto flex items-center justify-between gap-2 sm:gap-4 w-full h-[64px] sm:h-[72px]">
+      <div className="w-full h-[68px] sm:h-[72px] grid grid-cols-[auto_minmax(0,1.15fr)_minmax(72px,1fr)_auto] items-center gap-1 sm:gap-2 px-1 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
         <div className="flex flex-col justify-center shrink-0">
@@ -167,10 +167,10 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 2. VIENTO & ÁNGULO ZONE (Pure visual readout - angle controlled by mouse) */}
-        <div className="flex flex-col items-center justify-center shrink-0 px-1 sm:px-2 bg-black/40 py-1 rounded-lg border border-amber-600/30">
-          <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="min-w-0 flex flex-col items-center justify-center px-0.5 sm:px-2 bg-black/40 py-1 rounded-lg border border-amber-600/30 overflow-hidden">
+          <div className="flex items-center gap-0.5 sm:gap-2 min-w-0 whitespace-nowrap">
             {/* Wind Readout */}
-            <div className="flex items-center gap-1 text-[11px] sm:text-xs font-mono font-bold text-cyan-300">
+            <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-bold text-cyan-300 min-w-0">
               <span className="text-[10px] sm:text-xs text-slate-400 font-sans">VIENTO:</span>
               <span>{wind.speed} km/h</span>
               <span className="text-sm font-black text-cyan-400">
@@ -181,7 +181,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             <div className="w-[1px] h-4 bg-slate-700/80" />
 
             {/* Aim Angle Readout (Follows mouse position relative to vehicle) */}
-            <div className="flex items-center gap-1 text-[11px] sm:text-xs font-mono font-black text-emerald-300">
+            <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-black text-emerald-300 min-w-0">
               <span className="text-[10px] sm:text-xs text-slate-400 font-sans">ÁNGULO:</span>
               <span className="text-sm sm:text-base font-black text-amber-300">{angle}°</span>
             </div>
@@ -214,7 +214,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 3. FUERZA ZONE: Flexible Bar */}
-        <div className="flex-1 min-w-[110px] max-w-[260px] flex flex-col justify-center px-1">
+        <div className="min-w-0 w-full flex flex-col justify-center px-1">
           <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase text-amber-300 mb-0.5 font-['Fredoka',sans-serif]">
             <span>{isHoldingFire ? 'CARGANDO...' : 'FUERZA'}</span>
             <span className={`font-mono font-bold ${isHoldingFire ? 'text-yellow-300 scale-110' : 'text-amber-200'}`}>
@@ -240,7 +240,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
-        <div className="flex flex-col items-center justify-center shrink-0">
+        <div className="flex flex-col items-center justify-center shrink-0 min-w-0">
           <button
             onPointerDown={handleFirePointerDown}
             onPointerUp={handleFirePointerUp}
