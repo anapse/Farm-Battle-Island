@@ -57,6 +57,8 @@ export interface PlayerEntity {
   characterId: CharacterId;
   x: number;
   y: number;
+  previousX?: number;
+  previousY?: number;
   vx: number;
   vy: number;
   width: number;
