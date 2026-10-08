@@ -91,6 +91,7 @@ export default function App() {
   // In-battle controls state
   const [angle, setAngle] = useState(35);
   const [power, setPower] = useState(62);
+  const [lastShotPower, setLastShotPower] = useState<number | null>(null);
   const [activePowerUp, setActivePowerUp] = useState<PowerUpType | null>(null);
   const [powerUpSlots, setPowerUpSlots] = useState<(OfficialPowerUpId | null)[]>([null, null, null, null]);
   const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
@@ -648,6 +649,7 @@ export default function App() {
     if (!isMyTurn) return;
 
     const shotPower = overridePower !== undefined ? overridePower : power;
+    setLastShotPower(shotPower);
 
     // Send shot event online to Firestore
     sendShotOnline({
@@ -917,6 +919,13 @@ export default function App() {
             onSelectSlot={handleSelectSlot}
             onPowerChange={setPower}
             onFire={handleFire}
+            lastShotPower={lastShotPower}
+            onMarkLastShot={() => {
+              if (lastShotPower !== null) {
+                setPower(lastShotPower);
+                showTacticalToast(`Fuerza del último tiro marcada: ${lastShotPower}%`, 'info');
+              }
+            }}
             onMove={(delta) => engineRef.current?.movePlayer(playerRole, delta)}
           />
 
