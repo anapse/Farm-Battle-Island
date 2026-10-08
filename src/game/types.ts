@@ -92,6 +92,7 @@ export interface ProjectileEntity {
   y: number;
   vx: number;
   vy: number;
+  launchDirection: 1 | -1;
   radius: number;
   mass: number; // 0.7 (light) to 1.6 (heavy)
   power: number;
