@@ -27,6 +27,7 @@ export class InputHandler {
   private isPointerDown = false;
   private isAiming = false;
   private isPanningCamera = false;
+  private isMovingPlayer = false;
   private pointerStartX = 0;
   private pointerStartY = 0;
   private lastPointerX = 0;
@@ -138,7 +139,8 @@ export class InputHandler {
     // IMPORTANT: only the visible aim circle starts an aim drag.
     // Clicking elsewhere keeps the aim exactly where it was.
     this.isAiming = this.isPointerOnAimHandle(x, y);
-    this.isPanningCamera = !this.isAiming;
+    this.isMovingPlayer = !this.isAiming;
+    this.isPanningCamera = false;
 
     if (this.isAiming) {
       try {
@@ -165,12 +167,10 @@ export class InputHandler {
     if (this.isAiming) {
       // The aim circle follows the pointer while pressed.
       this.updateAimFromScreenCoords(screenX, screenY);
-    } else if (this.isPanningCamera) {
-      // Preserve the existing camera-pan behavior when dragging outside the aim handle.
+    } else if (this.isMovingPlayer) {
       const deltaX = screenX - this.lastPointerX;
-      const deltaY = screenY - this.lastPointerY;
-      if (Math.hypot(screenX - this.pointerStartX, screenY - this.pointerStartY) > 8) {
-        this.camera.manualPan(deltaX, deltaY);
+      if (Math.abs(deltaX) > 1) {
+        this.players.movePlayer(this.getCurrentTurn(), deltaX, this.terrain);
       }
     }
 
@@ -190,6 +190,7 @@ export class InputHandler {
     // Release freezes the current angle/aim position. Nothing is reset.
     this.isPointerDown = false;
     this.isAiming = false;
+    this.isMovingPlayer = false;
     this.isPanningCamera = false;
   };
 
