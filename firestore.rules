@@ -18,6 +18,7 @@ service cloud.firestore {
         && validPlayerName(request.resource.data.creatorPlayerName)
         && validId(request.resource.data.creatorPlayerId)
         && request.resource.data.player1.id == request.resource.data.creatorPlayerId
+        && request.resource.data.player1.authUid == request.auth.uid
         && request.resource.data.status in ['waiting', 'starting']
         && request.resource.data.gameState.currentTurnPlayerId == request.resource.data.creatorPlayerId;
 
@@ -25,8 +26,8 @@ service cloud.firestore {
         && validId(matchId)
         && resource.data.status != 'finished'
         && (
-          request.auth.uid == resource.data.player1.id
-          || (resource.data.player2 != null && request.auth.uid == resource.data.player2.id)
+          request.auth.uid == resource.data.player1.authUid
+          || (resource.data.player2 != null && request.auth.uid == resource.data.player2.authUid)
         )
         && request.resource.data.status in ['waiting', 'starting', 'playing', 'finished', 'cancelled']
         && request.resource.data.player1 != null
