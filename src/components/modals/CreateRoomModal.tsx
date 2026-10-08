@@ -103,7 +103,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                     : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:bg-slate-800'
                 }`}
               >
-                {num} {num === 1 ? 'VIDA' : 'VIDAS'}
+                {num === 'INFINITE' ? '∞ VIDAS' : `${num} ${num === 1 ? 'VIDA' : 'VIDAS'}`}
               </button>
             ))}
           </div>
