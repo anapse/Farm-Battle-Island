@@ -185,8 +185,8 @@ export async function createOnlineMatch(params: {
       characterSelected: true,
       hp: 100,
       maxHp: 100,
-      lives: params.lives,
-      maxLives: params.lives,
+      lives: params.lives === 'INFINITE' ? 999999 : params.lives,
+      maxLives: params.lives === 'INFINITE' ? 999999 : params.lives,
       score: 0,
       position: { x: 1720, y: 440 },
       isReady: true
