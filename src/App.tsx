@@ -436,7 +436,7 @@ export default function App() {
       currentTurn: onlineMatch.gameState.currentTurnPlayerId === onlineMatch.player1.id ? 'player1' : 'player2',
       windSpeed: onlineMatch.gameState.wind.speed,
       windDirection: onlineMatch.gameState.wind.direction,
-      maxLives: onlineMatch.settings.lives,
+      maxLives: onlineMatch.settings.lives === 'INFINITE' ? 999999 : onlineMatch.settings.lives,
       onAngleChange: (newAngle) => {
         setAngle(newAngle);
       },
