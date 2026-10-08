@@ -19,6 +19,7 @@ import {
   OnlineGameState, 
   MatchStatus, 
   CharacterId, 
+  GameLivesOption,
   PowerUpType, 
   WindState 
 } from '../types/game';
