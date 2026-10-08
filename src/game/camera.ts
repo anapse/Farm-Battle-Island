@@ -24,9 +24,11 @@ export class CameraController {
     this.viewportWidth = width;
     this.viewportHeight = height;
 
-    // Adjust zoom dynamically so the vertical frame fits the world height comfortably
-    const baseHeight = WorldConfig.WORLD_HEIGHT;
-    this.zoom = Math.max(0.65, Math.min(1.2, height / baseHeight));
+    // The complete battle map is exactly 2.5 viewport widths:
+    // 1 screen island + 0.5 screen sea + 1 screen island.
+    const zoomForHeight = height / WorldConfig.WORLD_HEIGHT;
+    const zoomForMapWidth = width / (WorldConfig.WORLD_WIDTH / 2.5);
+    this.zoom = Math.min(zoomForHeight, zoomForMapWidth);
   }
 
   public setMode(mode: CameraFollowMode) {
