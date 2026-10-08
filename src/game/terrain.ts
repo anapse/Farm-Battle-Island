@@ -17,7 +17,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_1',
     name: 'Playa Tranquila',
     columnHeights: [
-      1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1
+      1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 1, type: 'palm' },
@@ -33,7 +33,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_2',
     name: 'Costa Rocosa',
     columnHeights: [
-      2, 3, 5, 5, 4, 4, 4, 4, 3, 3, 4, 4, 3, 2, 2, 1, 1, 1, 0, 0
+      2, 3, 5, 5, 4, 4, 4, 4, 3, 3, 4, 4, 3, 2, 2, 1, 1, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 3, type: 'rock' },
@@ -49,7 +49,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_3',
     name: 'Bahía Abierta',
     columnHeights: [
-      1, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1
+      1, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 3, type: 'palm' },
@@ -64,7 +64,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_4',
     name: 'Arrecife Bajo',
     columnHeights: [
-      1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1
+      1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 2, type: 'rock' },
@@ -380,7 +380,7 @@ export class TerrainManager {
     const groundTile = spriteManager.getGroundTile(tileId);
     if (groundTile) {
       // Official Sliced Sprite Render - strictly preserves textures, colors, original design
-      ctx.drawImage(groundTile, x - 2, y - 2, width + 6, height + 4);
+      ctx.drawImage(groundTile, x - 6, y - 6, width + 12, height + 12);
       return;
     }
 
@@ -412,7 +412,7 @@ export class TerrainManager {
       // Official Sliced Decoration Render placed squarely on top of the supporting ground block
       const dw = decoId === 'hut' ? 104 : (decoId === 'palm' ? 240 : (decoId === 'rocks' ? 170 : 145));
       const dh = decoId === 'hut' ? 210 : (decoId === 'palm' ? 345 : (decoId === 'rocks' ? 115 : 135));
-      ctx.drawImage(sprite, x - dw / 2, y - dh + 2, dw, dh);
+      ctx.drawImage(sprite, x - dw / 2, y - dh + 14, dw, dh);
     }
   }
 }
