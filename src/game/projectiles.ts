@@ -75,7 +75,7 @@ export class ProjectileManager {
 
     // Wind Force: lighter projectiles affected more, heavier projectiles affected less
     // windForce = (windSpeed * direction * factor) / mass
-    const windAcceleration = (windSpeed * 18 * windDirection) / p.mass;
+    const windAcceleration = (windSpeed * 6 * windDirection) / p.mass;
     const horizontalDirection = p.launchDirection;
 
     p.vx += windAcceleration * dt;
