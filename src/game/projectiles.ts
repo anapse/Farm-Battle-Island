@@ -75,9 +75,16 @@ export class ProjectileManager {
     // Wind Force: lighter projectiles affected more, heavier projectiles affected less
     // windForce = (windSpeed * direction * factor) / mass
     const windAcceleration = (windSpeed * 18 * windDirection) / p.mass;
+    const horizontalDirection = Math.sign(p.vx) || 1;
 
     p.vx += windAcceleration * dt;
     p.vy += WorldConfig.GRAVITY * dt;
+
+    // El viento solo puede frenar o acelerar la velocidad horizontal.
+    // Nunca debe invertir el sentido del proyectil y hacerlo regresar al jugador.
+    if (p.vx !== 0 && Math.sign(p.vx) !== horizontalDirection) {
+      p.vx = 0;
+    }
 
     p.x += p.vx * dt;
     p.y += p.vy * dt;
@@ -168,11 +175,17 @@ export class ProjectileManager {
 
     const dt = 0.04;
     const windAcceleration = (windSpeed * 18 * windDirection) / mass;
-    const totalSteps = extendedSteps ? 28 : 24;
+    const horizontalDirection = Math.sign(vx) || facing;
+    // La guía sigue toda la parábola hasta el nivel del mar.
+    // No se corta artificialmente a mitad del vuelo.
+    const totalSteps = extendedSteps ? 48 : 40;
 
     for (let step = 0; step < totalSteps; step++) {
       vx += windAcceleration * dt;
       vy += WorldConfig.GRAVITY * dt;
+      if (vx !== 0 && Math.sign(vx) !== horizontalDirection) {
+        vx = 0;
+      }
       simX += vx * dt;
       simY += vy * dt;
       points.push({ x: simX, y: simY });
