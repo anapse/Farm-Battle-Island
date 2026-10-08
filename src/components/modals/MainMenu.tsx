@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getAssetUrl } from '../../utils/assets';
 import { 
   Play, 
   PlusCircle, 
@@ -61,7 +62,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       
       {/* Official 9:16 Menu Background Image (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
         className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-700 ${
           bgLoaded ? 'opacity-90' : 'opacity-0'
@@ -92,7 +93,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         {/* Official 3D Logo (logo.png) */}
         <div className="max-w-[280px] w-full flex justify-center mb-1">
           <img
-            src="/assets/sprites/logo.png"
+            src={getAssetUrl('assets/sprites/logo.png')}
             alt="Farm Battle Island Logo"
             className={`max-h-[20vh] sm:max-h-[22vh] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-500 ${
               logoLoaded ? 'block scale-100' : 'hidden scale-95'
