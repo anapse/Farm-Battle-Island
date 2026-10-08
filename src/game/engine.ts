@@ -57,6 +57,7 @@ export class GameEngine {
   private onAngleChange?: (angle: number) => void;
   private onSupplyCrateCollected?: (collector: 'player1' | 'player2') => void;
   private onStorkEvent?: () => void;
+  private projectileResolutionPending: boolean = false;
 
   constructor(options: GameEngineOptions) {
     this.canvas = options.canvas;
@@ -165,6 +166,7 @@ export class GameEngine {
     }
 
     this.isFiringSequence = true;
+    this.projectileResolutionPending = false;
     const shooter = this.players.getPlayer(this.currentTurn);
 
     // Track shots count and trigger Stork supply every 4 shots!
@@ -263,6 +265,7 @@ export class GameEngine {
     if (!proj) return;
 
     proj.isAlive = false;
+    this.projectileResolutionPending = true;
     const explosionRadius = proj.explosionRadius;
 
     // 7. Visual explosion
@@ -368,6 +371,20 @@ export class GameEngine {
           );
         }
       }
+    }
+
+    // A projectile can finish its flight without touching terrain, a player, or water
+    // (for example after passing beyond the world edge). It must still resolve the
+    // shot so the camera/turn sequence cannot remain stuck forever.
+    if (
+      this.projectiles.activeProjectile &&
+      !this.projectiles.activeProjectile.isAlive &&
+      !this.projectileResolutionPending
+    ) {
+      const p = this.projectiles.activeProjectile;
+      this.projectileResolutionPending = true;
+      const fellIntoWater = p.y >= WorldConfig.WATER_Y;
+      this.handleProjectileImpact(p.x, p.y, fellIntoWater);
     }
 
     // 3. Update Falling & Grounded Supply Crates
