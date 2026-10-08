@@ -113,6 +113,7 @@ export default function App() {
 
   // Ref to avoid duplicate shot executions
   const lastProcessedShotTimeRef = useRef<number>(0);
+  const lastExpiredTurnRef = useRef<string>('');
 
   const showTacticalToast = (text: string, type: 'info' | 'success' | 'warn' = 'info') => {
     const id = Date.now();
@@ -249,7 +250,9 @@ export default function App() {
       setTurnTimerRemaining(turnRem);
 
       // If turn timer expired and it was MY turn, pass turn automatically!
-      if (turnRem === 0 && onlineMatch.gameState.currentTurnPlayerId === myPlayerId) {
+      const turnKey = onlineMatch.matchId + ':' + onlineMatch.gameState.currentTurnPlayerId + ':' + onlineMatch.gameState.turnStartedAt;
+      if (turnRem === 0 && onlineMatch.gameState.currentTurnPlayerId === myPlayerId && lastExpiredTurnRef.current !== turnKey) {
+        lastExpiredTurnRef.current = turnKey;
         const nextPlayerId = playerRole === 'player1' ? (onlineMatch.player2?.id || 'bot') : onlineMatch.player1.id;
         const newSpeed = Math.floor(Math.random() * 22) + 2;
         const newDir = Math.random() > 0.5 ? 1 : -1;
@@ -299,6 +302,7 @@ export default function App() {
   }, [screen, onlineMatch, myPlayerId, playerRole, matchResult]);
 
   // 5. AI Bot Automation during AI match
+  const aiTurnKeyRef = useRef<string>('');
   useEffect(() => {
     if (
       screen === 'battle' && 
@@ -307,6 +311,10 @@ export default function App() {
       onlineMatch.gameState.currentTurnPlayerId !== myPlayerId && 
       !matchResult
     ) {
+      const aiTurnKey = onlineMatch.matchId + ':' + onlineMatch.gameState.turnStartedAt;
+      if (aiTurnKeyRef.current === aiTurnKey) return;
+      aiTurnKeyRef.current = aiTurnKey;
+
       const aiTimer = setTimeout(() => {
         if (!engineRef.current || !onlineMatchRef.current) return;
         const match = onlineMatchRef.current;
