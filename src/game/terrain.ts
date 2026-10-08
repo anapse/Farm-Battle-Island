@@ -208,7 +208,7 @@ export class TerrainManager {
     for (let col = 1; col < WorldConfig.TOTAL_COLUMNS - 1; col++) {
       this.blocks.push({
         id: `safety_${col}`,
-        islandIndex: col < 28 ? 1 : 2,
+        islandIndex: col < 30 ? 1 : 2,
         col,
         heightLevel: 0,
         x: col * bw,
