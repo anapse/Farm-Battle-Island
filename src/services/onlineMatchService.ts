@@ -744,20 +744,25 @@ export async function concludeMatchOnline(params: {
   // Combat HP/lives/score are local match state. Firestore is only the
   // authoritative place for the finished result metadata.
   const localBeforeFinish = getLocalMatches().find(m => m.matchId === params.matchId) || null;
+  if (localBeforeFinish?.gameState.processedForRanking) {
+    return localBeforeFinish;
+  }
+
   let finalMatch: OnlineMatch | null = localBeforeFinish;
+  let finishClaimed = false;
 
   if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', params.matchId);
-      await runTransaction(db, async (transaction) => {
+      const claimed = await runTransaction(db, async (transaction) => {
         const snap = await transaction.get(matchDocRef);
-        if (!snap.exists()) return null;
+        if (!snap.exists()) return false;
 
         const match = snap.data() as OnlineMatch;
 
         // Protection: If already finished, return as-is to prevent duplicate calculations
         if (match.status === 'finished' || match.gameState.processedForRanking) {
-          return match;
+          return false;
         }
 
         match.status = 'finished';
@@ -777,8 +782,9 @@ export async function concludeMatchOnline(params: {
           'gameState.processedForRanking': match.gameState.processedForRanking,
           updatedAt: match.updatedAt
         });
-        return match;
+        return true;
       });
+      finishClaimed = claimed;
     } catch (e) {
       console.warn('Firestore concludeMatch error, handling locally:', e);
     }
@@ -829,8 +835,9 @@ export async function concludeMatchOnline(params: {
     saveLocalMatch(finalMatch);
   }
 
-  // Update TOP 50 Leaderboard & Stats
-  if (finalMatch && finalMatch.gameState.processedForRanking) {
+  // Update TOP 50 Leaderboard & Stats only once. Firestore's finished flag
+  // is the idempotency gate when multiple clients finish the same match.
+  if (finalMatch && finalMatch.gameState.processedForRanking && (finishClaimed || !db || !isConfigured)) {
     const isWinnerP1 = finalMatch.player1.id === params.winnerPlayerId;
     const winner = isWinnerP1 ? finalMatch.player1 : finalMatch.player2;
     const loser = isWinnerP1 ? finalMatch.player2 : finalMatch.player1;
