@@ -31,7 +31,7 @@ export class InputHandler {
   private lastPointerY = 0;
 
   // The aim handle is intentionally long and remains fixed after release.
-  private readonly aimHandleDistance = 260;
+  private readonly aimHandleDistance = 180;
   private readonly aimHandleHitRadius = 34;
 
   constructor(options: InputHandlerOptions) {
