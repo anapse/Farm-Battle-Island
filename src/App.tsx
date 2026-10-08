@@ -151,7 +151,26 @@ export default function App() {
     const unsubscribe = subscribeToOnlineMatch(onlineMatch.matchId, (updated) => {
       if (!updated) return;
 
-      setOnlineMatch(updated);
+      setOnlineMatch(prev => {
+        if (!prev || prev.matchId !== updated.matchId || updated.status === 'waiting') {
+          return updated;
+        }
+        return {
+          ...updated,
+          player1: {
+            ...updated.player1,
+            hp: prev.player1.hp,
+            lives: prev.player1.lives,
+            score: prev.player1.score
+          },
+          player2: updated.player2 && prev.player2 ? {
+            ...updated.player2,
+            hp: prev.player2.hp,
+            lives: prev.player2.lives,
+            score: prev.player2.score
+          } : updated.player2
+        };
+      });
 
       // Handle match start transition from waiting or char_select
       if (updated.status === 'playing' && (screen === 'waiting_opponent' || screen === 'char_select')) {
