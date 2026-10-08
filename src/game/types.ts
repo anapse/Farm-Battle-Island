@@ -104,6 +104,10 @@ export interface ProjectileEntity {
   isAlive: boolean;
   canBounce?: boolean;
   hasBounced?: boolean;
+  /** Grenade has contacted the ground and is rolling instead of exploding immediately. */
+  grenadeRolling?: boolean;
+  /** Visual rotation of the grenade sprite while flying/rolling. */
+  rotation?: number;
   isDoubleImpact?: boolean;
   isFireShot?: boolean;
   /** Official combat sprite used by this projectile. */
