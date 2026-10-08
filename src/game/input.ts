@@ -11,6 +11,7 @@ export interface InputHandlerOptions {
   getCurrentTurn: () => 'player1' | 'player2';
   onAngleChange?: (angle: number) => void;
   onFireRequest?: () => void;
+  canInteract?: () => boolean;
 }
 
 export class InputHandler {
@@ -21,6 +22,7 @@ export class InputHandler {
   private getCurrentTurn: () => 'player1' | 'player2';
   private onAngleChange?: (angle: number) => void;
   private onFireRequest?: () => void;
+  private canInteract?: () => boolean;
 
   private isPointerDown = false;
   private isAiming = false;
@@ -42,6 +44,7 @@ export class InputHandler {
     this.getCurrentTurn = options.getCurrentTurn;
     this.onAngleChange = options.onAngleChange;
     this.onFireRequest = options.onFireRequest;
+    this.canInteract = options.canInteract;
 
     this.attachListeners();
   }
@@ -119,6 +122,7 @@ export class InputHandler {
   }
 
   private handlePointerDown = (e: PointerEvent) => {
+    if (this.canInteract && !this.canInteract()) return;
     const { x, y } = this.getPointerScreenPosition(e);
     const currentTurn = this.getCurrentTurn();
     const activePlayer = this.players.getPlayer(currentTurn);
@@ -190,6 +194,7 @@ export class InputHandler {
   };
 
   private handleKeyDown = (e: KeyboardEvent) => {
+    if (this.canInteract && !this.canInteract()) return;
     const currentTurn = this.getCurrentTurn();
 
     if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
