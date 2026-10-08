@@ -609,6 +609,18 @@ export default function App() {
   // ACTION: JUGAR (Quick Play vs AI)
   const handleQuickPlay = async () => {
     try {
+      // A new match starts completely clean: no power-ups, no previous
+      // marked shot, no previous selection or combat state.
+      setPowerUpSlots([null, null, null, null]);
+      setActivePowerUp(null);
+      setActiveSlotIndex(null);
+      setLastShotPower(null);
+      setAngle(45);
+      setPower(60);
+      lastProcessedShotTimeRef.current = 0;
+      lastExpiredTurnRef.current = '';
+      lastExpiredMatchRef.current = '';
+
       const match = await createOnlineMatch({
         creatorPlayerName: playerName,
         timeLimitSeconds: 300,
@@ -1021,7 +1033,11 @@ export default function App() {
           winnerCharacterId={matchResult.winnerCharacterId}
           onPlayAgain={() => {
             setMatchResult(null);
-            handleQuickPlay();
+            setPowerUpSlots([null, null, null, null]);
+            setActivePowerUp(null);
+            setActiveSlotIndex(null);
+            setLastShotPower(null);
+            void handleQuickPlay();
           }}
           onBackToMenu={handleBackToMenu}
         />
