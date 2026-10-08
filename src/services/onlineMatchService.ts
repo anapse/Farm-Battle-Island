@@ -12,7 +12,7 @@ import {
   runTransaction,
   serverTimestamp 
 } from 'firebase/firestore';
-import { db, isConfigured } from './firebase';
+import { db, auth, isConfigured, ensureFirebaseAuth } from './firebase';
 import { 
   OnlineMatch, 
   OnlinePlayer, 
@@ -101,11 +101,14 @@ export async function createOnlineMatch(params: {
   islandId: string;
   isAiMatch?: boolean;
 }): Promise<OnlineMatch> {
+  await ensureFirebaseAuth();
   const { playerId } = getPlayerIdentity(params.creatorPlayerName);
+  const authUid = auth?.currentUser?.uid || undefined;
   const matchId = `M_${Math.floor(100000 + Math.random() * 900000)}`;
 
   const player1: OnlinePlayer = {
     id: playerId,
+    authUid,
     name: params.creatorPlayerName,
     characterId: null,
     characterSelected: false,
@@ -198,7 +201,9 @@ export async function createOnlineMatch(params: {
  * Protections: Two players cannot take the same slot. Full match cannot be joined.
  */
 export async function joinOnlineMatch(matchId: string, joinerPlayerName: string): Promise<OnlineMatch> {
+  await ensureFirebaseAuth();
   const { playerId } = getPlayerIdentity(joinerPlayerName);
+  const authUid = auth?.currentUser?.uid || undefined;
 
   if (db && isConfigured) {
     try {
@@ -220,6 +225,7 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
 
         const player2: OnlinePlayer = {
           id: playerId,
+          authUid,
           name: joinerPlayerName,
           characterId: null,
           characterSelected: false,
@@ -258,6 +264,7 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
 
   match.player2 = {
     id: playerId,
+    authUid,
     name: joinerPlayerName,
     characterId: null,
     characterSelected: false,
@@ -612,25 +619,30 @@ export async function changeTurnOnline(
     updatedAt: Date.now()
   };
 
+  const local = getLocalMatches().find(m => m.matchId === matchId);
+  if (local) {
+    const turnStartedAt = Date.now();
+    local.gameState.currentTurnPlayerId = nextPlayerId;
+    local.gameState.turnStartedAt = turnStartedAt;
+    local.gameState.wind.speed = newWindSpeed;
+    local.gameState.wind.direction = newWindDirection;
+    local.updatedAt = turnStartedAt;
+    saveLocalMatch(local);
+  }
+
   if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
-      await updateDoc(matchDocRef, updatePayload);
+      await updateDoc(matchDocRef, {
+        ...updatePayload,
+        'gameState.turnStartedAt': local?.gameState.turnStartedAt || updatePayload['gameState.turnStartedAt']
+      });
     } catch (e) {
       console.warn('Firestore changeTurn error:', e);
     }
   }
 
-  const local = getLocalMatches().find(m => m.matchId === matchId);
-  if (local) {
-    local.gameState.currentTurnPlayerId = nextPlayerId;
-    local.gameState.turnStartedAt = Date.now();
-    local.gameState.wind.speed = newWindSpeed;
-    local.gameState.wind.direction = newWindDirection;
-    local.updatedAt = Date.now();
-    saveLocalMatch(local);
-    return local;
-  }
+  return local || null;
   return null;
 }
 
@@ -645,12 +657,15 @@ export async function concludeMatchOnline(params: {
   loserPlayerId: string;
   reason: 'lives_depleted' | 'time_expired' | 'voluntary_surrender' | 'opponent_disconnected';
 }): Promise<OnlineMatch | null> {
-  let finalMatch: OnlineMatch | null = null;
+  // Combat HP/lives/score are local match state. Firestore is only the
+  // authoritative place for the finished result metadata.
+  const localBeforeFinish = getLocalMatches().find(m => m.matchId === params.matchId) || null;
+  let finalMatch: OnlineMatch | null = localBeforeFinish;
 
   if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', params.matchId);
-      finalMatch = await runTransaction(db, async (transaction) => {
+      await runTransaction(db, async (transaction) => {
         const snap = await transaction.get(matchDocRef);
         if (!snap.exists()) return null;
 
@@ -721,6 +736,24 @@ export async function concludeMatchOnline(params: {
     finalMatch = local;
   }
 
+  // Even when Firestore successfully claims the finish, update the local
+  // combat state so the real score/lives from this device are used for ranking.
+  if (finalMatch && !finalMatch.gameState.processedForRanking) {
+    const isWinnerP1 = finalMatch.player1.id === params.winnerPlayerId;
+    const winner = isWinnerP1 ? finalMatch.player1 : finalMatch.player2;
+    if (winner) {
+      winner.score += 50;
+    }
+    finalMatch.status = 'finished';
+    finalMatch.gameState.winnerPlayerId = params.winnerPlayerId;
+    finalMatch.gameState.loserPlayerId = params.loserPlayerId;
+    finalMatch.gameState.finishReason = params.reason;
+    finalMatch.gameState.finishedAt = Date.now();
+    finalMatch.gameState.processedForRanking = true;
+    finalMatch.updatedAt = Date.now();
+    saveLocalMatch(finalMatch);
+  }
+
   // Update TOP 50 Leaderboard & Stats
   if (finalMatch && finalMatch.gameState.processedForRanking) {
     const isWinnerP1 = finalMatch.player1.id === params.winnerPlayerId;
@@ -770,9 +803,11 @@ export async function surrenderMatchOnline(matchId: string, surrenderingPlayerId
 export async function sendPresenceHeartbeat(matchId: string, playerId: string): Promise<void> {
   if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
-      const presenceDocRef = doc(db, 'presence', playerId);
+      const presenceId = auth?.currentUser?.uid || playerId;
+      const presenceDocRef = doc(db, 'presence', presenceId);
       await setDoc(presenceDocRef, {
         playerId,
+        authUid: auth?.currentUser?.uid || null,
         matchId,
         lastSeenAt: Date.now(),
         status: 'online'
