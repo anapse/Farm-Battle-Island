@@ -63,7 +63,7 @@ export default function App() {
   // Pending room settings during creation flow
   const [pendingCreation, setPendingCreation] = useState<{
     timeLimitSeconds: 300 | null;
-    lives: 1 | 3 | 5;
+    lives: GameLivesOption;
     islandId: string;
   } | null>(null);
 
