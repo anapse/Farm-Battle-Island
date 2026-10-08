@@ -90,6 +90,8 @@ export type MatchStatus = 'waiting' | 'starting' | 'playing' | 'finished' | 'can
 
 export interface OnlinePlayer {
   id: string;
+  /** Firebase Auth UID used only to authorize Firestore operations. */
+  authUid?: string;
   name: string;
   characterId: CharacterId | null;
   characterSelected: boolean;
