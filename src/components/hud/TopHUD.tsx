@@ -152,7 +152,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
                     i < player2.lives ? 'bg-red-500 shadow-[0_0_4px_#ef4444]' : 'bg-slate-700'
                   }`}
                 />
-              ))}
+              ))) : null}
             </div>
             <div className="flex items-center gap-1">
               <span className="text-[9px] sm:text-[10px] font-black uppercase text-amber-300 tracking-wider">
