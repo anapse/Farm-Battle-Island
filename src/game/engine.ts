@@ -640,49 +640,16 @@ export class GameEngine {
     const muzzleX = activePlayer.x + facing * 36;
     const muzzleY = activePlayer.y - 48;
 
-    // Preview de la parábola: muestra por dónde pasará el proyectil.
-    const trajectory = this.projectiles.calculateAimGuide(
-      activePlayer.x,
-      activePlayer.y,
-      activePlayer.angle,
-      activePlayer.power,
-      facing,
-      this.wind.direction,
-      this.wind.speed,
-      1.0,
-      true
-    );
-
-    ctx.save();
-
-    // Curva de trayectoria visible, sin colocar una mira en el punto de caída.
-    ctx.strokeStyle = activePlayer.role === 'player1'
-      ? 'rgba(239, 68, 68, 0.92)'
-      : 'rgba(59, 130, 246, 0.92)';
-    ctx.lineWidth = 3;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.setLineDash([7, 7]);
-
-    ctx.beginPath();
-    trajectory.forEach((point, index) => {
-      if (index === 0) ctx.moveTo(point.x, point.y);
-      else ctx.lineTo(point.x, point.y);
-    });
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // La mira NO representa el punto de impacto.
-    // Es solo el punto de control para indicar la dirección del disparo.
-    // La línea recta entre el cañón y la mira permite cambiar el ángulo.
-    const handleDistance = 180;
+    // La mira SOLO marca la dirección de disparo.
+    // No se dibuja la trayectoria parabólica ni el punto de impacto.
+    const handleDistance = 150;
     const handleX = muzzleX + Math.cos(angleRad) * handleDistance * facing;
     const handleY = muzzleY - Math.sin(angleRad) * handleDistance;
 
     ctx.strokeStyle = activePlayer.role === 'player1'
       ? 'rgba(239, 68, 68, 0.75)'
       : 'rgba(59, 130, 246, 0.75)';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(muzzleX, muzzleY);
     ctx.lineTo(handleX, handleY);
@@ -694,13 +661,13 @@ export class GameEngine {
     ctx.strokeStyle = '#FACC15';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(handleX, handleY, 16, 0, Math.PI * 2);
+    ctx.arc(handleX, handleY, 24, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#FACC15';
     ctx.beginPath();
-    ctx.arc(handleX, handleY, 4, 0, Math.PI * 2);
+    ctx.arc(handleX, handleY, 6, 0, Math.PI * 2);
     ctx.fill();
 
     // Small crosshair inside the handle.
