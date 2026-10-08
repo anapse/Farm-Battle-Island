@@ -15,7 +15,8 @@ import {
   RefreshCw,
   Clock,
   Layers,
-  Crosshair
+  Crosshair,
+  Image as ImageIcon
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -25,7 +26,7 @@ interface AdminDashboardProps {
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) => {
   const [metrics, setMetrics] = useState<AdminMetrics>(getAdminMetrics());
   const [rankings, setRankings] = useState<PlayerRanking[]>(getRankings());
-  const [activeTab, setActiveTab] = useState<'metrics' | 'characters' | 'activity' | 'players'>('metrics');
+  const [activeTab, setActiveTab] = useState<'metrics' | 'characters' | 'activity' | 'players' | 'assets'>('metrics');
 
   const refreshData = () => {
     setMetrics(getAdminMetrics());
@@ -117,6 +118,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
           }`}
         >
           Jugadores Registrados
+        </button>
+        <button
+          onClick={() => setActiveTab('assets')}
+          className={`px-3 py-1.5 rounded-lg transition whitespace-nowrap flex items-center gap-1.5 ${
+            activeTab === 'assets'
+              ? 'bg-amber-600 text-white'
+              : 'text-amber-400/90 hover:text-amber-300 hover:bg-slate-800'
+          }`}
+        >
+          <ImageIcon className="w-3.5 h-3.5" />
+          <span>Assets Oficiales</span>
         </button>
       </div>
 
@@ -325,6 +337,42 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onBackToGame }) 
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 5: OFFICIAL ASSETS REPOSITORY */}
+        {activeTab === 'assets' && (
+          <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xs font-black uppercase text-amber-400 flex items-center gap-1.5">
+                  <ImageIcon className="w-4 h-4" />
+                  <span>Assets Oficiales de Farm Battle Island</span>
+                </h3>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  Directorio de producción: <code className="text-amber-300 font-mono">public/assets/sprites/</code>
+                </p>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-950/60 rounded-xl border border-slate-800 text-xs text-slate-300 space-y-2">
+              <p className="font-bold text-amber-300">
+                11 Hojas y Archivos Oficiales Registrados:
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-400 list-disc list-inside">
+                <li><code className="text-slate-200">logo.png</code> - Logo Oficial 3D</li>
+                <li><code className="text-slate-200">fondomenu.png</code> - Fondo Menú 9:16</li>
+                <li><code className="text-slate-200">fondo juego 1.png</code> - Escenario Tropical Diurno</li>
+                <li><code className="text-slate-200">fondo juego 2.png</code> - Escenario Naufragio Diurno</li>
+                <li><code className="text-slate-200">fondo juego 3.png</code> - Escenario Naufragio Lunar</li>
+                <li><code className="text-slate-200">personajes.png</code> - Hoja 6 Personajes (2x3)</li>
+                <li><code className="text-slate-200">suelo.png</code> - Bloques de Terreno (2x2)</li>
+                <li><code className="text-slate-200">decoracion.png</code> - Elementos Insulares (2x3)</li>
+                <li><code className="text-slate-200">Iconos de combate y potenciadores retro.png</code> (2x3)</li>
+                <li><code className="text-slate-200">cofre.png</code> - Cofre Paracaídas & Resplandeciente</li>
+                <li><code className="text-slate-200">sigueña.png</code> - Animación Cigüeña (4 frames)</li>
+              </ul>
             </div>
           </div>
         )}

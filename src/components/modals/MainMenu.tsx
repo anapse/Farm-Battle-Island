@@ -1,14 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Play, 
   PlusCircle, 
   Users, 
   Trophy, 
   Mail, 
-  ShieldAlert, 
-  Gamepad2,
-  Anchor,
-  Compass
+  UserCheck, 
+  X
 } from 'lucide-react';
 
 interface MainMenuProps {
@@ -17,7 +15,6 @@ interface MainMenuProps {
   onJoinRoom: () => void;
   onRanking: () => void;
   onContact: () => void;
-  onAdmin: () => void;
   playerName: string;
   onPlayerNameChange: (name: string) => void;
 }
@@ -28,96 +25,131 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   onJoinRoom,
   onRanking,
   onContact,
-  onAdmin,
   playerName,
   onPlayerNameChange
 }) => {
+  const [logoLoaded, setLogoLoaded] = useState(false);
+  const [bgLoaded, setBgLoaded] = useState(false);
+
+  // Modal to prompt for player name before proceeding to action
+  const [pendingAction, setPendingAction] = useState<'quick_play' | 'create_room' | 'join_room' | null>(null);
+  const [tempPlayerName, setTempPlayerName] = useState(playerName || 'Comandante');
+
+  const handleActionClick = (action: 'quick_play' | 'create_room' | 'join_room') => {
+    setTempPlayerName(playerName || 'Comandante');
+    setPendingAction(action);
+  };
+
+  const handleConfirmName = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const finalName = tempPlayerName.trim() || 'Comandante';
+    onPlayerNameChange(finalName);
+    const actionToRun = pendingAction;
+    setPendingAction(null);
+
+    if (actionToRun === 'quick_play') {
+      onQuickPlay();
+    } else if (actionToRun === 'create_room') {
+      onCreateRoom();
+    } else if (actionToRun === 'join_room') {
+      onJoinRoom();
+    }
+  };
+
   return (
-    <div className="absolute inset-0 z-40 flex flex-col justify-between p-4 sm:p-6 bg-gradient-to-b from-sky-900 via-sky-950 to-slate-950 select-none overflow-hidden">
+    <div className="absolute inset-0 z-40 flex flex-col justify-between p-4 bg-slate-950 select-none overflow-hidden">
       
-      {/* Top Bar with independent CONTACTO at top-left and discrete ADMIN link at top-right */}
-      <div className="flex items-center justify-between w-full">
+      {/* Official 9:16 Menu Background Image (fondomenu.png) */}
+      <img
+        src="/assets/sprites/fondomenu.png"
+        alt="Fondo Menú"
+        className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-700 ${
+          bgLoaded ? 'opacity-90' : 'opacity-0'
+        }`}
+        onLoad={() => setBgLoaded(true)}
+        onError={() => setBgLoaded(false)}
+      />
+
+      {/* Subtle Dark Vignette Overlay for readability */}
+      {bgLoaded && (
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/70 pointer-events-none" />
+      )}
+      
+      {/* Top Bar with CONTACTO located independently at top-left */}
+      <div className="relative z-10 flex items-center justify-start w-full pt-1">
         <button
           onClick={onContact}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 text-amber-200 border border-amber-600/70 text-xs font-bold tracking-wider uppercase transition shadow-md active:scale-95 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 text-amber-200 border border-amber-600/70 text-xs font-bold tracking-wider uppercase transition shadow-md active:scale-95 cursor-pointer backdrop-blur-sm"
         >
           <Mail className="w-3.5 h-3.5 text-amber-400" />
           <span>CONTACTO</span>
         </button>
-
-        <button
-          onClick={onAdmin}
-          className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-600/50 text-[11px] font-mono transition cursor-pointer"
-          title="Panel de Administración /admin"
-        >
-          <ShieldAlert className="w-3.5 h-3.5 text-cyan-400" />
-          <span>/admin</span>
-        </button>
       </div>
 
       {/* Main Studio Brand & Title Lockup */}
-      <div className="flex flex-col items-center text-center my-auto">
-        <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-amber-400 uppercase drop-shadow mb-1">
-          ANAPSE VIDEO GAMES
-        </span>
-        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] font-['Fredoka',sans-serif]">
-          FARM BATTLE <span className="text-amber-400">ISLAND</span>
-        </h1>
-        <p className="text-xs text-sky-200/80 font-medium mt-1 max-w-[260px]">
-          Juego de artillería táctica por turnos
-        </p>
-
-        {/* Player Name Input */}
-        <div className="mt-5 w-full max-w-[260px] bg-slate-900/80 p-2.5 rounded-xl border border-amber-600/60 shadow-lg">
-          <label className="block text-[10px] font-black uppercase tracking-wider text-amber-300 text-left mb-1">
-            Tu Nombre / Alias:
-          </label>
-          <input
-            type="text"
-            value={playerName}
-            onChange={(e) => onPlayerNameChange(e.target.value)}
-            placeholder="Escribe tu alias..."
-            maxLength={18}
-            className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-bold text-white focus:outline-none focus:border-amber-400 transition"
+      <div className="relative z-10 flex flex-col items-center text-center my-auto">
+        
+        {/* Official 3D Logo (logo.png) */}
+        <div className="max-w-[280px] w-full flex justify-center mb-1">
+          <img
+            src="/assets/sprites/logo.png"
+            alt="Farm Battle Island Logo"
+            className={`max-h-[20vh] sm:max-h-[22vh] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-500 ${
+              logoLoaded ? 'block scale-100' : 'hidden scale-95'
+            }`}
+            onLoad={() => setLogoLoaded(true)}
+            onError={() => setLogoLoaded(false)}
           />
         </div>
 
-        {/* Primary Action Buttons Menu */}
-        <div className="flex flex-col gap-2.5 w-full max-w-[260px] mt-6">
+        {/* Fallback typography when logo.png is not loaded yet */}
+        {!logoLoaded && (
+          <div className="flex flex-col items-center mb-1">
+            <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-amber-400 uppercase drop-shadow mb-1">
+              ANAPSE VIDEO GAMES
+            </span>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] font-['Fredoka',sans-serif]">
+              FARM BATTLE <span className="text-amber-400">ISLAND</span>
+            </h1>
+          </div>
+        )}
+
+        {/* Action Buttons Menu - Slim, refined design */}
+        <div className="flex flex-col gap-2 w-full max-w-[220px] mt-3">
           
           {/* JUGAR (Quick game vs AI) */}
           <button
-            onClick={onQuickPlay}
-            className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-black text-sm tracking-wider uppercase border-2 border-emerald-300 shadow-[0_4px_12px_rgba(16,185,129,0.4)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            onClick={() => handleActionClick('quick_play')}
+            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-emerald-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Play className="w-4 h-4 fill-white" />
+            <Play className="w-3.5 h-3.5 fill-white" />
             <span>JUGAR</span>
           </button>
 
           {/* CREAR (Create Room Modal) */}
           <button
-            onClick={onCreateRoom}
-            className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-black text-sm tracking-wider uppercase border-2 border-amber-300 shadow-[0_4px_12px_rgba(245,158,11,0.4)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            onClick={() => handleActionClick('create_room')}
+            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-amber-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <PlusCircle className="w-4 h-4" />
+            <PlusCircle className="w-3.5 h-3.5" />
             <span>CREAR</span>
           </button>
 
           {/* UNIRSE (Join Available Room Modal) */}
           <button
-            onClick={onJoinRoom}
-            className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-sky-600 to-blue-500 hover:from-sky-500 hover:to-blue-400 text-white font-black text-sm tracking-wider uppercase border-2 border-sky-300 shadow-[0_4px_12px_rgba(14,165,233,0.4)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            onClick={() => handleActionClick('join_room')}
+            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 hover:from-sky-500 hover:to-blue-400 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-sky-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Users className="w-4 h-4" />
+            <Users className="w-3.5 h-3.5" />
             <span>UNIRSE</span>
           </button>
 
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-black text-sm tracking-wider uppercase border-2 border-purple-300 shadow-[0_4px_12px_rgba(147,51,234,0.4)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-purple-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Trophy className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+            <Trophy className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
             <span>TOP 50</span>
           </button>
 
@@ -125,9 +157,60 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="text-center text-[10px] text-sky-300/60 font-medium">
-        <span>© ANAPSE VIDEO GAMES · Mobile-First 9:16 Canvas Architecture</span>
+      <div className="relative z-10 text-center text-[10px] text-amber-200/70 font-semibold drop-shadow pb-1">
+        <span>© ANAPSE VIDEO GAMES</span>
       </div>
+
+      {/* Modal: Pedir Nombre de Jugador al presionar JUGAR, CREAR o UNIRSE */}
+      {pendingAction !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="w-full max-w-[280px] bg-slate-950/90 border border-amber-500/70 rounded-2xl shadow-2xl p-4 text-center relative overflow-hidden backdrop-blur-md">
+            
+            <button
+              onClick={() => setPendingAction(null)}
+              className="absolute top-2.5 right-2.5 text-slate-400 hover:text-white p-1 rounded-lg transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center mx-auto mb-2">
+              <UserCheck className="w-4 h-4 text-amber-400" />
+            </div>
+
+            <h3 className="text-sm font-black text-white uppercase tracking-wider mb-2">
+              Ingresa tu Alias
+            </h3>
+
+            <form onSubmit={handleConfirmName} className="space-y-3">
+              <input
+                type="text"
+                autoFocus
+                value={tempPlayerName}
+                onChange={(e) => setTempPlayerName(e.target.value)}
+                placeholder="Escribe tu alias..."
+                maxLength={18}
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-bold text-white text-center focus:outline-none focus:border-amber-400 transition"
+              />
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPendingAction(null)}
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase transition cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase border border-emerald-400/80 shadow-md transition active:scale-95 cursor-pointer"
+                >
+                  Continuar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -9,6 +9,7 @@ import { InputHandler } from './input';
 import { VehicleRenderer } from './vehicles';
 import { CharacterId, PowerUpType } from '../types/game';
 import { SupplyCrate } from './types';
+import { spriteManager } from './spriteManager';
 
 export interface GameEngineOptions {
   canvas: HTMLCanvasElement;
@@ -46,6 +47,7 @@ export class GameEngine {
   public isFiringSequence: boolean = false;
   public totalShotsCount: number = 0;
   public supplyCrates: SupplyCrate[] = [];
+  public islandId: string;
 
   private waveOffset: number = 0;
 
@@ -62,6 +64,7 @@ export class GameEngine {
     if (!context) throw new Error('Could not get 2D context from canvas');
     this.ctx = context;
 
+    this.islandId = options.islandId;
     this.currentTurn = options.initialTurn;
     this.wind = options.wind;
     this.onTurnComplete = options.onTurnComplete;
@@ -460,6 +463,18 @@ export class GameEngine {
 
   private renderSky() {
     const ctx = this.ctx;
+
+    // Check if official background 1, 2 or 3 is available
+    const themeNum: 1 | 2 | 3 = this.islandId === 'island_3' ? 3 : (this.islandId === 'island_2' ? 2 : 1);
+    const bgImage = spriteManager.getBackground(themeNum);
+
+    if (bgImage) {
+      // Draw official battlefield background
+      ctx.drawImage(bgImage, 0, 0, WorldConfig.WORLD_WIDTH, WorldConfig.WATER_Y + 60);
+      return;
+    }
+
+    // Procedural sky fallback
     const skyGrad = ctx.createLinearGradient(0, 0, 0, WorldConfig.WATER_Y);
     skyGrad.addColorStop(0, '#38BDF8');
     skyGrad.addColorStop(0.45, '#7DD3FC');
@@ -488,6 +503,12 @@ export class GameEngine {
   }
 
   private renderHorizonAndShip() {
+    const themeNum: 1 | 2 | 3 = this.islandId === 'island_3' ? 3 : (this.islandId === 'island_2' ? 2 : 1);
+    if (spriteManager.getBackground(themeNum)) {
+      // Official background already has horizon, mountains and shipwreck!
+      return;
+    }
+
     const ctx = this.ctx;
     const waterY = WorldConfig.WATER_Y;
 
@@ -559,6 +580,28 @@ export class GameEngine {
       if (crate.collected) continue;
 
       ctx.save();
+
+      // Check if official cofre.png sprites are available
+      const parachuteChest = spriteManager.getChest('parachute');
+      const openChest = spriteManager.getChest('open');
+
+      if (!crate.hasLanded && parachuteChest) {
+        // Draw official falling parachute chest
+        const w = 48;
+        const h = 58;
+        ctx.drawImage(parachuteChest, crate.x - w / 2, crate.y - 20, w, h);
+        ctx.restore();
+        continue;
+      } else if (crate.hasLanded && openChest) {
+        // Draw official landed glowing treasure chest
+        const w = 42;
+        const h = 38;
+        ctx.drawImage(openChest, crate.x - w / 2, crate.y - 12, w, h);
+        ctx.restore();
+        continue;
+      }
+
+      // Procedural fallback
       // Render Parachute if falling
       if (!crate.hasLanded) {
         ctx.fillStyle = '#F59E0B';

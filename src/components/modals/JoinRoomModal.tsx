@@ -10,7 +10,6 @@ interface JoinRoomModalProps {
 }
 
 export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
-  joinerName,
   onClose,
   onJoin
 }) => {
@@ -26,7 +25,6 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
     return () => unsubscribe();
   }, []);
 
-  // Disambiguate creator names if identical in lobby (Juan, Juan 2, Juan 3)
   const nameCounts: Record<string, number> = {};
   const disambiguatedMatches = availableMatches.map((match) => {
     const rawName = match.creatorPlayerName || match.player1.name || 'Comandante';
@@ -38,104 +36,104 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
   });
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm select-none">
-      <div className="w-full max-w-sm bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-sky-500 rounded-2xl shadow-2xl p-5 text-slate-100 relative max-h-[85vh] flex flex-col">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div>
-            <span className="text-[10px] font-black tracking-widest text-sky-400 uppercase">
-              LOBBY ONLINE FIRESTORE
-            </span>
-            <h2 className="text-xl font-black text-white">
-              PARTIDAS DISPONIBLES
-            </h2>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => {
-                setIsRefreshing(true);
-                setTimeout(() => setIsRefreshing(false), 500);
-              }}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-              title="Actualizar lista"
-            >
-              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-            </button>
-            <button
-              onClick={onClose}
-              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+      
+      {/* Official Menu Background (fondomenu.png) */}
+      <img
+        src="/assets/sprites/fondomenu.png"
+        alt="Fondo Menú"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+      />
 
-        {/* Player info notice */}
-        <div className="text-[11px] text-slate-400 my-2 px-1">
-          Te unirás como: <span className="text-sky-300 font-bold">{joinerName}</span>
-        </div>
+      {/* Dark Vignette Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
 
-        {/* Room List Container */}
-        <div className="flex-1 overflow-y-auto space-y-2 py-2 pr-1">
-          {disambiguatedMatches.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center text-slate-400">
-              <Users className="w-10 h-10 text-slate-600 mb-2" />
-              <p className="text-sm font-bold text-slate-300">No hay salas esperando jugadores</p>
-              <p className="text-xs text-slate-500 mt-1 max-w-[200px]">
-                Crea una sala nueva con el botón CREAR para que otro jugador se una.
-              </p>
+      {/* Header */}
+      <div className="relative z-10 flex items-center justify-between pt-1">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
+            PARTIDAS DISPONIBLES
+          </h2>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => {
+              setIsRefreshing(true);
+              setTimeout(() => setIsRefreshing(false), 500);
+            }}
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+            title="Actualizar"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+          </button>
+          <button
+            onClick={onClose}
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Room List Container */}
+      <div className="relative z-10 flex-1 overflow-y-auto space-y-2 my-3 max-w-[340px] w-full mx-auto pr-1">
+        {disambiguatedMatches.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 p-4">
+            <div className="w-12 h-12 rounded-full bg-slate-900/80 border border-slate-700 flex items-center justify-center mb-2">
+              <Users className="w-6 h-6 text-slate-500" />
             </div>
-          ) : (
-            disambiguatedMatches.map(({ match, displayCreatorName }) => (
-              <div
-                key={match.matchId}
-                className="bg-slate-800/80 hover:bg-slate-800 border border-slate-700 hover:border-sky-500 rounded-xl p-3 flex items-center justify-between transition shadow"
-              >
-                <div className="flex flex-col">
-                  {/* Creator name with disambiguation (Juan, Juan 2, Juan 3) in lobby */}
-                  <div className="font-black text-sm text-white flex items-center gap-1.5">
-                    <span className="text-amber-400">👑</span>
-                    <span>{displayCreatorName}</span>
-                  </div>
-
-                  {/* Rules summary tags */}
-                  <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-300">
-                    <span className="flex items-center gap-0.5 text-amber-300 font-bold">
-                      <Clock className="w-3 h-3 text-cyan-400" />
-                      {match.settings.timeLimit ? '5 MIN' : '∞'}
-                    </span>
-                    <span className="text-slate-500">·</span>
-                    <span className="flex items-center gap-0.5 text-red-300 font-bold">
-                      <Shield className="w-3 h-3 text-red-400" />
-                      {match.settings.lives} {match.settings.lives === 1 ? 'vida' : 'vidas'}
-                    </span>
-                    <span className="text-slate-500">·</span>
-                    <span className="text-slate-400 font-mono">
-                      #{match.matchId}
-                    </span>
-                  </div>
+            <p className="text-sm font-bold text-slate-300">No hay salas disponibles</p>
+            <p className="text-xs text-slate-400 mt-1">
+              Crea una sala nueva con el botón CREAR.
+            </p>
+          </div>
+        ) : (
+          disambiguatedMatches.map(({ match, displayCreatorName }) => (
+            <div
+              key={match.matchId}
+              className="bg-slate-950/80 backdrop-blur-md border border-slate-700/80 hover:border-sky-400 rounded-xl p-3 flex items-center justify-between transition shadow-md"
+            >
+              <div className="flex flex-col">
+                <div className="font-black text-sm text-white flex items-center gap-1.5">
+                  <span className="text-amber-400">👑</span>
+                  <span>{displayCreatorName}</span>
                 </div>
 
-                {/* UNIR Button */}
-                <button
-                  onClick={() => onJoin(match.matchId)}
-                  className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-wider shadow border border-sky-300 flex items-center gap-1 active:scale-95 transition"
-                >
-                  <span>UNIR</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
+                <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-300">
+                  <span className="flex items-center gap-0.5 text-amber-300 font-bold">
+                    <Clock className="w-3 h-3 text-cyan-400" />
+                    {match.settings.timeLimit ? '5 MIN' : '∞'}
+                  </span>
+                  <span className="text-slate-500">·</span>
+                  <span className="flex items-center gap-0.5 text-red-300 font-bold">
+                    <Shield className="w-3 h-3 text-red-400" />
+                    {match.settings.lives} {match.settings.lives === 1 ? 'vida' : 'vidas'}
+                  </span>
+                </div>
               </div>
-            ))
-          )}
-        </div>
 
-        {/* Footer */}
-        <div className="pt-2 border-t border-slate-800 text-center text-[10px] text-slate-500">
-          Las salas con 2 jugadores se inician automáticamente y se ocultan del lobby.
-        </div>
-
+              <button
+                onClick={() => onJoin(match.matchId)}
+                className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-wider shadow border border-sky-300 flex items-center gap-1 active:scale-95 transition cursor-pointer"
+              >
+                <span>UNIR</span>
+                <ArrowRight className="w-3 h-3" />
+              </button>
+            </div>
+          ))
+        )}
       </div>
+
+      {/* Footer */}
+      <div className="relative z-10 text-center pb-1">
+        <button
+          onClick={onClose}
+          className="w-full max-w-[340px] py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+        >
+          Atrás
+        </button>
+      </div>
+
     </div>
   );
 };

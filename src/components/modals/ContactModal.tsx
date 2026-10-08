@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Mail, Globe, MessageSquare, Gamepad2, Send } from 'lucide-react';
+import { X, Mail, Globe, Gamepad2 } from 'lucide-react';
 
 interface ContactModalProps {
   onClose: () => void;
@@ -7,68 +7,68 @@ interface ContactModalProps {
 
 export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm select-none">
-      <div className="w-full max-w-sm bg-gradient-to-b from-slate-900 to-slate-950 border-2 border-amber-500 rounded-3xl shadow-2xl p-5 text-slate-100">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-400 flex items-center justify-center">
-              <Mail className="w-4 h-4 text-amber-400" />
-            </div>
-            <div>
-              <span className="text-[10px] font-black tracking-widest text-amber-400 uppercase">
-                ESTUDIO DE DESARROLLO
-              </span>
-              <h2 className="text-xl font-black text-white font-['Fredoka',sans-serif]">
-                ANAPSE VIDEO GAMES
-              </h2>
-            </div>
-          </div>
+    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+      
+      {/* Official Menu Background (fondomenu.png) */}
+      <img
+        src="/assets/sprites/fondomenu.png"
+        alt="Fondo Menú"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+      />
 
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+      {/* Dark Vignette Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+
+      {/* Header */}
+      <div className="relative z-10 flex items-center justify-between pt-1">
+        <div className="flex items-center gap-2">
+          <Mail className="w-5 h-5 text-amber-400" />
+          <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
+            CONTACTO
+          </h2>
         </div>
+        <button
+          onClick={onClose}
+          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
 
-        {/* Studio Info */}
-        <div className="my-4 space-y-3 text-xs">
-          <p className="text-slate-300 leading-relaxed">
-            <strong>Farm Battle Island</strong> es un título de artillería táctica por turnos desarrollado por <strong>ANAPSE Video Games</strong>.
-          </p>
+      {/* Studio Info Card */}
+      <div className="relative z-10 my-auto max-w-[320px] w-full mx-auto space-y-3">
+        <div className="bg-slate-950/80 backdrop-blur-md p-4 rounded-xl border border-amber-500/40 text-center space-y-3 shadow-xl">
+          <h3 className="text-base font-black text-amber-300 font-['Fredoka',sans-serif]">
+            ANAPSE VIDEO GAMES
+          </h3>
 
-          <div className="bg-slate-950/80 p-3 rounded-2xl border border-slate-800 space-y-2">
-            <div className="flex items-center gap-2.5 text-slate-300">
+          <div className="space-y-2 text-left pt-1">
+            <div className="flex items-center gap-2 text-slate-300 text-xs">
               <Mail className="w-4 h-4 text-amber-400 shrink-0" />
               <span className="font-mono text-[11px]">contacto@anapsevideogames.com</span>
             </div>
-            <div className="flex items-center gap-2.5 text-slate-300">
+            <div className="flex items-center gap-2 text-slate-300 text-xs">
               <Globe className="w-4 h-4 text-sky-400 shrink-0" />
-              <span className="font-mono text-[11px]">https://anapsevideogames.com</span>
+              <span className="font-mono text-[11px]">anapsevideogames.com</span>
             </div>
-            <div className="flex items-center gap-2.5 text-slate-300">
+            <div className="flex items-center gap-2 text-slate-300 text-xs">
               <Gamepad2 className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span className="text-[11px]">Soporte Técnico y Torneos Oficiales</span>
+              <span className="text-[11px]">Soporte y Torneos Oficiales</span>
             </div>
           </div>
-
-          <p className="text-[11px] text-slate-400 text-center">
-            Para sugerencias de balance táctico, nuevos mapas de isla o reporte de incidencias en salas multijugador, comunícate con nuestro equipo.
-          </p>
         </div>
+      </div>
 
-        {/* Close action */}
+      {/* Footer */}
+      <div className="relative z-10 text-center pb-1">
         <button
           onClick={onClose}
-          className="w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider transition"
+          className="w-full max-w-[320px] py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
         >
           Cerrar
         </button>
-
       </div>
+
     </div>
   );
 };

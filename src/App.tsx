@@ -13,6 +13,7 @@ import { LeaveConfirmModal } from './components/modals/LeaveConfirmModal';
 import { ContactModal } from './components/modals/ContactModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { GameCanvasEngine } from './game/canvasEngine';
+import { spriteManager } from './game/spriteManager';
 import { 
   GameRoom, 
   GameScreen, 
@@ -70,6 +71,13 @@ export default function App() {
   const [showRanking, setShowRanking] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+
+  // Initialize official sprites on app startup
+  useEffect(() => {
+    spriteManager.loadAll().catch((err) => {
+      console.warn('Official sprites initialization check:', err);
+    });
+  }, []);
   const [matchResult, setMatchResult] = useState<{
     isVictory: boolean;
     earnedPoints: number;
@@ -678,10 +686,6 @@ export default function App() {
           onJoinRoom={() => setScreen('join_room')}
           onRanking={() => setShowRanking(true)}
           onContact={() => setShowContact(true)}
-          onAdmin={() => {
-            window.history.pushState({}, '', '/admin');
-            setScreen('admin');
-          }}
           playerName={playerName}
           onPlayerNameChange={handlePlayerNameChange}
         />
