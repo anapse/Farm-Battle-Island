@@ -211,7 +211,7 @@ export class ProjectileManager {
         : null;
 
       if (sprite) {
-        const size = p.spriteId === 'grenade' ? 28 : 24;
+        const size = p.spriteId === 'grenade' ? 50 : 43;
         const angle = p.grenadeRolling ? (p.rotation ?? 0) : Math.atan2(p.vy, p.vx);
         ctx.translate(p.x, p.y);
         ctx.rotate(angle);
