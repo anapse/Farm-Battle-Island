@@ -298,25 +298,34 @@ export class GameEngine {
       }, 160);
     }
 
-    // 8. Damage enemy if in blast radius
+    // 8. Damage enemy if in blast radius.
+    // Notify hits before deaths so the online local state records the
+    // final HP/life transition before the match can be concluded.
+    const defeatedRoles: ('player1' | 'player2')[] = [];
+
     for (const player of this.players.players) {
       const dist = Math.hypot(player.x - hitX, (player.y - 14) - hitY);
       if (dist <= explosionRadius) {
-        // Linear damage falloff from epicenter
         const damageFactor = Math.max(0.35, 1 - dist / explosionRadius);
         const rawDamage = Math.round(proj.damage * damageFactor);
 
-        const actualDamage = this.players.applyDamage(player, rawDamage, (deadPlayer) => {
-          if (this.onPlayerDied) {
-            this.onPlayerDied(deadPlayer.role);
-          }
-        });
+        const actualDamage = this.players.applyDamage(player, rawDamage);
 
         this.effects.addDamageNumber(player.x, player.y - 10, actualDamage);
 
         if (this.onPlayerHit) {
           this.onPlayerHit(player.role, actualDamage);
         }
+
+        if (player.hp <= 0 && player.lives <= 0) {
+          defeatedRoles.push(player.role);
+        }
+      }
+    }
+
+    for (const role of defeatedRoles) {
+      if (this.onPlayerDied) {
+        this.onPlayerDied(role);
       }
     }
 
