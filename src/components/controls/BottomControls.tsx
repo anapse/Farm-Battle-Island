@@ -34,6 +34,8 @@ interface BottomControlsProps {
   onSelectSlot?: (index: number) => void;
   onPowerChange: (newPower: number) => void;
   onFire: (overridePower?: number) => void;
+  lastShotPower?: number | null;
+  onMarkLastShot?: () => void;
   onMove?: (delta: number) => void;
 }
 
@@ -48,7 +50,9 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   onSelectSlot,
   onPowerChange,
   onFire,
-  onMove
+  onMove,
+  lastShotPower = null,
+  onMarkLastShot
 }) => {
   const [isHoldingFire, setIsHoldingFire] = useState(false);
 
@@ -222,22 +226,36 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             </span>
           </div>
 
-          <div className="relative w-full flex items-center">
-            <input
-              type="range"
-              min="10"
-              max="100"
-              value={power}
-              onChange={(e) => onPowerChange(Number(e.target.value))}
-              disabled={!isMyTurn || isFiring}
-              className={`w-full accent-amber-400 h-2 sm:h-2.5 bg-slate-900 rounded-lg appearance-none cursor-pointer border transition-all ${
-                isHoldingFire 
-                  ? 'border-yellow-300 shadow-[0_0_10px_#f59e0b]' 
-                  : 'border-amber-600/70'
-              }`}
-            />
-          </div>
-        </div>
+          <div className="relative w-full flex items-center gap-1.5">
+            <div className="relative flex-1">
+              <input
+                type="range"
+                min="10"
+                max="100"
+                value={power}
+                onChange={(e) => onPowerChange(Number(e.target.value))}
+                disabled={!isMyTurn || isFiring}
+                className={`w-full accent-amber-400 h-2 sm:h-2.5 bg-slate-900 rounded-lg appearance-none cursor-pointer border transition-all ${
+                  isHoldingFire ? 'border-yellow-300 shadow-[0_0_10px_#f59e0b]' : 'border-amber-600/70'
+                }`}
+              />
+              {lastShotPower !== null && (
+                <div className="absolute -top-1.5 pointer-events-none" style={{ left: `calc(${lastShotPower}% - 1px)` }}>
+                  <div className="h-5 w-0.5 bg-cyan-300 shadow-[0_0_5px_#22d3ee]" />
+                  <div className="absolute -top-4 -translate-x-1/2 whitespace-nowrap text-[7px] font-black text-cyan-200">
+                    ÚLTIMO {lastShotPower}%
+                  </div>
+                </div>
+              )}
+            </div>
+            {onMarkLastShot && (
+              <button type="button" onClick={onMarkLastShot} disabled={!isMyTurn || lastShotPower === null || isFiring}
+                className="shrink-0 rounded border border-cyan-500/60 bg-cyan-950/70 px-1.5 py-0.5 text-[8px] font-black text-cyan-200 disabled:opacity-30"
+                title="Marcar la fuerza usada en el último tiro">
+                MARCAR
+              </button>
+            )}
+          </div>   </div>
 
         {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
         <div className="flex flex-col items-center justify-center shrink-0 min-w-0 col-start-4 row-start-1">
