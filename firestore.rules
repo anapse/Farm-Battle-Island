@@ -1,86 +1,65 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper functions for data validation
-    function isValidId(id) {
+    function validId(id) {
       return id is string && id.size() > 0 && id.size() <= 64;
     }
 
-    function isValidPlayerName(name) {
+    function validPlayerName(name) {
       return name is string && name.size() >= 2 && name.size() <= 32;
     }
 
-    // 1. Matches Collection
     match /matches/{matchId} {
-      // Allow reading matches (lobby listing and game state sync)
       allow read: if true;
 
-      // Allow creating new matches with waiting status
-      allow create: if isValidId(matchId)
-        && isValidPlayerName(request.resource.data.creatorPlayerName)
-        && isValidId(request.resource.data.creatorPlayerId)
+      allow create: if request.auth != null
+        && validId(matchId)
+        && request.resource.data.matchId == matchId
+        && validPlayerName(request.resource.data.creatorPlayerName)
+        && validId(request.resource.data.creatorPlayerId)
         && request.resource.data.player1.id == request.resource.data.creatorPlayerId
-        && (
-          (request.resource.data.status == 'waiting' && request.resource.data.player2 == null)
-          || (request.resource.data.status == 'starting' && request.resource.data.isAiMatch == true && request.resource.data.player2 != null)
-        );
+        && request.resource.data.status in ['waiting', 'starting']
+        && request.resource.data.gameState.currentTurnPlayerId == request.resource.data.creatorPlayerId;
 
-      // Allow updating matches with strict state transition logic
-      allow update: if isValidId(matchId)
-        // Protection: Once a match is finished, it CANNOT be modified again (Idempotency protection)
+      allow update: if request.auth != null
+        && validId(matchId)
         && resource.data.status != 'finished'
         && (
-          // Case A: Player 2 joins (waiting -> starting)
-          (resource.data.status == 'waiting' 
-           && request.resource.data.status == 'starting' 
-           && request.resource.data.player2 != null
-           && request.resource.data.player2.id != resource.data.player1.id)
-          ||
-          // Case B: Character selection (starting -> starting or starting -> playing)
-          // ABSOLUTE RULE: Both players CANNOT pick the same character!
-          (resource.data.status == 'starting'
-           && (request.resource.data.player1.characterId == null 
-               || request.resource.data.player2.characterId == null 
-               || request.resource.data.player1.characterId != request.resource.data.player2.characterId))
-          ||
-          // Case C: Combat updates (playing -> playing)
-          (resource.data.status == 'playing' && request.resource.data.status == 'playing')
-          ||
-          // Case D: Match completion or surrender (playing/starting -> finished)
-          (request.resource.data.status == 'finished')
-          ||
-          // Case E: Match cancellation
-          (request.resource.data.status == 'cancelled')
-        );
+          request.auth.uid == resource.data.player1.id
+          || (resource.data.player2 != null && request.auth.uid == resource.data.player2.id)
+        )
+        && request.resource.data.status in ['waiting', 'starting', 'playing', 'finished', 'cancelled']
+        && request.resource.data.player1 != null
+        && request.resource.data.gameState != null;
 
       allow delete: if false;
     }
 
-    // 2. Presence Collection (Heartbeat & Disconnect Detection)
     match /presence/{playerId} {
       allow read: if true;
-      allow create, update: if isValidId(playerId)
+      allow create, update: if request.auth != null
+        && validId(playerId)
+        && request.auth.uid == playerId
         && request.resource.data.playerId == playerId
         && request.resource.data.lastSeenAt is number;
       allow delete: if false;
     }
 
-    // 3. Ranking Collection (Top 50 Leaderboard)
     match /ranking/{playerId} {
       allow read: if true;
-      allow create, update: if isValidId(playerId)
-        && isValidPlayerName(request.resource.data.playerName)
+      allow create, update: if request.auth != null
+        && validId(playerId)
+        && validPlayerName(request.resource.data.playerName)
         && request.resource.data.score is number
         && request.resource.data.victories is number
         && request.resource.data.defeats is number;
       allow delete: if false;
     }
 
-    // 4. Global Stats (/admin Dashboard)
     match /stats/{statId} {
-      allow read: if true;
-      allow create, update: if isValidId(statId)
+      allow read: true;
+      allow create, update: if request.auth != null
+        && validId(statId)
         && request.resource.data.totalMatches is number;
       allow delete: if false;
     }
