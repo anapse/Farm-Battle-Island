@@ -294,7 +294,7 @@ export default function App() {
         setMatchTimerRemaining(matchRem);
 
         // If match time reached 0: conclude match
-        if (matchRem === 0 && onlineMatch.gameState.currentTurnPlayerId === myPlayerId) {
+        if (matchRem === 0) {
           // Compare lives, then points
           const p1Lives = onlineMatch.player1.lives;
           const p2Lives = onlineMatch.player2?.lives || 0;
