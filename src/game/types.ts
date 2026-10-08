@@ -106,6 +106,8 @@ export interface ProjectileEntity {
   hasBounced?: boolean;
   /** Grenade has contacted the ground and is rolling instead of exploding immediately. */
   grenadeRolling?: boolean;
+  /** Seconds spent rolling after ground contact. */
+  grenadeRollTime?: number;
   /** Visual rotation of the grenade sprite while flying/rolling. */
   rotation?: number;
   isDoubleImpact?: boolean;
