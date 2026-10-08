@@ -635,29 +635,82 @@ export class GameEngine {
     const ctx = this.ctx;
     const activePlayer = this.players.getPlayer(this.currentTurn);
     const facing = activePlayer.facing;
+    const angleRad = (activePlayer.angle * Math.PI) / 180;
 
-    // Short straight sight indicator only. It shows the exact firing direction/angle;
-    // it does NOT draw the future projectile trajectory.
     const muzzleX = activePlayer.x + facing * 36;
     const muzzleY = activePlayer.y - 48;
-    const angleRad = (activePlayer.angle * Math.PI) / 180;
-    const sightLength = 58;
-    const aimEndX = muzzleX + Math.cos(angleRad) * sightLength * facing;
-    const aimEndY = muzzleY - Math.sin(angleRad) * sightLength;
+
+    // Long ballistic preview using the exact same projectile math as FIRE.
+    const trajectory = this.projectiles.calculateAimGuide(
+      activePlayer.x,
+      activePlayer.y,
+      activePlayer.angle,
+      activePlayer.power,
+      facing,
+      this.wind.direction,
+      this.wind.speed,
+      1.0,
+      true
+    );
 
     ctx.save();
-    ctx.strokeStyle = activePlayer.role === 'player1' ? '#EF4444' : '#3B82F6';
-    ctx.lineWidth = 2.5;
+
+    // Long, clearly visible parabolic trajectory.
+    ctx.strokeStyle = activePlayer.role === 'player1'
+      ? 'rgba(239, 68, 68, 0.92)'
+      : 'rgba(59, 130, 246, 0.92)';
+    ctx.lineWidth = 3;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.setLineDash([7, 7]);
+
+    ctx.beginPath();
+    trajectory.forEach((point, index) => {
+      if (index === 0) ctx.moveTo(point.x, point.y);
+      else ctx.lineTo(point.x, point.y);
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Direction stem from muzzle to the draggable control circle.
+    const handleDistance = 260;
+    const handleX = muzzleX + Math.cos(angleRad) * handleDistance * facing;
+    const handleY = muzzleY - Math.sin(angleRad) * handleDistance;
+
+    ctx.strokeStyle = activePlayer.role === 'player1'
+      ? 'rgba(239, 68, 68, 0.75)'
+      : 'rgba(59, 130, 246, 0.75)';
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(muzzleX, muzzleY);
-    ctx.lineTo(aimEndX, aimEndY);
+    ctx.lineTo(handleX, handleY);
+    ctx.stroke();
+
+    // Large draggable aim circle. Its position is derived from the current
+    // angle, so releasing the pointer leaves it exactly where it was dropped.
+    ctx.fillStyle = 'rgba(250, 204, 21, 0.22)';
+    ctx.strokeStyle = '#FACC15';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(handleX, handleY, 16, 0, Math.PI * 2);
+    ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = '#FACC15';
     ctx.beginPath();
-    ctx.arc(aimEndX, aimEndY, 2.5, 0, Math.PI * 2);
+    ctx.arc(handleX, handleY, 4, 0, Math.PI * 2);
     ctx.fill();
+
+    // Small crosshair inside the handle.
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(handleX - 9, handleY);
+    ctx.lineTo(handleX + 9, handleY);
+    ctx.moveTo(handleX, handleY - 9);
+    ctx.lineTo(handleX, handleY + 9);
+    ctx.stroke();
+
     ctx.restore();
   }
 
