@@ -73,7 +73,10 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             </button>
             <button
               type="button"
-              onClick={() => setTimeLimit('INFINITE')}
+              onClick={() => {
+                if (lives === 'INFINITE') return;
+                setTimeLimit('INFINITE');
+              }}
               className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                 timeLimit === 'INFINITE'
                   ? 'bg-amber-600 border-amber-300 text-white shadow-md'
@@ -96,7 +99,12 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               <button
                 key={num}
                 type="button"
-                onClick={() => setLives(num)}
+                onClick={() => {
+                  if (num === 'INFINITE' && timeLimit === 'INFINITE') {
+                    setTimeLimit('5_MIN');
+                  }
+                  setLives(num);
+                }}
                 className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                   lives === num
                     ? 'bg-red-600 border-red-300 text-white shadow-md'
