@@ -115,17 +115,37 @@ export async function recordMatchRankingResult(
     try {
       const docRef = doc(db, 'ranking', docId);
       const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        const prev = snap.data() as PlayerRanking;
+      const previous = snap.exists() ? (snap.data() as PlayerRanking) : null;
+
+      if (previous) {
         currentRecord = {
           playerName: cleanName,
-          score: Math.max(0, (prev.score || 0) + earnedPoints),
-          victories: (prev.victories || 0) + (isVictory ? 1 : 0),
-          defeats: (prev.defeats || 0) + (isVictory ? 0 : 1),
+          score: Math.max(0, (previous.score || 0) + earnedPoints),
+          victories: (previous.victories || 0) + (isVictory ? 1 : 0),
+          defeats: (previous.defeats || 0) + (isVictory ? 0 : 1),
           lastPlayedAt: new Date().toISOString().split('T')[0]
         };
       }
-      await setDoc(docRef, currentRecord, { merge: true });
+
+      // Persist only players who belong to the global Top 50.
+      // The ranking collection is not a match-history collection.
+      const topQuery = query(
+        collection(db, 'ranking'),
+        orderBy('score', 'desc'),
+        limit(50)
+      );
+      const topSnapshot = await getDocs(topQuery);
+      const topRecords = topSnapshot.docs.map(item => item.data() as PlayerRanking);
+      const alreadyRanked = topRecords.some(
+        item => item.playerName.toLowerCase() === cleanName.toLowerCase()
+      );
+      const cutoff = topRecords.length < 50
+        ? 0
+        : Math.min(...topRecords.map(item => item.score || 0));
+
+      if (alreadyRanked || currentRecord.score >= cutoff || topRecords.length < 50) {
+        await setDoc(docRef, currentRecord, { merge: true });
+      }
     } catch (e) {
       console.warn('Firestore ranking record error, saving locally:', e);
     }
