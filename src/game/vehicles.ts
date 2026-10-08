@@ -70,9 +70,10 @@ export class VehicleRenderer {
 
       const size = 136; // ~3.1 blocks wide & high: clear, prominent and proportionate
 
-      // In personajes.png, tanks face RIGHT by default.
-      // If player faces LEFT (facing === -1), flip horizontally.
-      if (facing === -1) {
+      // Official personajes.png sprites face LEFT by default.
+      // Player 1 must face RIGHT toward the rival; Player 2 must face LEFT.
+      // Therefore only a right-facing player is mirrored.
+      if (facing === 1) {
         ctx.scale(-1, 1);
       }
 
