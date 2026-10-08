@@ -10,7 +10,7 @@ export class WorldConfig {
 
   // Physical constants
   public static readonly GRAVITY = 720; // px / sec^2
-  public static readonly BASE_PROJECTILE_SPEED = 900; // px / sec
+  public static readonly BASE_PROJECTILE_SPEED = 1050; // px / sec
 
   // Block Geometry
   public static readonly BLOCK_WIDTH = 44;
