@@ -315,11 +315,16 @@ export default function App() {
             }
           }
 
-          concludeMatchOnline({
+          void concludeMatchOnline({
             matchId: onlineMatch.matchId,
             winnerPlayerId: winnerId,
             loserPlayerId: loserId,
             reason: 'time_expired'
+          }).then((finished) => {
+            if (finished) {
+              setOnlineMatch(finished);
+              showTacticalToast('¡Tiempo agotado! Partida finalizada.', 'success');
+            }
           });
         }
       } else {
@@ -500,11 +505,13 @@ export default function App() {
         const deadPlayer = targetRole === 'player1' ? match.player1 : match.player2;
         if (deadPlayer && deadPlayer.lives <= 1) {
           const winnerPlayerId = targetRole === 'player1' ? (match.player2?.id || 'bot') : match.player1.id;
-          concludeMatchOnline({
+          void concludeMatchOnline({
             matchId: match.matchId,
             winnerPlayerId,
             loserPlayerId: deadPlayer.id,
             reason: 'lives_depleted'
+          }).then((finished) => {
+            if (finished) setOnlineMatch(finished);
           });
         }
       }
