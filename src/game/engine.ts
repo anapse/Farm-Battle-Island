@@ -636,74 +636,28 @@ export class GameEngine {
     const activePlayer = this.players.getPlayer(this.currentTurn);
     const facing = activePlayer.facing;
 
-    // Cannon muzzle origin based on official vehicle scaling
+    // Short straight sight indicator only. It shows the exact firing direction/angle;
+    // it does NOT draw the future projectile trajectory.
     const muzzleX = activePlayer.x + facing * 36;
     const muzzleY = activePlayer.y - 48;
     const angleRad = (activePlayer.angle * Math.PI) / 180;
+    const sightLength = 58;
+    const aimEndX = muzzleX + Math.cos(angleRad) * sightLength * facing;
+    const aimEndY = muzzleY - Math.sin(angleRad) * sightLength;
 
     ctx.save();
-
-    // 1. Aim Cannon Direction Vector Indicator
-    const barrelLength = 46;
-    const aimEndX = muzzleX + Math.cos(angleRad) * barrelLength * facing;
-    const aimEndY = muzzleY - Math.sin(angleRad) * barrelLength;
-
-    // Laser / Sight line
-    ctx.lineWidth = 3;
     ctx.strokeStyle = activePlayer.role === 'player1' ? '#EF4444' : '#3B82F6';
+    ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
     ctx.beginPath();
     ctx.moveTo(muzzleX, muzzleY);
     ctx.lineTo(aimEndX, aimEndY);
     ctx.stroke();
 
-    // Small muzzle glow dot
     ctx.fillStyle = '#FACC15';
     ctx.beginPath();
-    ctx.arc(aimEndX, aimEndY, 3.5, 0, Math.PI * 2);
+    ctx.arc(aimEndX, aimEndY, 2.5, 0, Math.PI * 2);
     ctx.fill();
-
-    // 2. Parabolic Trajectory Guide
-    const guidePoints = this.projectiles.calculateAimGuide(
-      activePlayer.x,
-      activePlayer.y,
-      activePlayer.angle,
-      activePlayer.power,
-      facing,
-      this.wind.direction,
-      this.wind.speed,
-      1.0,
-      activePlayer.precisionActive
-    );
-
-    if (guidePoints.length >= 2) {
-      ctx.setLineDash([5, 6]);
-      ctx.strokeStyle = activePlayer.role === 'player1' ? 'rgba(239, 68, 68, 0.85)' : 'rgba(59, 130, 246, 0.85)';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(guidePoints[0].x, guidePoints[0].y);
-
-      for (let i = 1; i < guidePoints.length; i++) {
-        ctx.lineTo(guidePoints[i].x, guidePoints[i].y);
-      }
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // 3. Aim Reticle at trajectory end
-      const lastPt = guidePoints[guidePoints.length - 1];
-      ctx.strokeStyle = activePlayer.role === 'player1' ? '#EF4444' : '#3B82F6';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(lastPt.x, lastPt.y, 8, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(lastPt.x - 12, lastPt.y);
-      ctx.lineTo(lastPt.x + 12, lastPt.y);
-      ctx.moveTo(lastPt.x, lastPt.y - 12);
-      ctx.lineTo(lastPt.x, lastPt.y + 12);
-      ctx.stroke();
-    }
-
     ctx.restore();
   }
 
