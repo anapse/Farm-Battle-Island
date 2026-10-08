@@ -151,7 +151,7 @@ export interface OnlineMatch {
   creatorPlayerName: string;
   settings: {
     timeLimit: 300 | null; // 300 seconds for 5 min, null for infinite
-    lives: 1 | 3 | 5;
+    lives: GameLivesOption;
     islandId: string;
   };
   player1: OnlinePlayer;
