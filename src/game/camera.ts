@@ -73,7 +73,7 @@ export class CameraController {
 
   public update(dt: number) {
     // Smooth camera lerp
-    const lerpSpeed = 0.08;
+    const lerpSpeed = this.followMode === 'projectile' ? 0.22 : 0.08;
     this.x += (this.targetX - this.x) * lerpSpeed;
     this.y += (this.targetY - this.y) * lerpSpeed;
 
