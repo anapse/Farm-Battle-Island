@@ -97,7 +97,7 @@ export default function App() {
   const [tacticalToast, setTacticalToast] = useState<{ id: number; text: string; type: 'info' | 'success' | 'warn' } | null>(null);
 
   // Timers calculated from timestamps
-  const [turnTimerRemaining, setTurnTimerRemaining] = useState(40);
+  const [turnTimerRemaining, setTurnTimerRemaining] = useState(25);
   const [matchTimerRemaining, setMatchTimerRemaining] = useState(300);
 
   // Canvas Reference & Engine
@@ -245,7 +245,7 @@ export default function App() {
     const interval = setInterval(() => {
       // Calculate remaining turn seconds based on turnStartedAt
       const elapsedTurnMs = Date.now() - onlineMatch.gameState.turnStartedAt;
-      const turnRem = Math.max(0, Math.ceil((40000 - elapsedTurnMs) / 1000));
+      const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
       // If turn timer expired and it was MY turn, pass turn automatically!
