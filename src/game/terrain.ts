@@ -17,7 +17,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_1',
     name: 'Playa Tranquila',
     columnHeights: [
-      1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 0, 0
+      1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 2, type: 'palm' },
@@ -49,7 +49,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_3',
     name: 'Bahía Abierta',
     columnHeights: [
-      1, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1, 0, 0, 0
+      1, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 3, type: 'palm' },
@@ -64,7 +64,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_4',
     name: 'Arrecife Bajo',
     columnHeights: [
-      1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 0, 0, 0
+      1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1
     ],
     scenery: [
       { colIndex: 2, type: 'rock' },
@@ -380,7 +380,7 @@ export class TerrainManager {
     const groundTile = spriteManager.getGroundTile(tileId);
     if (groundTile) {
       // Official Sliced Sprite Render - strictly preserves textures, colors, original design
-      ctx.drawImage(groundTile, x, y, width, height);
+      ctx.drawImage(groundTile, x, y, width + 1.5, height);
       return;
     }
 
@@ -410,8 +410,8 @@ export class TerrainManager {
     const sprite = spriteManager.getDecoration(decoId);
     if (sprite) {
       // Official Sliced Decoration Render placed squarely on top of the supporting ground block
-      const dw = decoId === 'hut' ? 64 : (decoId === 'palm' ? 58 : (decoId === 'rocks' ? 42 : 36));
-      const dh = decoId === 'hut' ? 52 : (decoId === 'palm' ? 84 : (decoId === 'rocks' ? 28 : 36));
+      const dw = decoId === 'hut' ? 104 : (decoId === 'palm' ? 96 : (decoId === 'rocks' ? 68 : 58));
+      const dh = decoId === 'hut' ? 84 : (decoId === 'palm' ? 138 : (decoId === 'rocks' ? 46 : 54));
       ctx.drawImage(sprite, x - dw / 2, y - dh + 2, dw, dh);
     }
   }
