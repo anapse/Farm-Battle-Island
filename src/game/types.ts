@@ -106,6 +106,8 @@ export interface ProjectileEntity {
   hasBounced?: boolean;
   isDoubleImpact?: boolean;
   isFireShot?: boolean;
+  /** Official combat sprite used by this projectile. */
+  spriteId?: 'single_missile' | 'double_missile' | 'triple_missile' | 'explosive_missile' | 'grenade';
   trail: { x: number; y: number; alpha: number; size: number }[];
 }
 
