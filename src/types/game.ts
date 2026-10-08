@@ -25,6 +25,8 @@ export type PowerUpType =
   | 'agility'     // 🏃 Movimiento
   | 'fire_shot'   // 🔥 Disparo
   | 'double_hit'  // 💥💥 Doble Impacto
+  | 'triple_hit'  // 💥💥💥 Triple Impacto
+  | 'grenade'
   | 'bounce';     // ↩ Rebote
 
 export interface PowerUpItem {
@@ -67,7 +69,7 @@ export interface PlayerState {
 }
 
 export type GameTimeOption = '5_MIN' | 'INFINITE';
-export type GameLivesOption = 1 | 3 | 5;
+export type GameLivesOption = 1 | 3 | 5 | 'INFINITE';
 
 export type GameScreen = 
   | 'menu' 
