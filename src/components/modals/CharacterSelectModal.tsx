@@ -105,7 +105,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
           <div
             className="w-[150px] h-[150px] transition-transform hover:scale-105"
             style={{
-              backgroundImage: \`url('${getAssetUrl('assets/sprites/personajes.png')}')\`,
+              backgroundImage: `url('${getAssetUrl('assets/sprites/personajes.png')}')`,
               backgroundSize: '300% 200%',
               backgroundPosition: CHARACTER_SPRITE_COORDS[selectedId]?.bgPos || '0% 0%',
               backgroundRepeat: 'no-repeat'
