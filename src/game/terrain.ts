@@ -1,5 +1,6 @@
 import { TerrainBlock, SceneryObject } from './types';
 import { WorldConfig } from './world';
+import { spriteManager, GroundTileId, DecorationId } from './spriteManager';
 
 export interface IslandMold {
   id: string;
@@ -352,116 +353,66 @@ export class TerrainManager {
 
     // Safety floor under water
     if (heightLevel === 0) {
-      ctx.fillStyle = '#0F172A';
-      ctx.fillRect(x, y, width, height);
-      ctx.strokeStyle = '#1E293B';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y, width, height);
+      const rockTile = spriteManager.getGroundTile('rock');
+      if (rockTile) {
+        ctx.drawImage(rockTile, x, y, width, height);
+      } else {
+        ctx.fillStyle = '#0F172A';
+        ctx.fillRect(x, y, width, height);
+      }
       return;
     }
 
-    // Universal Block Concept:
-    // Base: Heavy warm sandstone / Quarry rock
-    ctx.fillStyle = '#D97706'; // Warm quarry stone
-    ctx.fillRect(x, y, width, height);
-
-    // Earth / Sand middle gradient band
-    ctx.fillStyle = '#B45309';
-    ctx.fillRect(x + 2, y + height * 0.4, width - 4, height * 0.5);
-
-    // Beveled rock edges
-    ctx.strokeStyle = '#78350F';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(x, y, width, height);
-
-    // Stone chisel texture groove
-    ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-    ctx.beginPath();
-    ctx.moveTo(x + 8, y + 10);
-    ctx.lineTo(x + width - 8, y + 10);
-    ctx.moveTo(x + 12, y + height - 12);
-    ctx.lineTo(x + width - 12, y + height - 12);
-    ctx.stroke();
-
-    // Top: Lush Light Green Moss (Musgo verde claro)
+    // Determine official tile from suelo.png 2x2 grid:
+    // 0,0 = grass_top (roca + grama arriba)
+    // 1,0 = rock (roca interior)
+    // 0,1 = water_shore (roca arriba + agua abajo)
+    // 1,1 = pure_grass (grama)
+    let tileId: GroundTileId = 'rock';
     if (hasMoss) {
-      ctx.fillStyle = '#22C55E'; // Lush tropical grass
-      ctx.fillRect(x, y, width, 10);
+      tileId = 'grass_top';
+    } else if (y + height >= WorldConfig.WATER_Y - 2) {
+      tileId = 'water_shore';
+    } else {
+      tileId = 'rock';
+    }
 
-      // Light moss fringe highlights
-      ctx.fillStyle = '#86EFAC';
-      ctx.fillRect(x + 2, y + 1, width - 4, 3);
+    const groundTile = spriteManager.getGroundTile(tileId);
+    if (groundTile) {
+      // Official Sliced Sprite Render - strictly preserves textures, colors, original design
+      ctx.drawImage(groundTile, x, y, width, height);
+      return;
+    }
 
-      // Drooping moss tendrils
+    // Natural stone texture fallback only if official sprite not loaded yet
+    ctx.fillStyle = '#92400E';
+    ctx.fillRect(x, y, width, height);
+    if (hasMoss) {
       ctx.fillStyle = '#16A34A';
-      ctx.beginPath();
-      ctx.arc(x + width * 0.3, y + 10, 4, 0, Math.PI);
-      ctx.arc(x + width * 0.7, y + 10, 5, 0, Math.PI);
-      ctx.fill();
+      ctx.fillRect(x, y, width, 8);
     }
   }
 
   private renderScenery(ctx: CanvasRenderingContext2D, obj: SceneryObject) {
     const { x, y, type } = obj;
 
-    if (type === 'crate') {
-      const s = 24;
-      const bx = x - s / 2;
-      const by = y - s;
-      ctx.fillStyle = '#B45309';
-      ctx.fillRect(bx, by, s, s);
-      ctx.strokeStyle = '#78350F';
-      ctx.lineWidth = 2;
-      ctx.strokeRect(bx, by, s, s);
-      ctx.beginPath();
-      ctx.moveTo(bx, by);
-      ctx.lineTo(bx + s, by + s);
-      ctx.moveTo(bx + s, by);
-      ctx.lineTo(bx, by + s);
-      ctx.stroke();
-    } else if (type === 'rock') {
-      const rw = 28;
-      const rh = 18;
-      ctx.fillStyle = '#64748B';
-      ctx.beginPath();
-      ctx.ellipse(x, y - rh / 2, rw / 2, rh / 2, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#334155';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    } else if (type === 'palm') {
-      // Slanted organic palm trunk
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = '#92400E';
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.quadraticCurveTo(x - 12, y - 40, x + 8, y - 76);
-      ctx.stroke();
+    // Map to official decoracion.png (2 rows x 3 cols):
+    // 0,0 = palm | 1,0 = rocks | 2,0 = crate
+    // 0,1 = hut  | 1,1 = bush  | 2,1 = crate_stack
+    let decoId: DecorationId = 'palm';
+    if (type === 'palm') decoId = 'palm';
+    else if (type === 'rock' || (type as any) === 'rocks') decoId = 'rocks';
+    else if (type === 'crate') decoId = 'crate';
+    else if (type === 'hut') decoId = 'hut';
+    else if ((type as any) === 'bush' || (type as any) === 'hierba') decoId = 'bush';
+    else if ((type as any) === 'crate_stack' || (type as any) === '3_cajas') decoId = 'crate_stack';
 
-      // Fronds
-      ctx.fillStyle = '#15803D';
-      const topX = x + 8;
-      const topY = y - 76;
-      for (let a = -0.9; a <= 0.9; a += 0.45) {
-        ctx.beginPath();
-        ctx.arc(topX + a * 24, topY - 12, 18, 0, Math.PI);
-        ctx.fill();
-      }
-    } else if (type === 'hut') {
-      // Beach hut
-      const hw = 52;
-      const hh = 34;
-      ctx.fillStyle = '#78350F';
-      ctx.fillRect(x - hw / 2, y - hh, hw, hh);
-
-      // Straw thatch roof
-      ctx.fillStyle = '#D97706';
-      ctx.beginPath();
-      ctx.moveTo(x - hw / 2 - 8, y - hh);
-      ctx.lineTo(x, y - hh - 24);
-      ctx.lineTo(x + hw / 2 + 8, y - hh);
-      ctx.closePath();
-      ctx.fill();
+    const sprite = spriteManager.getDecoration(decoId);
+    if (sprite) {
+      // Official Sliced Decoration Render placed squarely on top of the supporting ground block
+      const dw = decoId === 'hut' ? 64 : (decoId === 'palm' ? 58 : (decoId === 'rocks' ? 42 : 36));
+      const dh = decoId === 'hut' ? 52 : (decoId === 'palm' ? 84 : (decoId === 'rocks' ? 28 : 36));
+      ctx.drawImage(sprite, x - dw / 2, y - dh + 2, dw, dh);
     }
   }
 }

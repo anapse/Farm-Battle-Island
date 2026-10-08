@@ -40,7 +40,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
   return (
     <header className="fixed top-0 left-0 right-0 z-30 pointer-events-none select-none p-2 sm:p-3">
       {/* Top Banner Row */}
-      <div className="flex items-start justify-between gap-1 sm:gap-2 max-w-full">
+      <div className="flex items-start justify-between gap-1 sm:gap-2 max-w-5xl mx-auto">
         
         {/* Player 1 HUD Box (~33% width) */}
         <div className={`w-[33%] max-w-[130px] sm:max-w-[180px] flex flex-col pointer-events-auto transition-all duration-300 ${

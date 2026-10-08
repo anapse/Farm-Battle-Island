@@ -41,7 +41,7 @@ export class VehicleRenderer {
       ctx.lineWidth = 3;
       ctx.setLineDash([5, 5]);
       ctx.beginPath();
-      ctx.arc(0, -22 + idleOscillation, 44, 0, Math.PI * 2);
+      ctx.arc(0, -45 + idleOscillation, 68, 0, Math.PI * 2);
       ctx.stroke();
       ctx.setLineDash([]);
     }
@@ -53,7 +53,7 @@ export class VehicleRenderer {
       ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
       ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.arc(0, -22 + idleOscillation, 46, 0, Math.PI * 2);
+      ctx.arc(0, -45 + idleOscillation, 70, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
       ctx.restore();
@@ -64,24 +64,25 @@ export class VehicleRenderer {
 
     if (officialCharCanvas) {
       // Official Sliced Sprite Render
+      // Size proportional to terrain blocks (44px), preserving 1:1 original proportion
       ctx.save();
       ctx.translate(0, idleOscillation);
 
-      const spriteW = 76;
-      const spriteH = 62;
+      const size = 136; // ~3.1 blocks wide & high: clear, prominent and proportionate
 
-      // In personajes.png, tanks face LEFT by default.
-      // If player faces RIGHT (facing === 1), flip horizontally.
-      if (facing === 1) {
+      // In personajes.png, tanks face RIGHT by default.
+      // If player faces LEFT (facing === -1), flip horizontally.
+      if (facing === -1) {
         ctx.scale(-1, 1);
       }
 
+      // Drawn centered on ground contact anchor
       ctx.drawImage(
         officialCharCanvas,
-        -spriteW / 2,
-        -spriteH + 12,
-        spriteW,
-        spriteH
+        -size / 2,
+        -size + 8,
+        size,
+        size
       );
 
       ctx.restore();

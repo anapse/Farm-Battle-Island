@@ -83,6 +83,7 @@ function assetManagerPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [react(), tailwindcss(), assetManagerPlugin()],
     resolve: {
       alias: {

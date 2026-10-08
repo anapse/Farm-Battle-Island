@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GameContainer } from './components/layout/GameContainer';
 import { TopHUD } from './components/hud/TopHUD';
-import { BottomControls } from './components/controls/BottomControls';
+import { BottomControls, OfficialPowerUpId } from './components/controls/BottomControls';
 import { MainMenu } from './components/modals/MainMenu';
 import { CreateRoomModal } from './components/modals/CreateRoomModal';
 import { JoinRoomModal } from './components/modals/JoinRoomModal';
@@ -92,6 +92,8 @@ export default function App() {
   const [angle, setAngle] = useState(35);
   const [power, setPower] = useState(62);
   const [activePowerUp, setActivePowerUp] = useState<PowerUpType | null>(null);
+  const [powerUpSlots, setPowerUpSlots] = useState<(OfficialPowerUpId | null)[]>([null, null, null, null]);
+  const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
   const [tacticalToast, setTacticalToast] = useState<{ id: number; text: string; type: 'info' | 'success' | 'warn' } | null>(null);
 
   // Timers calculated from timestamps
@@ -376,6 +378,27 @@ export default function App() {
           isWater: false
         });
       },
+      onSupplyCrateCollected: (collector) => {
+        if (collector === playerRole) {
+          const availableList: OfficialPowerUpId[] = [
+            'bala_doble',
+            'bala_triple',
+            'bala_explosiva',
+            'granada',
+            'corazon'
+          ];
+          const chosen = availableList[Math.floor(Math.random() * availableList.length)];
+          setPowerUpSlots(prev => {
+            const next = [...prev];
+            const emptyIdx = next.findIndex(s => s === null);
+            if (emptyIdx !== -1) {
+              next[emptyIdx] = chosen;
+            }
+            return next;
+          });
+          showTacticalToast(`¡Suministro Recogido! Power-up añadido`, 'success');
+        }
+      },
       onPlayerDied: (targetRole) => {
         // If target lost all lives, finish match!
         const match = onlineMatchRef.current;
@@ -526,10 +549,12 @@ export default function App() {
   };
 
   // ACTION: DISPARAR CAÑÓN
-  const handleFire = () => {
+  const handleFire = (overridePower?: number) => {
     if (!engineRef.current || !onlineMatch) return;
     const isMyTurn = onlineMatch.gameState.currentTurnPlayerId === myPlayerId;
     if (!isMyTurn) return;
+
+    const shotPower = overridePower !== undefined ? overridePower : power;
 
     // Send shot event online to Firestore
     sendShotOnline({
@@ -537,7 +562,7 @@ export default function App() {
       playerId: myPlayerId,
       shooterRole: playerRole,
       angle,
-      power,
+      power: shotPower,
       powerUpType: activePowerUp,
       windSpeed: onlineMatch.gameState.wind.speed,
       windDirection: onlineMatch.gameState.wind.direction
@@ -546,52 +571,52 @@ export default function App() {
     // Fire immediately in local canvas
     engineRef.current.fireShot(playerRole, activePowerUp);
 
-    // Consume offensive munition after firing
-    if (activePowerUp && activePowerUp !== 'shield' && activePowerUp !== 'precision' && activePowerUp !== 'agility') {
-      setActivePowerUp(null);
+    // Consume official powerup slot after firing
+    if (activeSlotIndex !== null) {
+      setPowerUpSlots(prev => {
+        const next = [...prev];
+        next[activeSlotIndex] = null;
+        return next;
+      });
+      setActiveSlotIndex(null);
     }
+    setActivePowerUp(null);
   };
 
-  // ACTION: POWER-UP ACTIVATION
-  const handlePowerUpSelect = (pu: PowerUpType) => {
-    if (!onlineMatch || onlineMatch.gameState.currentTurnPlayerId !== myPlayerId) return;
+  // ACTION: OFFICIAL POWER-UP SLOT SELECTION
+  const handleSelectSlot = (index: number) => {
+    const item = powerUpSlots[index];
+    if (!item) return;
 
-    if (pu === 'heal_10' || pu === 'heal_20') {
-      const healAmount = pu === 'heal_10' ? 10 : 20;
-      engineRef.current?.applyPowerUp(playerRole, pu);
-      showTacticalToast(`+${healAmount}% Salud Restaurada ❤️`, 'success');
+    if (item === 'corazon') {
+      engineRef.current?.applyPowerUp(playerRole, 'heal_20');
+      showTacticalToast('+20 Salud Restaurada ❤️', 'success');
+      setPowerUpSlots(prev => {
+        const next = [...prev];
+        next[index] = null;
+        return next;
+      });
+      if (activeSlotIndex === index) {
+        setActiveSlotIndex(null);
+        setActivePowerUp(null);
+      }
       return;
     }
 
-    if (pu === 'shield') {
-      engineRef.current?.applyPowerUp(playerRole, 'shield');
-      setActivePowerUp('shield');
-      showTacticalToast('🛡️ Escudo Defensivo Activado (-50% Daño)', 'info');
-      return;
-    }
-
-    if (pu === 'precision') {
-      engineRef.current?.applyPowerUp(playerRole, 'precision');
-      setActivePowerUp('precision');
-      showTacticalToast('🎯 Guía Láser Extendida Activada', 'info');
-      return;
-    }
-
-    if (pu === 'agility') {
-      engineRef.current?.applyPowerUp(playerRole, 'agility');
-      setActivePowerUp('agility');
-      showTacticalToast('🏃 Motor de Movimiento Aumentado', 'info');
-      return;
-    }
-
-    // Munition weapons
-    if (activePowerUp === pu) {
+    if (activeSlotIndex === index) {
+      setActiveSlotIndex(null);
       setActivePowerUp(null);
-      showTacticalToast('Munición estándar restaurada', 'info');
+      showTacticalToast('Bala normal restaurada', 'info');
     } else {
-      setActivePowerUp(pu);
-      const item = POWER_UP_LIST.find(p => p.id === pu);
-      showTacticalToast(`${item?.symbol || '💥'} ${item?.name || 'Munición'} Cargada`, 'warn');
+      setActiveSlotIndex(index);
+      // Map to game power-up type for physics
+      let pt: PowerUpType = 'mega_bomb';
+      if (item === 'bala_doble') pt = 'double_hit';
+      else if (item === 'bala_triple') pt = 'double_hit';
+      else if (item === 'bala_explosiva') pt = 'mega_bomb';
+      else if (item === 'granada') pt = 'bounce';
+      setActivePowerUp(pt);
+      showTacticalToast(`Power-up Activado para disparo`, 'warn');
     }
   };
 
@@ -668,7 +693,7 @@ export default function App() {
     : null;
 
   return (
-    <GameContainer>
+    <GameContainer isBattle={screen === 'battle'}>
       
       {/* 1. ADMIN DASHBOARD ROUTE */}
       {screen === 'admin' && (
@@ -790,17 +815,15 @@ export default function App() {
           {/* Bottom Controls Fixed Overlay */}
           <BottomControls
             angle={angle}
-            minAngle={myCharacterStats?.minAngle || 10}
-            maxAngle={myCharacterStats?.maxAngle || 82}
             power={power}
             wind={onlineMatch.gameState.wind}
             isMyTurn={isMyTurn}
-            activePowerUp={activePowerUp}
-            onAngleChange={setAngle}
+            isFiring={engineRef.current?.isFiring()}
+            powerUpSlots={powerUpSlots}
+            activeSlotIndex={activeSlotIndex}
+            onSelectSlot={handleSelectSlot}
             onPowerChange={setPower}
-            onPowerUpSelect={handlePowerUpSelect}
             onFire={handleFire}
-            onCameraFocus={handleCameraFocus}
             onMove={(delta) => engineRef.current?.movePlayer(playerRole, delta)}
           />
 

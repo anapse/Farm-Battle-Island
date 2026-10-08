@@ -6,6 +6,8 @@
  * and alpha transparency.
  */
 
+import { getAssetUrl } from '../utils/assets';
+
 export interface SpriteAtlasState {
   loaded: boolean;
   loading: boolean;
@@ -51,11 +53,12 @@ class SpriteManager {
    */
   private loadImage(src: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
+      const resolvedSrc = getAssetUrl(src);
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error(`Failed to load sprite image: ${src}`));
-      img.src = src;
+      img.onerror = () => reject(new Error(`Failed to load sprite image: ${resolvedSrc}`));
+      img.src = resolvedSrc;
     });
   }
 
@@ -219,17 +222,24 @@ class SpriteManager {
           console.warn('Official decoracion.png not available yet', e);
         }
 
-        // 5. Load and slice Combat & Powerup Icons (Iconos de combate y potenciadores retro.png - 2 rows x 3 cols)
+        // 5. Load and slice Combat & Powerup Icons (balas.png - 2 rows x 3 cols)
+        // 0,0 = bala normal | 1,0 = bala doble | 2,0 = bala triple
+        // 0,1 = bala explosiva | 1,1 = granada | 2,1 = corazón
         try {
-          const iconSheet = await this.loadImage('/assets/sprites/Iconos de combate y potenciadores retro.png');
-          this.combatIcons.set('single_missile', this.sliceGridTile(iconSheet, 0, 0, 3, 2, true));
-          this.combatIcons.set('double_missile', this.sliceGridTile(iconSheet, 1, 0, 3, 2, true));
-          this.combatIcons.set('triple_missile', this.sliceGridTile(iconSheet, 2, 0, 3, 2, true));
-          this.combatIcons.set('explosive_missile', this.sliceGridTile(iconSheet, 0, 1, 3, 2, true));
-          this.combatIcons.set('grenade', this.sliceGridTile(iconSheet, 1, 1, 3, 2, true));
-          this.combatIcons.set('heart', this.sliceGridTile(iconSheet, 2, 1, 3, 2, true));
+          let iconSheet: HTMLImageElement;
+          try {
+            iconSheet = await this.loadImage('/assets/sprites/balas.png');
+          } catch {
+            iconSheet = await this.loadImage('/assets/sprites/Iconos de combate y potenciadores retro.png');
+          }
+          this.combatIcons.set('single_missile', this.sliceGridTile(iconSheet, 0, 0, 3, 2, false));
+          this.combatIcons.set('double_missile', this.sliceGridTile(iconSheet, 1, 0, 3, 2, false));
+          this.combatIcons.set('triple_missile', this.sliceGridTile(iconSheet, 2, 0, 3, 2, false));
+          this.combatIcons.set('explosive_missile', this.sliceGridTile(iconSheet, 0, 1, 3, 2, false));
+          this.combatIcons.set('grenade', this.sliceGridTile(iconSheet, 1, 1, 3, 2, false));
+          this.combatIcons.set('heart', this.sliceGridTile(iconSheet, 2, 1, 3, 2, false));
         } catch (e) {
-          console.warn('Official combat icons not available yet', e);
+          console.warn('Official combat icons (balas.png) not available yet', e);
         }
 
         // 6. Load and slice Chests (cofre.png - 1 row x 2 cols)

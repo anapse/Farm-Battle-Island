@@ -94,11 +94,8 @@ export class GameEngine {
       players: this.players,
       terrain: this.terrain,
       getCurrentTurn: () => this.currentTurn,
-      onAngleDelta: (delta) => {
-        const player = this.players.getPlayer(this.currentTurn);
-        const newAngle = player.angle + delta;
-        this.players.setAimAngle(this.currentTurn, newAngle);
-        if (this.onAngleChange) this.onAngleChange(player.angle);
+      onAngleChange: (angle) => {
+        if (this.onAngleChange) this.onAngleChange(angle);
       },
       onFireRequest: () => {
         this.executeFireSequence();
@@ -464,17 +461,23 @@ export class GameEngine {
   private renderSky() {
     const ctx = this.ctx;
 
-    // Check if official background 1, 2 or 3 is available
-    const themeNum: 1 | 2 | 3 = this.islandId === 'island_3' ? 3 : (this.islandId === 'island_2' ? 2 : 1);
-    const bgImage = spriteManager.getBackground(themeNum);
+    // Determine theme or fallback to any available official background
+    let themeNum: 1 | 2 | 3 = 1;
+    if (this.islandId.includes('3')) themeNum = 3;
+    else if (this.islandId.includes('2')) themeNum = 2;
+
+    const bgImage = spriteManager.getBackground(themeNum) || 
+                    spriteManager.getBackground(1) || 
+                    spriteManager.getBackground(2) || 
+                    spriteManager.getBackground(3);
 
     if (bgImage) {
-      // Draw official battlefield background
-      ctx.drawImage(bgImage, 0, 0, WorldConfig.WORLD_WIDTH, WorldConfig.WATER_Y + 60);
+      // Official full background drawn behind the entire world (no atlas slicing)
+      ctx.drawImage(bgImage, 0, 0, WorldConfig.WORLD_WIDTH, WorldConfig.WORLD_HEIGHT);
       return;
     }
 
-    // Procedural sky fallback
+    // Procedural sky fallback only if assets missing
     const skyGrad = ctx.createLinearGradient(0, 0, 0, WorldConfig.WATER_Y);
     skyGrad.addColorStop(0, '#38BDF8');
     skyGrad.addColorStop(0.45, '#7DD3FC');
@@ -483,29 +486,14 @@ export class GameEngine {
 
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, WorldConfig.WORLD_WIDTH, WorldConfig.WATER_Y);
-
-    // Gentle fluffy clouds
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-    this.drawCloud(220, 110, 80);
-    this.drawCloud(680, 160, 110);
-    this.drawCloud(1220, 90, 90);
-    this.drawCloud(1750, 140, 100);
-    this.drawCloud(2150, 110, 80);
-  }
-
-  private drawCloud(cx: number, cy: number, size: number) {
-    const ctx = this.ctx;
-    ctx.beginPath();
-    ctx.arc(cx, cy, size * 0.4, 0, Math.PI * 2);
-    ctx.arc(cx + size * 0.35, cy - size * 0.12, size * 0.48, 0, Math.PI * 2);
-    ctx.arc(cx + size * 0.75, cy, size * 0.38, 0, Math.PI * 2);
-    ctx.fill();
   }
 
   private renderHorizonAndShip() {
-    const themeNum: 1 | 2 | 3 = this.islandId === 'island_3' ? 3 : (this.islandId === 'island_2' ? 2 : 1);
-    if (spriteManager.getBackground(themeNum)) {
-      // Official background already has horizon, mountains and shipwreck!
+    // If official background is available, do not draw procedural mountains or pirate ship!
+    const bgImage = spriteManager.getBackground(1) || 
+                    spriteManager.getBackground(2) || 
+                    spriteManager.getBackground(3);
+    if (bgImage) {
       return;
     }
 
@@ -648,6 +636,34 @@ export class GameEngine {
     const activePlayer = this.players.getPlayer(this.currentTurn);
     const facing = activePlayer.facing;
 
+    // Cannon muzzle origin based on official vehicle scaling
+    const muzzleX = activePlayer.x + facing * 36;
+    const muzzleY = activePlayer.y - 48;
+    const angleRad = (activePlayer.angle * Math.PI) / 180;
+
+    ctx.save();
+
+    // 1. Aim Cannon Direction Vector Indicator
+    const barrelLength = 46;
+    const aimEndX = muzzleX + Math.cos(angleRad) * barrelLength * facing;
+    const aimEndY = muzzleY - Math.sin(angleRad) * barrelLength;
+
+    // Laser / Sight line
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = activePlayer.role === 'player1' ? '#EF4444' : '#3B82F6';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(muzzleX, muzzleY);
+    ctx.lineTo(aimEndX, aimEndY);
+    ctx.stroke();
+
+    // Small muzzle glow dot
+    ctx.fillStyle = '#FACC15';
+    ctx.beginPath();
+    ctx.arc(aimEndX, aimEndY, 3.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Parabolic Trajectory Guide
     const guidePoints = this.projectiles.calculateAimGuide(
       activePlayer.x,
       activePlayer.y,
@@ -660,20 +676,34 @@ export class GameEngine {
       activePlayer.precisionActive
     );
 
-    if (guidePoints.length < 2) return;
+    if (guidePoints.length >= 2) {
+      ctx.setLineDash([5, 6]);
+      ctx.strokeStyle = activePlayer.role === 'player1' ? 'rgba(239, 68, 68, 0.85)' : 'rgba(59, 130, 246, 0.85)';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(guidePoints[0].x, guidePoints[0].y);
 
-    ctx.save();
-    ctx.setLineDash([4, 6]);
-    ctx.strokeStyle = activePlayer.role === 'player1' ? 'rgba(239, 68, 68, 0.75)' : 'rgba(59, 130, 246, 0.75)';
-    ctx.lineWidth = 2.5;
-    ctx.beginPath();
-    ctx.moveTo(guidePoints[0].x, guidePoints[0].y);
+      for (let i = 1; i < guidePoints.length; i++) {
+        ctx.lineTo(guidePoints[i].x, guidePoints[i].y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-    for (let i = 1; i < guidePoints.length; i++) {
-      ctx.lineTo(guidePoints[i].x, guidePoints[i].y);
+      // 3. Aim Reticle at trajectory end
+      const lastPt = guidePoints[guidePoints.length - 1];
+      ctx.strokeStyle = activePlayer.role === 'player1' ? '#EF4444' : '#3B82F6';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(lastPt.x, lastPt.y, 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(lastPt.x - 12, lastPt.y);
+      ctx.lineTo(lastPt.x + 12, lastPt.y);
+      ctx.moveTo(lastPt.x, lastPt.y - 12);
+      ctx.lineTo(lastPt.x, lastPt.y + 12);
+      ctx.stroke();
     }
 
-    ctx.stroke();
     ctx.restore();
   }
 
