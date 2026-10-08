@@ -579,7 +579,7 @@ export async function registerImpactOnline(params: {
     return;
   }
 
-  if (db && isConfigured) {
+  if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', params.matchId);
       await updateDoc(matchDocRef, {
