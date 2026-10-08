@@ -54,7 +54,17 @@ export class CollisionSystem {
       }
     }
 
-    // 3. Terrain block collision
+    // 3. Terrain block collision. A grenade that is already rolling
+    // follows the terrain surface; it must not immediately collide again.
+    if (projectile.grenadeRolling) {
+      return {
+        hit: false,
+        type: 'none',
+        hitX: x,
+        hitY: y
+      };
+    }
+
     for (const b of blocks) {
       if (b.isDestroyed) continue;
 
