@@ -1,4 +1,5 @@
 import React from 'react';
+import { getAssetUrl } from '../../utils/assets';
 
 interface GameContainerProps {
   children: React.ReactNode;
@@ -8,7 +9,7 @@ interface GameContainerProps {
 export const GameContainer: React.FC<GameContainerProps> = ({ children, isBattle = false }) => {
   return (
     <div className="w-screen h-screen overflow-hidden bg-slate-950 flex items-center justify-center relative select-none bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('/assets/sprites/fondo juego 1.png')" }}>
+      style={{ backgroundImage: "url('${getAssetUrl('assets/sprites/fondo juego 1.png')}')" }}>
 
       {/* Neutral ambient backdrop outside the 9:16 game viewport on desktop. */}
       {!isBattle && (
