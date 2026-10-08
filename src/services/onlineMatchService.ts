@@ -109,7 +109,7 @@ function toPersistentPlayer(player: OnlinePlayer) {
 
 function hydratePlayer(
   player: Partial<OnlinePlayer>,
-  defaultLives: number,
+  defaultLives: OnlineMatch['settings']['lives'],
   cached?: OnlinePlayer | null
 ): OnlinePlayer {
   return {
@@ -120,8 +120,8 @@ function hydratePlayer(
     characterSelected: player.characterSelected ?? cached?.characterSelected ?? false,
     hp: cached?.hp ?? 100,
     maxHp: cached?.maxHp ?? 100,
-    lives: cached?.lives ?? defaultLives,
-    maxLives: cached?.maxLives ?? defaultLives,
+    lives: cached?.lives ?? (defaultLives === 'INFINITE' ? 999999 : defaultLives),
+    maxLives: cached?.maxLives ?? (defaultLives === 'INFINITE' ? 999999 : defaultLives),
     score: cached?.score ?? 0,
     position: player.position || cached?.position || { x: 0, y: 440 },
     isReady: player.isReady ?? cached?.isReady ?? false
@@ -148,7 +148,7 @@ function hydrateMatch(data: OnlineMatch, cached?: OnlineMatch | null): OnlineMat
 export async function createOnlineMatch(params: {
   creatorPlayerName: string;
   timeLimitSeconds: 300 | null;
-  lives: 1 | 3 | 5;
+  lives: GameLivesOption;
   islandId: string;
   isAiMatch?: boolean;
 }): Promise<OnlineMatch> {
