@@ -71,11 +71,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         onError={() => setBgLoaded(false)}
       />
 
-      {/* Subtle Dark Vignette Overlay for readability */}
-      {bgLoaded && (
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/70 pointer-events-none" />
-      )}
-      
+      {/* Sin sombra sobre el fondo oficial del menú. */}
       {/* Top Bar with CONTACTO located independently at top-left */}
       <div className="relative z-10 flex items-center justify-start w-full pt-1">
         <button
