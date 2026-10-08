@@ -28,6 +28,12 @@ service cloud.firestore {
         && (
           request.auth.uid == resource.data.player1.authUid
           || (resource.data.player2 != null && request.auth.uid == resource.data.player2.authUid)
+          || (
+            resource.data.player2 == null
+            && request.resource.data.player2 != null
+            && request.resource.data.player2.authUid == request.auth.uid
+            && resource.data.status == 'waiting'
+          )
         )
         && request.resource.data.status in ['waiting', 'starting', 'playing', 'finished', 'cancelled']
         && request.resource.data.player1 != null
