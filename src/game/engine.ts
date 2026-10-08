@@ -397,9 +397,10 @@ export class GameEngine {
           // Grenade does not explode on the first ground contact.
           // It lands, bounces once, then rolls along the terrain.
           p.hasBounced = true;
-          p.grenadeRolling = true;
+          p.grenadeRolling = false;
           p.grenadeRollTime = 0;
-          p.vy = 0;
+          p.grenadeBounceTimer = 0.14;
+          p.vy = -Math.max(90, Math.abs(p.vy) * 0.34);
           p.vx *= 0.72;
           p.y = collision.hitY - p.radius - 2;
           this.effects.playGrenadeBounce();
