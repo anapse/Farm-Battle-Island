@@ -249,14 +249,22 @@ export default function App() {
       const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
-      // If turn timer expired and it was MY turn, pass turn automatically!
+      // If the 25s turn expires, pass it immediately.
+      // For a human match, only the player whose turn it is advances it.
+      // For an AI match, the local client also advances the AI turn.
       const turnKey = onlineMatch.matchId + ':' + onlineMatch.gameState.currentTurnPlayerId + ':' + onlineMatch.gameState.turnStartedAt;
-      if (turnRem === 0 && onlineMatch.gameState.currentTurnPlayerId === myPlayerId && lastExpiredTurnRef.current !== turnKey) {
+      const isMyTurn = onlineMatch.gameState.currentTurnPlayerId === myPlayerId;
+      const isAiTurn = onlineMatch.isAiMatch && !isMyTurn;
+      if (turnRem === 0 && (isMyTurn || isAiTurn) && lastExpiredTurnRef.current !== turnKey) {
         lastExpiredTurnRef.current = turnKey;
-        const nextPlayerId = playerRole === 'player1' ? (onlineMatch.player2?.id || 'bot') : onlineMatch.player1.id;
+        const nextPlayerId = isAiTurn
+          ? myPlayerId
+          : (playerRole === 'player1' ? (onlineMatch.player2?.id || 'bot') : onlineMatch.player1.id);
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
-        changeTurnOnline(onlineMatch.matchId, nextPlayerId, newSpeed, newDir);
+        changeTurnOnline(onlineMatch.matchId, nextPlayerId, newSpeed, newDir).then((updated) => {
+          if (updated) setOnlineMatch(updated);
+        });
         showTacticalToast('Tiempo agotado. Turno cedido al rival.', 'warn');
       }
 
