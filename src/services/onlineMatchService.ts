@@ -643,7 +643,6 @@ export async function changeTurnOnline(
   }
 
   return local || null;
-  return null;
 }
 
 /**
