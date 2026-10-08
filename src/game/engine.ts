@@ -182,6 +182,7 @@ export class GameEngine {
     // 2. Cannon recoil & muzzle flash particles
     shooter.recoilOffset = 14;
     this.effects.createExplosion(shooter.x + shooter.facing * 32, shooter.y - 18, 16, false);
+    this.effects.playShot(power);
 
     // Determine shot attributes based on power-up
     let mass = 1.0;
@@ -289,6 +290,7 @@ export class GameEngine {
 
     // 7. Visual explosion
     this.effects.createExplosion(hitX, hitY, explosionRadius, isWater);
+    this.effects.playImpact();
     if (proj.spriteId === 'grenade') {
       this.effects.playGrenadeExplosion();
     }
@@ -486,6 +488,7 @@ export class GameEngine {
         if (dx <= pickupHalfWidth && dy <= 58) {
           crate.collected = true;
           this.effects.createExplosion(crate.x, crate.y, 30, false);
+        this.effects.playPickup();
           if (this.onSupplyCrateCollected) {
             this.onSupplyCrateCollected(activePlayer.role);
           }
