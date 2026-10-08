@@ -346,10 +346,16 @@ export default function App() {
       const aiTimer = setTimeout(() => {
         if (!engineRef.current || !onlineMatchRef.current) return;
         const match = onlineMatchRef.current;
-        const shooter = engineRef.current.getEngine().players.getPlayer('player2');
-        const target = engineRef.current.getEngine().players.getPlayer('player1');
+        const game = engineRef.current.getEngine();
+        const shooter = game.players.getPlayer('player2');
+        const target = game.players.getPlayer('player1');
 
-        // AI busca una combinación ángulo/fuerza que acerque la parábola
+        // La IA también se reposiciona: no permanece clavada en su isla.
+        const moveDirection = Math.random() > 0.5 ? 1 : -1;
+        const moveAmount = 35 + Math.floor(Math.random() * 95);
+        game.players.movePlayer('player2', moveDirection * moveAmount, game.terrain);
+
+        // La IA busca una combinación ángulo/fuerza que acerque la parábola
         // al objetivo, teniendo en cuenta gravedad y viento.
         let best = { angle: 45, power: 80, error: Number.POSITIVE_INFINITY };
         for (let angle = 20; angle <= 80; angle += 2) {
@@ -373,9 +379,22 @@ export default function App() {
           }
         }
 
+        // La IA no debe acertar siempre. La mayoría de sus tiros son buenos,
+        // pero algunos tienen error intencional para que siga siendo jugable.
+        const shouldMiss = Math.random() < 0.24;
+        const angleError = shouldMiss
+          ? (Math.random() > 0.5 ? 1 : -1) * (7 + Math.random() * 12)
+          : (Math.random() - 0.5) * 2.5;
+        const powerError = shouldMiss
+          ? (Math.random() > 0.5 ? 1 : -1) * (8 + Math.random() * 15)
+          : (Math.random() - 0.5) * 4;
+
+        const aiAngle = Math.round(Math.max(20, Math.min(80, best.angle + angleError)));
+        const aiPower = Math.round(Math.max(45, Math.min(100, best.power + powerError)));
+
         engineRef.current.updateConfig({
-          player2Angle: best.angle,
-          player2Power: best.power
+          player2Angle: aiAngle,
+          player2Power: aiPower
         });
         engineRef.current.fireShot('player2');
       }, 1500);
