@@ -413,11 +413,13 @@ export default function App() {
           }
         }
       },
-      onHit: (targetRole, damage) => {
-        // Register impact damage online
+      onHit: async (targetRole, damage) => {
+        // Update the online state immediately so HP, lives and score change in the HUD
+        // even if Firestore synchronization is temporarily unavailable.
         const match = onlineMatchRef.current;
         if (!match) return;
-        registerImpactOnline({
+
+        const updated = await registerImpactOnline({
           matchId: match.matchId,
           targetRole,
           damage,
@@ -425,6 +427,10 @@ export default function App() {
           hitY: 0,
           isWater: false
         });
+
+        if (updated) {
+          setOnlineMatch(updated);
+        }
       },
       onSupplyCrateCollected: (collector) => {
         if (collector === playerRole) {
