@@ -116,17 +116,17 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[18%] select-none box-border overflow-hidden bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t-2 border-amber-500/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[18%] select-none box-border overflow-hidden bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t border-slate-700/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
       <div className="w-full h-full min-h-0 grid grid-cols-[auto_minmax(0,1fr)_auto_auto] grid-rows-[1fr_auto] items-center gap-1 px-0.5 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
         <div className="flex flex-col justify-center shrink-0 justify-self-start">
-          <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-400 mb-0.5 font-['Fredoka',sans-serif]">
+          <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-slate-400 mb-0.5 font-['Fredoka',sans-serif]">
             POWER-UP
           </span>
-          <div className="flex items-center gap-1 sm:gap-1.5 bg-black/50 p-1 rounded-lg border border-amber-600/40">
+          <div className="flex items-center gap-1 sm:gap-1.5 bg-slate-950/80 p-1 rounded-lg border border-slate-700/60">
             {powerUpSlots.slice(0, 4).map((powerUpId, idx) => {
               const isSelected = activeSlotIndex === idx;
               const hasItem = powerUpId !== null;
@@ -142,9 +142,9 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                   disabled={!isMyTurn || !hasItem}
                   className={`w-7 h-7 sm:w-8 sm:h-8 rounded flex items-center justify-center transition relative ${
                     isSelected
-                      ? 'border-2 border-amber-300 ring-2 ring-amber-400 bg-amber-950/60 shadow-[0_0_8px_#f59e0b]'
+                      ? 'border-2 border-slate-400 ring-1 ring-slate-500/70 bg-slate-800 shadow-[0_0_6px_rgba(148,163,184,0.25)]'
                       : hasItem
-                      ? 'border border-amber-500/60 bg-slate-900/90 hover:bg-slate-800'
+                      ? 'border border-slate-600 bg-slate-900/90 hover:bg-slate-800'
                       : 'border border-slate-700/60 bg-slate-950/80 cursor-default opacity-40'
                   }`}
                   title={hasItem ? `Power-Up: ${powerUpId}` : 'Slot Vacío'}
@@ -171,13 +171,13 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 2. VIENTO & ÁNGULO ZONE (Pure visual readout - angle controlled by mouse) */}
-        <div className="min-w-0 flex flex-col items-center justify-center px-0.5 sm:px-2 bg-black/40 py-1 rounded-lg border border-amber-600/30 overflow-hidden">
+        <div className="min-w-0 flex flex-col items-center justify-center px-0.5 sm:px-2 bg-slate-950/70 py-1 rounded-lg border border-slate-700/60 overflow-hidden">
           <div className="flex items-center gap-0.5 sm:gap-2 min-w-0 whitespace-nowrap">
             {/* Wind Readout */}
-            <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-bold text-cyan-300 min-w-0">
+            <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-bold text-slate-300 min-w-0">
               <span className="text-[10px] sm:text-xs text-slate-400 font-sans">VIENTO:</span>
               <span>{wind.speed} km/h</span>
-              <span className="text-sm font-black text-cyan-400">
+              <span className="text-sm font-black text-slate-300">
                 {wind.direction > 0 ? '➡' : '⬅'}
               </span>
             </div>
@@ -187,7 +187,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             {/* Aim Angle Readout (Follows mouse position relative to vehicle) */}
             <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-black text-emerald-300 min-w-0">
               <span className="text-[10px] sm:text-xs text-slate-400 font-sans">ÁNGULO:</span>
-              <span className="text-sm sm:text-base font-black text-amber-300">{angle}°</span>
+              <span className="text-sm sm:text-base font-black text-slate-200">{angle}°</span>
             </div>
           </div>
 
@@ -197,7 +197,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
               <button
                 onClick={() => onMove(-14)}
                 disabled={!isMyTurn}
-                className="px-2 py-0.2 rounded bg-emerald-950/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-600/60 disabled:opacity-30 text-[10px] font-black transition active:scale-95"
+                className="px-2 py-0.2 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 disabled:opacity-30 text-[10px] font-black transition active:scale-95"
                 title="Mover tanque izquierda (A / ◀)"
               >
                 ◀
@@ -219,9 +219,9 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
 
         {/* 3. FUERZA ZONE: Flexible Bar */}
         <div className="min-w-0 w-full flex flex-col justify-center px-1 col-span-4 row-start-2 pb-1">
-          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase text-amber-300 mb-0.5 font-['Fredoka',sans-serif]">
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase text-slate-400 mb-0.5 font-['Fredoka',sans-serif]">
             <span>{isHoldingFire ? 'CARGANDO...' : 'FUERZA'}</span>
-            <span className={`font-mono font-bold ${isHoldingFire ? 'text-yellow-300 scale-110' : 'text-amber-200'}`}>
+            <span className={`font-mono font-bold ${isHoldingFire ? 'text-slate-200 scale-110' : 'text-slate-300'}`}>
               {power}%
             </span>
           </div>
@@ -235,8 +235,8 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                 value={power}
                 onChange={(e) => onPowerChange(Number(e.target.value))}
                 disabled={!isMyTurn || isFiring}
-                className={`w-full accent-amber-400 h-2 sm:h-2.5 bg-slate-900 rounded-lg appearance-none cursor-pointer border transition-all ${
-                  isHoldingFire ? 'border-yellow-300 shadow-[0_0_10px_#f59e0b]' : 'border-amber-600/70'
+                className={`w-full accent-slate-400 h-2 sm:h-2.5 bg-slate-900 rounded-lg appearance-none cursor-pointer border transition-all ${
+                  isHoldingFire ? 'border-slate-300 shadow-[0_0_8px_rgba(148,163,184,0.35)]' : 'border-slate-600/70'
                 }`}
               />
               {lastShotPower !== null && (
@@ -250,7 +250,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             </div>
             {onMarkLastShot && (
               <button type="button" onClick={onMarkLastShot} disabled={!isMyTurn || lastShotPower === null || isFiring}
-                className="shrink-0 rounded border border-cyan-500/60 bg-cyan-950/70 px-1.5 py-0.5 text-[8px] font-black text-cyan-200 disabled:opacity-30"
+                className="shrink-0 rounded border border-cyan-500/60 bg-slate-800 px-1.5 py-0.5 text-[8px] font-black text-slate-300 disabled:opacity-30"
                 title="Marcar la fuerza usada en el último tiro">
                 MARCAR
               </button>
@@ -268,8 +268,8 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
               !isMyTurn || isFiring
                 ? 'bg-slate-800 border-slate-600 opacity-40 cursor-not-allowed'
                 : isHoldingFire
-                ? 'bg-gradient-to-tr from-yellow-500 via-amber-400 to-red-500 border-white scale-105 shadow-[0_0_20px_#f59e0b] cursor-pointer'
-                : 'bg-gradient-to-tr from-red-600 via-red-500 to-amber-500 hover:brightness-110 active:scale-95 border-amber-300 cursor-pointer animate-pulse'
+                ? 'bg-slate-700 border-slate-300 scale-105 shadow-[0_0_12px_rgba(148,163,184,0.3)] cursor-pointer'
+                : 'bg-slate-800 hover:bg-slate-700 active:scale-95 border-slate-600 cursor-pointer'
             }`}
             title={
               !isMyTurn 
@@ -279,7 +279,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                 : 'Mantén presionado para cargar fuerza, suelta para disparar'
             }
           >
-            <Flame className={`w-4 h-4 sm:w-5 sm:h-5 text-amber-100 fill-amber-200 ${isHoldingFire ? 'scale-115 animate-bounce' : ''}`} />
+            <Flame className={`w-4 h-4 sm:w-5 sm:h-5 text-slate-200 fill-slate-300 ${isHoldingFire ? 'scale-115 animate-bounce' : ''}`} />
             <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-tight text-white drop-shadow font-['Fredoka',sans-serif] leading-tight">
               {isHoldingFire ? '¡SUELTA!' : isFiring ? 'EN VUELO' : 'FIRE'}
             </span>
