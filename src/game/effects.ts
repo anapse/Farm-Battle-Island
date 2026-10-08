@@ -18,6 +18,36 @@ export class EffectManager {
     }
   }
 
+  private playTone(start: number, end: number, duration: number, volume: number, type: OscillatorType = 'triangle') {
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(start, now);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(20, end), now + duration);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(volume, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + duration + 0.02);
+  }
+
+  public playShot(power = 60) {
+    this.playTone(210 + power * 1.2, 75, 0.18, 0.055, 'sawtooth');
+  }
+
+  public playImpact() {
+    this.playTone(120, 45, 0.25, 0.09, 'square');
+  }
+
+  public playPickup() {
+    this.playTone(520, 900, 0.16, 0.035, 'sine');
+  }
+
   public playGrenadeBounce() {
     const ctx = this.getAudioContext();
     if (!ctx) return;
