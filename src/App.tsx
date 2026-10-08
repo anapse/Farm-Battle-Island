@@ -254,7 +254,7 @@ export default function App() {
       if (turnRem === 0 && onlineMatch.gameState.currentTurnPlayerId === myPlayerId && lastExpiredTurnRef.current !== turnKey) {
         lastExpiredTurnRef.current = turnKey;
         const nextPlayerId = playerRole === 'player1' ? (onlineMatch.player2?.id || 'bot') : onlineMatch.player1.id;
-        const newSpeed = Math.floor(Math.random() * 22) + 2;
+        const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
         changeTurnOnline(onlineMatch.matchId, nextPlayerId, newSpeed, newDir);
         showTacticalToast('Tiempo agotado. Turno cedido al rival.', 'warn');
@@ -391,11 +391,18 @@ export default function App() {
         // Change turn online
         const match = onlineMatchRef.current;
         if (!match) return;
-        if (match.status === 'playing' && match.gameState.currentTurnPlayerId === myPlayerId) {
-          const nextPlayerId = playerRole === 'player1' ? (match.player2?.id || 'bot') : match.player1.id;
-          const newSpeed = Math.floor(Math.random() * 22) + 2;
-          const newDir = Math.random() > 0.5 ? 1 : -1;
-          changeTurnOnline(match.matchId, nextPlayerId, newSpeed, newDir);
+        if (match.status === 'playing') {
+          const isMyTurn = match.gameState.currentTurnPlayerId === myPlayerId;
+          const isAiTurn = match.isAiMatch && !isMyTurn;
+          if (isMyTurn || isAiTurn) {
+            const nextPlayerId = isAiTurn
+              ? myPlayerId
+              : (playerRole === 'player1' ? (match.player2?.id || 'bot') : match.player1.id);
+            const newSpeed = Math.floor(Math.random() * 10) + 3;
+            const newDir = Math.random() > 0.5 ? 1 : -1;
+            const updated = await changeTurnOnline(match.matchId, nextPlayerId, newSpeed, newDir);
+            if (updated) setOnlineMatch(updated);
+          }
         }
       },
       onHit: (targetRole, damage) => {
