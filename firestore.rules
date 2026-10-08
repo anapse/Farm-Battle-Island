@@ -18,11 +18,13 @@ service cloud.firestore {
 
       // Allow creating new matches with waiting status
       allow create: if isValidId(matchId)
-        && request.resource.data.status == 'waiting'
         && isValidPlayerName(request.resource.data.creatorPlayerName)
         && isValidId(request.resource.data.creatorPlayerId)
         && request.resource.data.player1.id == request.resource.data.creatorPlayerId
-        && request.resource.data.player2 == null;
+        && (
+          (request.resource.data.status == 'waiting' && request.resource.data.player2 == null)
+          || (request.resource.data.status == 'starting' && request.resource.data.isAiMatch == true && request.resource.data.player2 != null)
+        );
 
       // Allow updating matches with strict state transition logic
       allow update: if isValidId(matchId)
