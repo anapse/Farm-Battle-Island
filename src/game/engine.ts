@@ -99,7 +99,8 @@ export class GameEngine {
       },
       onFireRequest: () => {
         this.executeFireSequence();
-      }
+      },
+      canInteract: () => !this.isFiringSequence && !(this.projectiles?.activeProjectile?.isAlive)
     });
 
     // Initial camera focus on starting player
@@ -618,7 +619,7 @@ export class GameEngine {
       ctx.strokeRect(crate.x - crate.width / 2, crate.y, crate.width, crate.height);
 
       // Golden Ribbon
-      ctx.fillStyle = '#FACC15';
+      ctx.fillStyle = '#DC2626';
       ctx.fillRect(crate.x - 3, crate.y, 6, crate.height);
       ctx.fillRect(crate.x - crate.width / 2, crate.y + crate.height / 2 - 3, crate.width, 6);
 
@@ -649,7 +650,8 @@ export class GameEngine {
     ctx.strokeStyle = activePlayer.role === 'player1'
       ? 'rgba(239, 68, 68, 0.75)'
       : 'rgba(59, 130, 246, 0.75)';
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#111111';
     ctx.beginPath();
     ctx.moveTo(muzzleX, muzzleY);
     ctx.lineTo(handleX, handleY);
@@ -657,9 +659,9 @@ export class GameEngine {
 
     // Large draggable aim circle. Its position is derived from the current
     // angle, so releasing the pointer leaves it exactly where it was dropped.
-    ctx.fillStyle = 'rgba(250, 204, 21, 0.22)';
-    ctx.strokeStyle = '#FACC15';
-    ctx.lineWidth = 3;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.strokeStyle = '#111111';
+    ctx.lineWidth = 5;
     ctx.beginPath();
     ctx.arc(handleX, handleY, 24, 0, Math.PI * 2);
     ctx.fill();
@@ -671,7 +673,7 @@ export class GameEngine {
     ctx.fill();
 
     // Small crosshair inside the handle.
-    ctx.strokeStyle = '#FFFFFF';
+    ctx.strokeStyle = '#111111';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(handleX - 9, handleY);
