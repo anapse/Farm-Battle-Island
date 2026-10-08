@@ -4,7 +4,7 @@ export class WorldConfig {
   public static readonly WORLD_HEIGHT = 1200;
 
   // Water & Depth levels
-  public static readonly WATER_Y = 800;
+  public static readonly WATER_Y = 900;
   public static readonly SAFETY_FLOOR_Y = 1020; // Safety floor under water
   public static readonly DEATH_FLOOR_Y = 1140; // Complete death line
 
