@@ -1,12 +1,12 @@
 export class WorldConfig {
   // Virtual World Dimensions (approx 2.5 mobile screens wide)
   public static readonly WORLD_WIDTH = 2200;
-  public static readonly WORLD_HEIGHT = 1120;
+  public static readonly WORLD_HEIGHT = 1280;
 
   // Water & Depth levels
-  public static readonly WATER_Y = 940;
-  public static readonly SAFETY_FLOOR_Y = 1000; // Safety floor under water
-  public static readonly DEATH_FLOOR_Y = 1080; // Complete death line
+  public static readonly WATER_Y = 980;
+  public static readonly SAFETY_FLOOR_Y = 1060; // Safety floor under water
+  public static readonly DEATH_FLOOR_Y = 1240; // Complete death line
 
   // Physical constants
   public static readonly GRAVITY = 720; // px / sec^2
