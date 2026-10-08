@@ -602,7 +602,7 @@ export async function changeTurnOnline(
   nextPlayerId: string, 
   newWindSpeed: number, 
   newWindDirection: -1 | 1
-): Promise<void> {
+): Promise<OnlineMatch | null> {
   const updatePayload = {
     'gameState.currentTurnPlayerId': nextPlayerId,
     'gameState.turnStartedAt': Date.now(),
@@ -628,7 +628,9 @@ export async function changeTurnOnline(
     local.gameState.wind.direction = newWindDirection;
     local.updatedAt = Date.now();
     saveLocalMatch(local);
+    return local;
   }
+  return null;
 }
 
 /**
