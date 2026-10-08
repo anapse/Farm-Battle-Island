@@ -7,7 +7,7 @@ export const ISLANDS: IslandConfig[] = [
     name: 'Playa Tranquila',
     title: 'ISLA 1',
     subtitle: 'PLAYA TRANQUILA',
-    totalColumns: 32,
+    totalColumns: 50,
     maxHeight: 5,
     leftIsland: {
       startCol: 2,
@@ -52,7 +52,7 @@ export const ISLANDS: IslandConfig[] = [
     name: 'Costa Rocosa',
     title: 'ISLA 2',
     subtitle: 'COSTA ROCOSA',
-    totalColumns: 32,
+    totalColumns: 50,
     maxHeight: 5,
     leftIsland: {
       startCol: 3,
@@ -94,7 +94,7 @@ export const ISLANDS: IslandConfig[] = [
     name: 'Bahía Abierta',
     title: 'ISLA 3',
     subtitle: 'BAHÍA ABIERTA',
-    totalColumns: 32,
+    totalColumns: 50,
     maxHeight: 5,
     leftIsland: {
       startCol: 2,
@@ -138,7 +138,7 @@ export const ISLANDS: IslandConfig[] = [
     name: 'Arrecife Bajo',
     title: 'ISLA 4',
     subtitle: 'ARRECIFE BAJO',
-    totalColumns: 32,
+    totalColumns: 50,
     maxHeight: 5,
     leftIsland: {
       startCol: 2,
