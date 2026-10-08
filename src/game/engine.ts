@@ -640,7 +640,7 @@ export class GameEngine {
     const muzzleX = activePlayer.x + facing * 36;
     const muzzleY = activePlayer.y - 48;
 
-    // Long ballistic preview using the exact same projectile math as FIRE.
+    // Preview de la parábola: muestra por dónde pasará el proyectil.
     const trajectory = this.projectiles.calculateAimGuide(
       activePlayer.x,
       activePlayer.y,
@@ -655,7 +655,7 @@ export class GameEngine {
 
     ctx.save();
 
-    // Long, clearly visible parabolic trajectory.
+    // Curva de trayectoria visible, sin colocar una mira en el punto de caída.
     ctx.strokeStyle = activePlayer.role === 'player1'
       ? 'rgba(239, 68, 68, 0.92)'
       : 'rgba(59, 130, 246, 0.92)';
@@ -672,39 +672,10 @@ export class GameEngine {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Mira de impacto en la punta de la trayectoria.
-    // La bala sube, alcanza su punto máximo y luego cae de forma parabólica.
-    const tip = trajectory[trajectory.length - 1];
-    const reticleOuter = 34;
-    const reticleInner = 17;
-    ctx.save();
-    ctx.strokeStyle = '#111827';
-    ctx.lineWidth = 7;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.arc(tip.x, tip.y, reticleOuter, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(tip.x, tip.y, reticleInner, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(tip.x - 50, tip.y);
-    ctx.lineTo(tip.x - 30, tip.y);
-    ctx.moveTo(tip.x + 30, tip.y);
-    ctx.lineTo(tip.x + 50, tip.y);
-    ctx.moveTo(tip.x, tip.y - 50);
-    ctx.lineTo(tip.x, tip.y - 30);
-    ctx.moveTo(tip.x, tip.y + 30);
-    ctx.lineTo(tip.x, tip.y + 50);
-    ctx.stroke();
-    ctx.fillStyle = '#DC2626';
-    ctx.beginPath();
-    ctx.arc(tip.x, tip.y, 6, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // Direction stem from muzzle to the draggable control circle.
-    const handleDistance = 260;
+    // La mira NO representa el punto de impacto.
+    // Es solo el punto de control para indicar la dirección del disparo.
+    // La línea recta entre el cañón y la mira permite cambiar el ángulo.
+    const handleDistance = 180;
     const handleX = muzzleX + Math.cos(angleRad) * handleDistance * facing;
     const handleY = muzzleY - Math.sin(angleRad) * handleDistance;
 
