@@ -1,0 +1,6 @@
+{
+  "firestore": {
+    "database": "ai-studio-farmbattleisland-c5b697e9-a0ad-4773-b680-4de27b4daf80",
+    "rules": "firestore.rules"
+  }
+}
