@@ -6,7 +6,9 @@ import {
   Lock,
   Zap,
   ShieldAlert,
-  Crosshair
+  Crosshair,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { getAssetUrl } from '../../utils/assets';
 
@@ -35,12 +37,23 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
   onSelectCharacter,
   onCancel
 }) => {
-  const [selectedId, setSelectedId] = useState<CharacterId>(
-    lockedCharacterId === 'mono' ? 'tortuga' : 'mono'
-  );
+  const initialIndex = Math.max(0, CHARACTERS.findIndex(c => c.id === (lockedCharacterId === 'mono' ? 'tortuga' : 'mono')));
+  const [carouselIndex, setCarouselIndex] = useState(initialIndex);
+  const selectedId = CHARACTERS[carouselIndex]?.id || CHARACTERS[0].id;
+  const selectedChar = CHARACTERS[carouselIndex] || CHARACTERS[0];
 
-  const selectedChar = CHARACTERS.find(c => c.id === selectedId) || CHARACTERS[0];
   const isLockedByRival = lockedCharacterId === selectedChar.id;
+
+  const moveCarousel = (direction: number) => {
+    const total = CHARACTERS.length;
+    for (let step = 1; step <= total; step++) {
+      const nextIndex = (carouselIndex + direction * step + total) % total;
+      if (CHARACTERS[nextIndex].id !== lockedCharacterId) {
+        setCarouselIndex(nextIndex);
+        return;
+      }
+    }
+  };
 
   const handleConfirm = () => {
     if (isLockedByRival) return;
@@ -75,60 +88,44 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         </div>
       )}
 
-      {/* 2 Lines of 3 Characters (6 characters in 2 rows x 3 cols grid) */}
-      <div className="relative z-10 flex-1 min-h-0 flex flex-col justify-center max-w-[340px] mx-auto w-full my-1">
-        <div className="grid grid-cols-3 grid-rows-2 gap-2 w-full h-[220px] sm:h-[240px]">
-          {CHARACTERS.map((char) => {
-            const isSelected = char.id === selectedId;
-            const isLocked = lockedCharacterId === char.id;
-            const coords = CHARACTER_SPRITE_COORDS[char.id] || { bgPos: '0% 0%' };
+      {/* Character carousel: one large official sprite at a time */}
+      <div className="relative z-10 flex-1 min-h-0 flex items-center justify-center max-w-[340px] mx-auto w-full my-1">
+        <button
+          type="button"
+          onClick={() => moveCarousel(-1)}
+          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-slate-950/85 border-2 border-amber-500/70 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-900"
+          aria-label="Personaje anterior"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
 
-            return (
-              <button
-                key={char.id}
-                onClick={() => {
-                  if (!isLocked) setSelectedId(char.id);
-                }}
-                disabled={isLocked}
-                className={`relative rounded-xl border-2 transition-all p-1 flex flex-col items-center justify-between overflow-hidden cursor-pointer backdrop-blur-sm ${
-                  isSelected
-                    ? 'border-amber-400 bg-amber-500/25 scale-105 shadow-[0_0_12px_#f59e0b] ring-2 ring-amber-400'
-                    : isLocked
-                    ? 'border-red-900/60 bg-red-950/60 opacity-50 cursor-not-allowed'
-                    : 'border-slate-700/80 bg-slate-900/80 hover:border-amber-500/60 hover:bg-slate-800'
-                }`}
-                title={char.name}
-              >
-                {/* Character Sprite with idle animation */}
-                <div className="w-full flex-1 min-h-0 flex items-center justify-center relative">
-                  <div
-                    className={`w-14 h-14 sm:w-16 sm:h-16 transition-transform ${
-                      isSelected ? 'animate-bounce' : 'hover:scale-110'
-                    }`}
-                    style={{
-                      backgroundImage: `url('${getAssetUrl('assets/sprites/personajes.png')}')`,
-                      backgroundSize: '300% 200%',
-                      backgroundPosition: coords.bgPos,
-                      backgroundRepeat: 'no-repeat'
-                    }}
-                  />
-                  {isLocked && (
-                    <div className="absolute inset-0 bg-red-950/85 flex items-center justify-center rounded">
-                      <Lock className="w-4 h-4 text-red-400" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Name */}
-                <span className={`text-[10px] sm:text-[11px] font-black uppercase tracking-wider font-['Fredoka',sans-serif] ${
-                  isSelected ? 'text-amber-300' : 'text-slate-300'
-                }`}>
-                  {char.name}
-                </span>
-              </button>
-            );
-          })}
+        <div className={`w-[210px] h-[230px] rounded-2xl border-2 flex flex-col items-center justify-center p-3 backdrop-blur-sm shadow-xl ${
+          isLockedByRival ? 'border-red-700 bg-red-950/70 opacity-60' : 'border-amber-400 bg-slate-950/75'
+        }`}>
+          <div
+            className="w-[150px] h-[150px] transition-transform hover:scale-105"
+            style={{
+              backgroundImage: \`url('${getAssetUrl('assets/sprites/personajes.png')}')\`,
+              backgroundSize: '300% 200%',
+              backgroundPosition: CHARACTER_SPRITE_COORDS[selectedId]?.bgPos || '0% 0%',
+              backgroundRepeat: 'no-repeat'
+            }}
+          />
+          <span className="text-base font-black uppercase tracking-wider text-amber-300 font-['Fredoka',sans-serif]">
+            {selectedChar.name}
+          </span>
+          <span className="text-[10px] text-slate-300 mt-1">PERSONAJE {carouselIndex + 1} / {CHARACTERS.length}</span>
+          {isLockedByRival && <span className="text-[10px] text-red-300 font-bold mt-1">BLOQUEADO POR EL RIVAL</span>}
         </div>
+
+        <button
+          type="button"
+          onClick={() => moveCarousel(1)}
+          className="absolute right-0 z-20 w-10 h-10 rounded-full bg-slate-950/85 border-2 border-amber-500/70 text-amber-300 flex items-center justify-center shadow-lg hover:bg-slate-900"
+          aria-label="Siguiente personaje"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
       </div>
 
       {/* Balanced Attributes Panel */}
