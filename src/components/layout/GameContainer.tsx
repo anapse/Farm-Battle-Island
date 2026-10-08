@@ -7,7 +7,8 @@ interface GameContainerProps {
 
 export const GameContainer: React.FC<GameContainerProps> = ({ children, isBattle = false }) => {
   return (
-    <div className="w-screen h-screen overflow-hidden bg-slate-950 flex items-center justify-center relative select-none">
+    <div className="w-screen h-screen overflow-hidden bg-slate-950 flex items-center justify-center relative select-none bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/assets/sprites/fondo juego 1.png')" }}>
 
       {/* Neutral ambient backdrop outside the 9:16 game viewport on desktop. */}
       {!isBattle && (
@@ -28,7 +29,7 @@ export const GameContainer: React.FC<GameContainerProps> = ({ children, isBattle
           w-full h-full bg-slate-950
           md:w-[min(100vw,calc(100dvh*9/16))]
           md:h-[min(100dvh,calc(100vw*16/9))]
-          md:shadow-[0_0_60px_rgba(0,0,0,0.95)]
+          md:shadow-none
         "
       >
         {children}
