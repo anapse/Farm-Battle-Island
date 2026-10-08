@@ -583,8 +583,6 @@ export async function registerImpactOnline(params: {
     try {
       const matchDocRef = doc(db, 'matches', params.matchId);
       await updateDoc(matchDocRef, {
-        player1: local.player1,
-        player2: local.player2,
         'gameState.lastImpact': impactEvent,
         updatedAt: Date.now()
       });
@@ -680,7 +678,15 @@ export async function concludeMatchOnline(params: {
         match.gameState.processedForRanking = true;
         match.updatedAt = Date.now();
 
-        transaction.update(matchDocRef, match);
+        transaction.update(matchDocRef, {
+          status: match.status,
+          'gameState.winnerPlayerId': match.gameState.winnerPlayerId,
+          'gameState.loserPlayerId': match.gameState.loserPlayerId,
+          'gameState.finishReason': match.gameState.finishReason,
+          'gameState.finishedAt': match.gameState.finishedAt,
+          'gameState.processedForRanking': match.gameState.processedForRanking,
+          updatedAt: match.updatedAt
+        });
         return match;
       });
     } catch (e) {
