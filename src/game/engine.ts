@@ -289,6 +289,9 @@ export class GameEngine {
 
     // 7. Visual explosion
     this.effects.createExplosion(hitX, hitY, explosionRadius, isWater);
+    if (proj.spriteId === 'grenade') {
+      this.effects.playGrenadeExplosion();
+    }
     this.camera.addShake(isWater ? 8 : 15);
 
     // Double impact secondary wave
@@ -374,7 +377,7 @@ export class GameEngine {
     this.waveOffset += dt * 2.8;
 
     // 1. Update Projectiles
-    this.projectiles.update(dt, this.wind.direction, this.wind.speed);
+    this.projectiles.update(dt, this.wind.direction, this.wind.speed, (x) => this.terrain.getGroundYAt(x));
 
     // 2. Check every projectile independently. Double/triple shots are
     // real projectiles: each can hit, miss, or leave the map independently.
@@ -390,7 +393,19 @@ export class GameEngine {
       );
 
       if (collision.hit) {
-        if (collision.type === 'terrain' && p.canBounce && !p.hasBounced) {
+        if (collision.type === 'terrain' && p.spriteId === 'grenade' && !p.grenadeRolling) {
+          // Grenade does not explode on the first ground contact.
+          // It lands, bounces once, then rolls along the terrain.
+          p.hasBounced = true;
+          p.grenadeRolling = true;
+          p.grenadeRollTime = 0;
+          p.vy = 0;
+          p.vx *= 0.72;
+          p.y = collision.hitY - p.radius - 2;
+          this.effects.playGrenadeBounce();
+          this.effects.playGrenadeRoll();
+          this.camera.addShake(4);
+        } else if (collision.type === 'terrain' && p.canBounce && !p.hasBounced) {
           p.hasBounced = true;
           p.vy = -Math.abs(p.vy) * 0.6;
           p.vx = p.vx * 0.7;
@@ -406,6 +421,13 @@ export class GameEngine {
             collision.hitPlayer?.role
           );
         }
+      } else if (
+        p.spriteId === 'grenade' &&
+        p.grenadeRolling &&
+        (Math.abs(p.vx) < 18 || (p.grenadeRollTime ?? 0) >= 2.8)
+      ) {
+        // A grenade that has finished rolling detonates where it stopped.
+        this.handleProjectileImpact(p, p.x, p.y, false);
       }
     }
 
