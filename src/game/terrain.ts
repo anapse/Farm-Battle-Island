@@ -380,7 +380,7 @@ export class TerrainManager {
     const groundTile = spriteManager.getGroundTile(tileId);
     if (groundTile) {
       // Official Sliced Sprite Render - strictly preserves textures, colors, original design
-      ctx.drawImage(groundTile, x - 5, y, width + 10, height);
+      ctx.drawImage(groundTile, x - 2, y - 2, width + 6, height + 4);
       return;
     }
 
