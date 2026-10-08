@@ -143,16 +143,20 @@ export const TopHUD: React.FC<TopHUDProps> = ({
           <div className="flex items-center justify-between mt-0.5 px-1 bg-slate-950/70 backdrop-blur-sm rounded py-0.5 border border-slate-700/60">
             {/* Lives Indicators */}
             <div className="flex items-center gap-0.5">
-              {player2 && (player2.maxLives > 100 ? (
-                <span className="text-[11px] font-black text-cyan-300">∞</span>
-              ) : Array.from({ length: player2.maxLives }).map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
-                    i < player2.lives ? 'bg-red-500 shadow-[0_0_4px_#ef4444]' : 'bg-slate-700'
-                  }`}
-                />
-              ))) : null}
+              {player2 && (
+                player2.maxLives > 100 ? (
+                  <span className="text-[11px] font-black text-cyan-300">∞</span>
+                ) : (
+                  Array.from({ length: player2.maxLives }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
+                        i < player2.lives ? 'bg-red-500 shadow-[0_0_4px_#ef4444]' : 'bg-slate-700'
+                      }`}
+                    />
+                  ))
+                )
+              )}
             </div>
             <div className="flex items-center gap-1">
               <span className="text-[9px] sm:text-[10px] font-black uppercase text-amber-300 tracking-wider">
