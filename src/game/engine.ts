@@ -672,6 +672,37 @@ export class GameEngine {
     ctx.stroke();
     ctx.setLineDash([]);
 
+    // Mira de impacto en la punta de la trayectoria.
+    // La bala sube, alcanza su punto máximo y luego cae de forma parabólica.
+    const tip = trajectory[trajectory.length - 1];
+    const reticleOuter = 34;
+    const reticleInner = 17;
+    ctx.save();
+    ctx.strokeStyle = '#111827';
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, reticleOuter, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, reticleInner, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(tip.x - 50, tip.y);
+    ctx.lineTo(tip.x - 30, tip.y);
+    ctx.moveTo(tip.x + 30, tip.y);
+    ctx.lineTo(tip.x + 50, tip.y);
+    ctx.moveTo(tip.x, tip.y - 50);
+    ctx.lineTo(tip.x, tip.y - 30);
+    ctx.moveTo(tip.x, tip.y + 30);
+    ctx.lineTo(tip.x, tip.y + 50);
+    ctx.stroke();
+    ctx.fillStyle = '#DC2626';
+    ctx.beginPath();
+    ctx.arc(tip.x, tip.y, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
     // Direction stem from muzzle to the draggable control circle.
     const handleDistance = 260;
     const handleX = muzzleX + Math.cos(angleRad) * handleDistance * facing;
