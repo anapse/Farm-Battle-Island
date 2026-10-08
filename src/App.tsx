@@ -115,6 +115,7 @@ export default function App() {
   // Ref to avoid duplicate shot executions
   const lastProcessedShotTimeRef = useRef<number>(0);
   const lastExpiredTurnRef = useRef<string>('');
+  const lastExpiredMatchRef = useRef<string>('');
 
   const showTacticalToast = (text: string, type: 'info' | 'success' | 'warn' = 'info') => {
     const id = Date.now();
@@ -264,17 +265,99 @@ export default function App() {
     }
 
     const interval = setInterval(() => {
-      // Calculate remaining turn seconds based on turnStartedAt
+      // Match time has priority over the 25s turn timer. Once the match
+      // deadline is reached, do not give another turn to either player.
+      if (onlineMatch.gameState.matchEndAt) {
+        const matchRem = Math.max(
+          0,
+          Math.ceil((onlineMatch.gameState.matchEndAt - Date.now()) / 1000)
+        );
+        setMatchTimerRemaining(matchRem);
+
+        if (matchRem <= 0) {
+          const matchKey = 'MATCH:' + onlineMatch.matchId;
+          if (lastExpiredMatchRef.current !== matchKey) {
+            lastExpiredMatchRef.current = matchKey;
+
+            // Use the combat state currently hydrated in this client.
+            const p1 = onlineMatch.player1;
+            const p2 = onlineMatch.player2;
+            if (!p2) return;
+
+            let winnerId = p1.id;
+            let loserId = p2.id;
+
+            // More remaining lives wins. If tied, more HP wins. If still
+            // tied, damage/score wins.
+            if (p2.lives > p1.lives ||
+                (p2.lives === p1.lives && p2.hp > p1.hp) ||
+                (p2.lives === p1.lives && p2.hp === p1.hp && p2.score > p1.score)) {
+              winnerId = p2.id;
+              loserId = p1.id;
+            }
+
+            void concludeMatchOnline({
+              matchId: onlineMatch.matchId,
+              winnerPlayerId: winnerId,
+              loserPlayerId: loserId,
+              reason: 'time_expired'
+            }).then((finished) => {
+              if (!finished) return;
+
+              setOnlineMatch(finished);
+
+              const isWinner = finished.gameState.winnerPlayerId === myPlayerId;
+              const winnerPlayer =
+                finished.player1.id === finished.gameState.winnerPlayerId
+                  ? finished.player1
+                  : finished.player2;
+              const loserPlayer =
+                finished.player1.id === finished.gameState.loserPlayerId
+                  ? finished.player1
+                  : finished.player2;
+
+              setMatchResult({
+                isVictory: isWinner,
+                earnedPoints: isWinner
+                  ? (winnerPlayer?.score || 150)
+                  : (loserPlayer?.score || 50),
+                winnerName: winnerPlayer?.name || 'Comandante',
+                loserName: loserPlayer?.name || 'Rival',
+                isSurrender: false,
+                surrenderMessage: '',
+                winnerCharacterId: winnerPlayer?.characterId
+              });
+
+              showTacticalToast(
+                isWinner ? '¡Tiempo agotado! ¡Ganaste!' : '¡Tiempo agotado! Perdiste.',
+                isWinner ? 'success' : 'warn'
+              );
+            });
+
+            return;
+          }
+
+          return;
+        }
+      } else {
+        setMatchTimerRemaining(-1);
+      }
+
+      // Only process the 25s turn timer while the overall match is still alive.
       const elapsedTurnMs = Date.now() - onlineMatch.gameState.turnStartedAt;
       const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
-      // When the 25s turn expires, ANY connected client can advance it.
-      // Both clients calculate the same next player from the authoritative
-      // current turn, so the game does not depend on the shooter browser
-      // remaining open or responding.
-      const turnKey = onlineMatch.matchId + ':' + onlineMatch.gameState.currentTurnPlayerId + ':' + onlineMatch.gameState.turnStartedAt;
-      const currentPlayerIsP1 = onlineMatch.gameState.currentTurnPlayerId === onlineMatch.player1.id;
+      const turnKey =
+        onlineMatch.matchId +
+        ':' +
+        onlineMatch.gameState.currentTurnPlayerId +
+        ':' +
+        onlineMatch.gameState.turnStartedAt;
+
+      const currentPlayerIsP1 =
+        onlineMatch.gameState.currentTurnPlayerId === onlineMatch.player1.id;
+
       const nextPlayerId = currentPlayerIsP1
         ? (onlineMatch.player2?.id || 'bot')
         : onlineMatch.player1.id;
@@ -283,55 +366,21 @@ export default function App() {
         lastExpiredTurnRef.current = turnKey;
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
-        changeTurnOnline(onlineMatch.matchId, nextPlayerId, newSpeed, newDir).then((updated) => {
-          if (updated) setOnlineMatch(updated);
+
+        void changeTurnOnline(
+          onlineMatch.matchId,
+          nextPlayerId,
+          newSpeed,
+          newDir
+        ).then((updated) => {
+          if (updated && updated.status === 'playing') {
+            setOnlineMatch(updated);
+          }
         });
+
         showTacticalToast('Tiempo agotado. Turno cedido al rival.', 'warn');
       }
-
-      // Calculate remaining match seconds if 5-minute limit is enabled
-      if (onlineMatch.gameState.matchEndAt) {
-        const matchRem = Math.max(0, Math.ceil((onlineMatch.gameState.matchEndAt - Date.now()) / 1000));
-        setMatchTimerRemaining(matchRem);
-
-        // If match time reached 0: conclude match
-        if (matchRem === 0) {
-          // Compare lives, then points
-          const p1Lives = onlineMatch.player1.lives;
-          const p2Lives = onlineMatch.player2?.lives || 0;
-          let winnerId = onlineMatch.player1.id;
-          let loserId = onlineMatch.player2?.id || 'p2';
-
-          if (p2Lives > p1Lives) {
-            winnerId = onlineMatch.player2?.id || 'p2';
-            loserId = onlineMatch.player1.id;
-          } else if (p1Lives === p2Lives) {
-            // Compare score
-            const p1Score = onlineMatch.player1.score;
-            const p2Score = onlineMatch.player2?.score || 0;
-            if (p2Score > p1Score) {
-              winnerId = onlineMatch.player2?.id || 'p2';
-              loserId = onlineMatch.player1.id;
-            }
-          }
-
-          void concludeMatchOnline({
-            matchId: onlineMatch.matchId,
-            winnerPlayerId: winnerId,
-            loserPlayerId: loserId,
-            reason: 'time_expired'
-          }).then((finished) => {
-            if (finished) {
-              setOnlineMatch(finished);
-              showTacticalToast('¡Tiempo agotado! Partida finalizada.', 'success');
-            }
-          });
-        }
-      } else {
-        setMatchTimerRemaining(-1);
-      }
-    }, 1000);
-
+    }, 250);
     return () => clearInterval(interval);
   }, [screen, onlineMatch, myPlayerId, playerRole, matchResult]);
 
