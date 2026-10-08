@@ -530,7 +530,7 @@ export async function registerImpactOnline(params: {
   hitX: number;
   hitY: number;
   isWater: boolean;
-}): Promise<void> {
+}): Promise<OnlineMatch | null> {
   const impactEvent = {
     shotId: `impact_${Date.now()}`,
     hitX: params.hitX,
@@ -542,7 +542,7 @@ export async function registerImpactOnline(params: {
   };
 
   const local = getLocalMatches().find(m => m.matchId === params.matchId);
-  if (!local) return;
+  if (!local) return null;
 
   const targetPlayer = params.targetRole === 'player1' ? local.player1 : local.player2;
   const attackerPlayer = params.targetRole === 'player1' ? local.player2 : local.player1;
@@ -576,7 +576,7 @@ export async function registerImpactOnline(params: {
       loserPlayerId: targetPlayer.id,
       reason: 'lives_depleted'
     });
-    return;
+    return getLocalMatches().find(m => m.matchId === params.matchId) || local;
   }
 
   if (db && isConfigured && await ensureFirebaseAuth()) {
@@ -589,9 +589,12 @@ export async function registerImpactOnline(params: {
         updatedAt: Date.now()
       });
     } catch (e) {
+      // Local state was already updated; Firestore failure must not freeze the HUD.
       console.warn('Firestore registerImpact error:', e);
     }
   }
+
+  return local;
 }
 
 /**
