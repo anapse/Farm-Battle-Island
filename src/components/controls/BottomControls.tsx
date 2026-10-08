@@ -84,7 +84,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     const loop = (time: number) => {
       const elapsed = (time - startTime) / 1000;
       // Continuous smooth sine oscillation between 15% and 100%
-      const wave = (Math.sin(elapsed * 4.8) + 1) / 2;
+      const wave = (Math.sin(elapsed * 1.8) + 1) / 2;
       const calculated = Math.round(15 + wave * 85);
       currentOscillatingPowerRef.current = calculated;
       onPowerChange(calculated);
