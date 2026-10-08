@@ -1,0 +1,7 @@
+{
+  "name": "Farm Battle Island",
+  "description": "Juego de artillería táctica por turnos en islas tropicales. Mobile-first con relación vertical 9:16 y arquitectura multijugador online.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

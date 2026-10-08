@@ -1,0 +1,160 @@
+{
+  "entities": {
+    "Match": {
+      "title": "Match",
+      "description": "Partida online de artillería táctica sincronizada en tiempo real",
+      "type": "object",
+      "properties": {
+        "matchId": {
+          "type": "string",
+          "description": "Identificador único de la partida"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["waiting", "starting", "playing", "finished", "cancelled"],
+          "description": "Estado del ciclo de vida de la partida"
+        },
+        "creatorPlayerId": {
+          "type": "string",
+          "description": "ID del jugador anfitrión"
+        },
+        "creatorPlayerName": {
+          "type": "string",
+          "description": "Nombre visible del creador"
+        },
+        "player1": {
+          "type": "object",
+          "description": "Estado y configuración del Jugador 1"
+        },
+        "player2": {
+          "type": "object",
+          "description": "Estado y configuración del Jugador 2"
+        },
+        "settings": {
+          "type": "object",
+          "description": "Reglas de la partida: tiempo, vidas e isla"
+        },
+        "gameState": {
+          "type": "object",
+          "description": "Estado dinámico del combate, turnos, temporizadores y eventos"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp Unix de creación"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp Unix de última actualización"
+        }
+      },
+      "required": ["matchId", "status", "creatorPlayerId", "creatorPlayerName", "player1", "settings", "createdAt", "updatedAt"]
+    },
+    "Presence": {
+      "title": "Presence",
+      "description": "Heartbeat de presencia activa para detección de abandono y desconexión",
+      "type": "object",
+      "properties": {
+        "playerId": {
+          "type": "string",
+          "description": "ID único del jugador"
+        },
+        "matchId": {
+          "type": "string",
+          "description": "ID de la partida actual del jugador"
+        },
+        "lastSeenAt": {
+          "type": "number",
+          "description": "Timestamp del último latido de presencia"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["online", "disconnected", "abandoned"],
+          "description": "Estado de conexión del jugador"
+        }
+      },
+      "required": ["playerId", "matchId", "lastSeenAt", "status"]
+    },
+    "PlayerRanking": {
+      "title": "PlayerRanking",
+      "description": "Registro de ranking para el TOP 50 de jugadores",
+      "type": "object",
+      "properties": {
+        "playerName": {
+          "type": "string",
+          "description": "Nombre del jugador"
+        },
+        "score": {
+          "type": "number",
+          "description": "Puntos acumulados (daño realizado + bonos de victoria)"
+        },
+        "victories": {
+          "type": "number",
+          "description": "Cantidad de victorias totales"
+        },
+        "defeats": {
+          "type": "number",
+          "description": "Cantidad de derrotas totales"
+        },
+        "lastPlayedAt": {
+          "type": "string",
+          "description": "Fecha ISO de última actividad"
+        }
+      },
+      "required": ["playerName", "score", "victories", "defeats"]
+    },
+    "GlobalStats": {
+      "title": "GlobalStats",
+      "description": "Métricas globales del sistema para el panel /admin",
+      "type": "object",
+      "properties": {
+        "totalMatches": {
+          "type": "number",
+          "description": "Total de partidas creadas"
+        },
+        "completedMatches": {
+          "type": "number",
+          "description": "Total de partidas terminadas con victoria/derrota"
+        },
+        "abandonedMatches": {
+          "type": "number",
+          "description": "Total de partidas finalizadas por abandono"
+        },
+        "activeMatches": {
+          "type": "number",
+          "description": "Partidas actualmente en curso"
+        },
+        "totalPlayers": {
+          "type": "number",
+          "description": "Cantidad de participantes únicos"
+        },
+        "characterPicks": {
+          "type": "object",
+          "description": "Conteo de selecciones por personaje"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp de actualización"
+        }
+      },
+      "required": ["totalMatches", "completedMatches", "abandonedMatches"]
+    }
+  },
+  "firestore": {
+    "/matches/{matchId}": {
+      "schema": "Match",
+      "description": "Colección de partidas sincronizadas en tiempo real"
+    },
+    "/presence/{playerId}": {
+      "schema": "Presence",
+      "description": "Heartbeats de presencia y detección de desconexión"
+    },
+    "/ranking/{playerId}": {
+      "schema": "PlayerRanking",
+      "description": "Colección estándar de ranking para el Top 50"
+    },
+    "/stats/global": {
+      "schema": "GlobalStats",
+      "description": "Métricas globales para el panel /admin"
+    }
+  }
+}
