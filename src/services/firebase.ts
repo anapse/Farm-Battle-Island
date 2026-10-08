@@ -69,10 +69,9 @@ try {
     auth = getAuth(app);
     isConfigured = true;
 
-    // Optional silent anonymous sign-in for zero-friction player sessions
-    signInAnonymously(auth).catch(() => {
-      // Offline or anonymous auth disabled, safe fallback
-    });
+    // Authentication is optional for this game. The match identity is handled by
+    // the persistent local player id, so do not call signInAnonymously here.
+    // This also avoids a noisy 400 when Anonymous Authentication is disabled.
   }
 } catch (e) {
   console.info('Firebase initialization status:', e);
