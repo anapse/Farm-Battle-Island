@@ -1,5 +1,5 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore, doc, getDocFromServer } from 'firebase/firestore';
+import { getFirestore, Firestore } from 'firebase/firestore';
 import { getAuth, Auth, signInAnonymously } from 'firebase/auth';
 import firebaseConfigJson from '../../firebase-applet-config.json';
 
@@ -49,6 +49,7 @@ let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
 let auth: Auth | null = null;
 let isConfigured = false;
+let authReady: Promise<void> = Promise.resolve();
 
 try {
   const config = firebaseConfigJson;
@@ -58,36 +59,31 @@ try {
     } else {
       app = getApps()[0];
     }
-    
-    // Support custom named database ID if present in applet config
-    if (config.firestoreDatabaseId) {
-      db = getFirestore(app, config.firestoreDatabaseId);
-    } else {
-      db = getFirestore(app);
-    }
+
+    db = config.firestoreDatabaseId
+      ? getFirestore(app, config.firestoreDatabaseId)
+      : getFirestore(app);
 
     auth = getAuth(app);
     isConfigured = true;
 
-    // Authentication is optional for this game. The match identity is handled by
-    // the persistent local player id, so do not call signInAnonymously here.
-    // This also avoids a noisy 400 when Anonymous Authentication is disabled.
+    authReady = (async () => {
+      if (auth!.currentUser) return;
+      try {
+        await signInAnonymously(auth!);
+      } catch (error) {
+        console.warn('Anonymous Firebase Auth unavailable:', error);
+      }
+    })();
   }
 } catch (e) {
   console.info('Firebase initialization status:', e);
 }
 
-export async function testConnection(): Promise<boolean> {
-  if (!db) return false;
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-    return true;
-  } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn('Firebase client is offline.');
-    }
-    return false;
-  }
+export async function ensureFirebaseAuth(): Promise<boolean> {
+  if (!isConfigured || !auth) return false;
+  await authReady;
+  return !!auth.currentUser;
 }
 
 export { app, db, auth, isConfigured };
