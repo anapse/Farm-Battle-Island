@@ -791,14 +791,13 @@ export async function concludeMatchOnline(params: {
     }
   }
 
-  if (!finalMatch) {
-    const local = getLocalMatches().find(m => m.matchId === params.matchId);
-    if (!local) return null;
+  // Always finalize the local cache as well. Firestore may successfully
+  // claim the finish while this browser still has the active combat snapshot.
+  // Without this local transition the result modal/ranking can remain stuck.
+  const local = getLocalMatches().find(m => m.matchId === params.matchId);
+  if (!local) return finalMatch;
 
-    if (local.status === 'finished' || local.gameState.processedForRanking) {
-      return local;
-    }
-
+  if (local.status !== 'finished' && !local.gameState.processedForRanking) {
     const isWinnerP1 = local.player1.id === params.winnerPlayerId;
     const winner = isWinnerP1 ? local.player1 : local.player2;
 
@@ -813,28 +812,10 @@ export async function concludeMatchOnline(params: {
     local.gameState.finishedAt = Date.now();
     local.gameState.processedForRanking = true;
     local.updatedAt = Date.now();
-
     saveLocalMatch(local);
-    finalMatch = local;
   }
 
-  // Even when Firestore successfully claims the finish, update the local
-  // combat state so the real score/lives from this device are used for ranking.
-  if (finalMatch && !finalMatch.gameState.processedForRanking) {
-    const isWinnerP1 = finalMatch.player1.id === params.winnerPlayerId;
-    const winner = isWinnerP1 ? finalMatch.player1 : finalMatch.player2;
-    if (winner) {
-      winner.score += 50;
-    }
-    finalMatch.status = 'finished';
-    finalMatch.gameState.winnerPlayerId = params.winnerPlayerId;
-    finalMatch.gameState.loserPlayerId = params.loserPlayerId;
-    finalMatch.gameState.finishReason = params.reason;
-    finalMatch.gameState.finishedAt = Date.now();
-    finalMatch.gameState.processedForRanking = true;
-    finalMatch.updatedAt = Date.now();
-    saveLocalMatch(finalMatch);
-  }
+  finalMatch = local;
 
   // Update TOP 50 Leaderboard & Stats only once. Firestore's finished flag
   // is the idempotency gate when multiple clients finish the same match.
