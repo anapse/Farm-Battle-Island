@@ -20,11 +20,11 @@ export const ISLAND_MOLDS: IslandMold[] = [
       1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1
     ],
     scenery: [
-      { colIndex: 2, type: 'palm' },
-      { colIndex: 4, type: 'crate' },
-      { colIndex: 7, type: 'rock' },
-      { colIndex: 11, type: 'crate' },
-      { colIndex: 14, type: 'palm' }
+      { colIndex: 1, type: 'palm' },
+      { colIndex: 5, type: 'crate' },
+      { colIndex: 8, type: 'rock' },
+      { colIndex: 12, type: 'crate' },
+      { colIndex: 18, type: 'palm' }
     ],
     playerSpawnColIndex: 5
   },
@@ -380,7 +380,7 @@ export class TerrainManager {
     const groundTile = spriteManager.getGroundTile(tileId);
     if (groundTile) {
       // Official Sliced Sprite Render - strictly preserves textures, colors, original design
-      ctx.drawImage(groundTile, x - 2, y, width + 4, height);
+      ctx.drawImage(groundTile, x - 5, y, width + 10, height);
       return;
     }
 
