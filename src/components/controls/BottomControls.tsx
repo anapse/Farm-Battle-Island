@@ -84,7 +84,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     const loop = (time: number) => {
       const elapsed = (time - startTime) / 1000;
       // Continuous smooth sine oscillation between 15% and 100%
-      const wave = (Math.sin(elapsed * 1.8) + 1) / 2;
+      const wave = (Math.sin(elapsed * 2.8) + 1) / 2;
       const calculated = Math.round(15 + wave * 85);
       currentOscillatingPowerRef.current = calculated;
       onPowerChange(calculated);
@@ -115,10 +115,10 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     <footer className="absolute bottom-0 left-0 right-0 z-30 h-[18%] select-none box-border overflow-hidden bg-gradient-to-t from-slate-950 via-slate-950/95 to-slate-900/90 border-t-2 border-amber-500/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
-      <div className="w-full h-full min-h-0 grid grid-cols-[auto_minmax(0,1.15fr)_minmax(72px,1fr)_auto] items-center gap-1 sm:gap-2 px-1 sm:px-2">
+      <div className="w-full h-full min-h-0 grid grid-rows-[1fr_auto] items-center gap-1 px-1 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
-        <div className="flex flex-col justify-center shrink-0">
+        <div className="flex flex-col justify-center shrink-0 justify-self-start">
           <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-amber-400 mb-0.5 font-['Fredoka',sans-serif]">
             POWER-UP
           </span>
@@ -214,7 +214,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 3. FUERZA ZONE: Flexible Bar */}
-        <div className="min-w-0 w-full flex flex-col justify-center px-1">
+        <div className="min-w-0 w-full flex flex-col justify-center px-1 col-span-4 row-start-2 pb-1">
           <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase text-amber-300 mb-0.5 font-['Fredoka',sans-serif]">
             <span>{isHoldingFire ? 'CARGANDO...' : 'FUERZA'}</span>
             <span className={`font-mono font-bold ${isHoldingFire ? 'text-yellow-300 scale-110' : 'text-amber-200'}`}>
@@ -240,7 +240,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
-        <div className="flex flex-col items-center justify-center shrink-0 min-w-0">
+        <div className="flex flex-col items-center justify-center shrink-0 min-w-0 col-start-4 row-start-1">
           <button
             onPointerDown={handleFirePointerDown}
             onPointerUp={handleFirePointerUp}
