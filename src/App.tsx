@@ -387,7 +387,7 @@ export default function App() {
       onAngleChange: (newAngle) => {
         setAngle(newAngle);
       },
-      onTurnComplete: () => {
+      onTurnComplete: async () => {
         // Change turn online
         const match = onlineMatchRef.current;
         if (!match) return;
