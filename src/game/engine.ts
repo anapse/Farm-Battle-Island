@@ -236,8 +236,8 @@ export class GameEngine {
         islandIndex: 1,
         x: p1Spawn.x + 36,
         y: 120,
-        width: 28,
-        height: 28,
+        width: 80,
+        height: 56,
         collected: false,
         hasLanded: false,
         vy: 65
@@ -400,13 +400,19 @@ export class GameEngine {
         }
       }
 
-      // Check pickup collision with active player
+      // Wide pickup zone: make the power-up easy to collect even when the
+      // vehicle does not overlap the exact center of the chest sprite.
       const activePlayer = this.players.getPlayer(this.currentTurn);
       if (activePlayer.lifeState === 'active') {
-        const dist = Math.hypot(activePlayer.x - crate.x, (activePlayer.y - 14) - crate.y);
-        if (dist <= 36) {
+        const pickupHalfWidth = crate.hasLanded ? 74 : 48;
+        const pickupCenterY = crate.hasLanded
+          ? crate.y + crate.height * 0.5
+          : crate.y + crate.height * 0.35;
+        const dx = Math.abs(activePlayer.x - crate.x);
+        const dy = Math.abs((activePlayer.y - 14) - pickupCenterY);
+        if (dx <= pickupHalfWidth && dy <= 58) {
           crate.collected = true;
-          this.effects.createExplosion(crate.x, crate.y, 24, false);
+          this.effects.createExplosion(crate.x, crate.y, 30, false);
           if (this.onSupplyCrateCollected) {
             this.onSupplyCrateCollected(activePlayer.role);
           }
@@ -593,16 +599,16 @@ export class GameEngine {
 
       if (!crate.hasLanded && parachuteChest) {
         // Draw official falling parachute chest
-        const w = 48;
-        const h = 58;
-        ctx.drawImage(parachuteChest, crate.x - w / 2, crate.y - 20, w, h);
+        const w = 108;
+        const h = 132;
+        ctx.drawImage(parachuteChest, crate.x - w / 2, crate.y - 92, w, h);
         ctx.restore();
         continue;
       } else if (crate.hasLanded && openChest) {
         // Draw official landed glowing treasure chest
-        const w = 42;
-        const h = 38;
-        ctx.drawImage(openChest, crate.x - w / 2, crate.y - 12, w, h);
+        const w = 96;
+        const h = 82;
+        ctx.drawImage(openChest, crate.x - w / 2, crate.y - 58, w, h);
         ctx.restore();
         continue;
       }
