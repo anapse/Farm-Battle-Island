@@ -58,6 +58,7 @@ export class GameEngine {
   private onSupplyCrateCollected?: (collector: 'player1' | 'player2') => void;
   private onStorkEvent?: () => void;
   private projectileResolutionPending: boolean = false;
+  private resolvedProjectileIds = new Set<string>();
 
   constructor(options: GameEngineOptions) {
     this.canvas = options.canvas;
@@ -206,8 +207,8 @@ export class GameEngine {
       canBounce = true;
     }
 
-    // 3. Launch ballistic projectile
-    this.projectiles.fireShot({
+    // 3. Launch ballistic projectile(s)
+    const commonShot = {
       shooterRole: this.currentTurn,
       originX: shooter.x,
       originY: shooter.y,
@@ -220,7 +221,19 @@ export class GameEngine {
       canBounce,
       isDoubleImpact,
       isFireShot
-    });
+    };
+
+    if (powerUpType === 'triple_hit') {
+      this.projectiles.fireMultiShot({ ...commonShot, spriteId: 'triple_missile' }, 3);
+    } else if (powerUpType === 'double_hit') {
+      this.projectiles.fireMultiShot({ ...commonShot, spriteId: 'double_missile' }, 2);
+    } else if (powerUpType === 'grenade') {
+      this.projectiles.fireShot({ ...commonShot, spriteId: 'grenade', canBounce: true });
+    } else if (powerUpType === 'mega_bomb') {
+      this.projectiles.fireShot({ ...commonShot, spriteId: 'explosive_missile' });
+    } else {
+      this.projectiles.fireShot({ ...commonShot, spriteId: 'single_missile' });
+    }
 
     // 4. Camera tracks projectile
     this.camera.setMode('projectile');
@@ -260,11 +273,17 @@ export class GameEngine {
     }
   }
 
-  private handleProjectileImpact(hitX: number, hitY: number, isWater: boolean, hitTarget?: 'player1' | 'player2') {
-    const proj = this.projectiles.activeProjectile;
-    if (!proj) return;
+  private handleProjectileImpact(
+    proj: import('./types').ProjectileEntity,
+    hitX: number,
+    hitY: number,
+    isWater: boolean,
+    hitTarget?: 'player1' | 'player2'
+  ) {
+    if (!proj || this.resolvedProjectileIds.has(proj.id)) return;
 
     proj.isAlive = false;
+    this.resolvedProjectileIds.add(proj.id);
     this.projectileResolutionPending = true;
     const explosionRadius = proj.explosionRadius;
 
@@ -310,12 +329,19 @@ export class GameEngine {
     this.camera.setTarget(hitX, hitY);
 
     setTimeout(() => {
-      this.projectiles.activeProjectile = null;
-      this.isFiringSequence = false;
+      this.projectiles.activeProjectiles = this.projectiles.activeProjectiles.filter(p => p.id !== proj.id);
 
-      // 12. Turn finishes
-      if (this.onTurnComplete) {
-        this.onTurnComplete();
+      if (this.projectiles.activeProjectiles.length === 0) {
+        this.projectiles.activeProjectile = null;
+        this.isFiringSequence = false;
+        this.projectileResolutionPending = false;
+        this.resolvedProjectileIds.clear();
+
+        if (this.onTurnComplete) {
+          this.onTurnComplete();
+        }
+      } else {
+        this.projectiles.activeProjectile = this.projectiles.activeProjectiles.find(p => p.isAlive) || this.projectiles.activeProjectiles[0] || null;
       }
     }, 1100);
   }
@@ -341,11 +367,11 @@ export class GameEngine {
     // 1. Update Projectiles
     this.projectiles.update(dt, this.wind.direction, this.wind.speed);
 
-    // 2. Check Projectile Collisions
-    if (this.projectiles.activeProjectile && this.projectiles.activeProjectile.isAlive) {
-      const p = this.projectiles.activeProjectile;
+    // 2. Check every projectile independently. Double/triple shots are
+    // real projectiles: each can hit, miss, or leave the map independently.
+    for (const p of this.projectiles.activeProjectiles) {
+      if (!p.isAlive || this.resolvedProjectileIds.has(p.id)) continue;
 
-      // Camera follows projectile smoothly
       this.camera.setTarget(p.x, p.y);
 
       const collision = CollisionSystem.checkProjectileCollision(
@@ -364,6 +390,7 @@ export class GameEngine {
           this.camera.addShake(6);
         } else {
           this.handleProjectileImpact(
+            p,
             collision.hitX,
             collision.hitY,
             collision.type === 'water',
@@ -373,30 +400,31 @@ export class GameEngine {
       }
     }
 
-    // A projectile can finish its flight without touching terrain, a player, or water
-    // (for example after passing beyond the world edge). It must still resolve the
-    // shot so the camera/turn sequence cannot remain stuck forever.
-    if (
-      this.projectiles.activeProjectile &&
-      !this.projectiles.activeProjectile.isAlive &&
-      !this.projectileResolutionPending
-    ) {
-      const p = this.projectiles.activeProjectile;
+    // Projectiles that leave through the top or sides are misses.
+    // They never explode, damage, or destroy terrain.
+    for (const p of [...this.projectiles.activeProjectiles]) {
+      if (p.isAlive || this.resolvedProjectileIds.has(p.id)) continue;
 
-      // Exiting the world is a miss, not an impact. Do not explode or
-      // destroy terrain when the shot leaves through the top or sides.
       const exitsSide = p.x < -120 || p.x > WorldConfig.WORLD_WIDTH + 120;
       const exitsTop = p.y < -240;
+      const fellBelowWorld = p.y > WorldConfig.WORLD_HEIGHT + 80;
 
-      if (exitsSide || exitsTop) {
-        this.projectileResolutionPending = true;
-        this.projectiles.activeProjectile = null;
-        this.isFiringSequence = false;
-        if (this.onTurnComplete) this.onTurnComplete();
-      } else {
-        this.projectileResolutionPending = true;
-        const fellIntoWater = p.y >= WorldConfig.WATER_Y;
-        this.handleProjectileImpact(p.x, p.y, fellIntoWater);
+      if (exitsSide || exitsTop || fellBelowWorld) {
+        this.resolvedProjectileIds.add(p.id);
+        this.projectiles.activeProjectiles = this.projectiles.activeProjectiles.filter(item => item.id !== p.id);
+      }
+    }
+
+    if (
+      this.isFiringSequence &&
+      this.projectiles.activeProjectiles.length === 0
+    ) {
+      this.projectiles.activeProjectile = null;
+      this.isFiringSequence = false;
+      this.projectileResolutionPending = false;
+      this.resolvedProjectileIds.clear();
+      if (this.onTurnComplete) {
+        this.onTurnComplete();
       }
     }
 
