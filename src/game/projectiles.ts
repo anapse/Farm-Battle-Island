@@ -1,4 +1,5 @@
 import { ProjectileEntity } from './types';
+import { spriteManager } from './spriteManager';
 import { WorldConfig } from './world';
 
 export interface FireShotParams {
@@ -14,40 +15,75 @@ export interface FireShotParams {
   canBounce?: boolean;
   isDoubleImpact?: boolean;
   isFireShot?: boolean;
+  spriteId?: 'single_missile' | 'double_missile' | 'triple_missile' | 'explosive_missile' | 'grenade';
 }
 
 export class ProjectileManager {
   public activeProjectile: ProjectileEntity | null = null;
+  public activeProjectiles: ProjectileEntity[] = [];
 
   public fireShot(params: FireShotParams): ProjectileEntity {
-    const { 
-      shooterRole, 
-      originX, 
-      originY, 
-      angleDeg, 
-      powerPercent, 
-      facing, 
+    const projectile = this.createProjectile(params);
+    this.activeProjectiles = [projectile];
+    this.activeProjectile = projectile;
+    return projectile;
+  }
+
+  /**
+   * Fire 2 or 3 independent projectiles. They share the same target area
+   * but have a tiny angle spread, so each projectile can independently hit
+   * or miss while using its own official sprite.
+   */
+  public fireMultiShot(params: FireShotParams, count: 2 | 3): ProjectileEntity[] {
+    const spriteId = count === 3 ? 'triple_missile' : 'double_missile';
+    const offsets = count === 3 ? [-2.2, 0, 2.2] : [-2, 2];
+    const projectiles = offsets.map((offset, index) =>
+      this.createProjectile({
+        ...params,
+        angleDeg: params.angleDeg + offset,
+        spriteId,
+        mass: params.mass ?? 1,
+        powerPercent: params.powerPercent
+      }, index)
+    );
+    this.activeProjectiles = projectiles;
+    this.activeProjectile = projectiles[0] || null;
+    return projectiles;
+  }
+
+  private createProjectile(params: FireShotParams, index = 0): ProjectileEntity {
+    const {
+      shooterRole,
+      originX,
+      originY,
+      angleDeg,
+      powerPercent,
+      facing,
       mass = 1.0,
       damageMultiplier = 1.0,
       explosionRadiusMultiplier = 1.0,
       canBounce = false,
       isDoubleImpact = false,
-      isFireShot = false
+      isFireShot = false,
+      spriteId = 'single_missile'
     } = params;
 
     const angleRad = (angleDeg * Math.PI) / 180;
-    // Base speed proportional to power, divided by square root of mass (heavier = shorter range)
     const normalizedPower = powerPercent / 100;
-    const initialSpeed = ((WorldConfig.BASE_PROJECTILE_SPEED * 0.4) + (WorldConfig.BASE_PROJECTILE_SPEED * 0.85 * normalizedPower)) / Math.sqrt(mass);
+    const initialSpeed =
+      ((WorldConfig.BASE_PROJECTILE_SPEED * 0.4) +
+        (WorldConfig.BASE_PROJECTILE_SPEED * 0.85 * normalizedPower)) /
+      Math.sqrt(mass);
 
     const vx = Math.cos(angleRad) * initialSpeed * facing;
     const vy = -Math.sin(angleRad) * initialSpeed;
+    const spread = index === 0 ? 0 : (index % 2 === 0 ? 5 : -5);
 
-    const projectile: ProjectileEntity = {
-      id: `proj_${Date.now()}`,
-      x: originX + facing * 28,
+    return {
+      id: `proj_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      x: originX + facing * 28 + spread,
       y: originY - 18,
-      previousX: originX + facing * 28,
+      previousX: originX + facing * 28 + spread,
       previousY: originY - 18,
       vx,
       vy,
@@ -63,99 +99,103 @@ export class ProjectileManager {
       hasBounced: false,
       isDoubleImpact,
       isFireShot,
+      spriteId,
       trail: []
     };
-
-    this.activeProjectile = projectile;
-    return projectile;
   }
 
   public update(dt: number, windDirection: -1 | 1, windSpeed: number) {
-    if (!this.activeProjectile || !this.activeProjectile.isAlive) return;
+    if (this.activeProjectiles.length === 0) return;
 
-    const p = this.activeProjectile;
+    for (const p of this.activeProjectiles) {
+      if (!p.isAlive) continue;
 
-    // Wind Force: lighter projectiles affected more, heavier projectiles affected less
-    // windForce = (windSpeed * direction * factor) / mass
-    const windAcceleration = (windSpeed * 6 * windDirection) / p.mass;
-    const horizontalDirection = p.launchDirection;
+      const windAcceleration = (windSpeed * 6 * windDirection) / p.mass;
+      const horizontalDirection = p.launchDirection;
 
-    p.vx += windAcceleration * dt;
-    p.vy += WorldConfig.GRAVITY * dt;
+      p.vx += windAcceleration * dt;
+      p.vy += WorldConfig.GRAVITY * dt;
 
-    // El viento solo puede frenar o acelerar la velocidad horizontal.
-    // Nunca debe invertir el sentido del proyectil y hacerlo regresar al jugador.
-    if (p.vx !== 0 && Math.sign(p.vx) !== horizontalDirection) {
-      p.vx = 0;
+      if (p.vx !== 0 && Math.sign(p.vx) !== horizontalDirection) {
+        p.vx = 0;
+      }
+
+      p.previousX = p.x;
+      p.previousY = p.y;
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+
+      p.trail.unshift({
+        x: p.x,
+        y: p.y,
+        alpha: 1.0,
+        size: p.radius * 0.85
+      });
+
+      if (p.trail.length > 28) p.trail.pop();
+
+      for (const point of p.trail) {
+        point.alpha *= 0.93;
+        point.size *= 0.97;
+      }
+
+      if (
+        p.x < -120 ||
+        p.x > WorldConfig.WORLD_WIDTH + 120 ||
+        p.y > WorldConfig.WORLD_HEIGHT + 80 ||
+        p.y < -240
+      ) {
+        p.isAlive = false;
+      }
     }
 
-    p.previousX = p.x;
-    p.previousY = p.y;
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-
-    // Record smoke & fire trail
-    p.trail.unshift({
-      x: p.x,
-      y: p.y,
-      alpha: 1.0,
-      size: p.radius * 0.85
-    });
-
-    if (p.trail.length > 28) {
-      p.trail.pop();
-    }
-
-    for (let i = 0; i < p.trail.length; i++) {
-      p.trail[i].alpha *= 0.93;
-      p.trail[i].size *= 0.97;
-    }
-
-    // Check bounds
-    // Resolve any shot that leaves the playable world. This prevents a
-    // projectile that misses every object from keeping the turn locked.
-    if (
-      p.x < -120 ||
-      p.x > WorldConfig.WORLD_WIDTH + 120 ||
-      p.y > WorldConfig.WORLD_HEIGHT + 80 ||
-      p.y < -240
-    ) {
-      p.isAlive = false;
+    const alive = this.activeProjectiles.filter(p => p.isAlive);
+    if (alive.length === 0) {
+      this.activeProjectile = null;
+    } else {
+      this.activeProjectile = alive[0];
     }
   }
 
   public render(ctx: CanvasRenderingContext2D) {
-    if (!this.activeProjectile || !this.activeProjectile.isAlive) return;
-    const p = this.activeProjectile;
+    for (const p of this.activeProjectiles) {
+      if (!p.isAlive) continue;
 
-    // 1. Render Smoke Trail
-    for (let i = 0; i < p.trail.length; i++) {
-      const pt = p.trail[i];
-      ctx.fillStyle = `rgba(226, 232, 240, ${pt.alpha * 0.65})`;
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.size + (1 - pt.alpha) * 4, 0, Math.PI * 2);
-      ctx.fill();
+      for (const pt of p.trail) {
+        ctx.fillStyle = `rgba(226, 232, 240, ${pt.alpha * 0.65})`;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.size + (1 - pt.alpha) * 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.save();
+      const sprite = p.spriteId
+        ? spriteManager.getCombatIcon(p.spriteId)
+        : null;
+
+      if (sprite) {
+        const size = p.spriteId === 'grenade' ? 28 : 24;
+        const angle = Math.atan2(p.vy, p.vx);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(angle);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(sprite, -size / 2, -size / 2, size, size);
+      } else {
+        ctx.fillStyle = '#0F172A';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.fillStyle = '#EF4444';
+        ctx.beginPath();
+        ctx.arc(p.x - p.vx * 0.01, p.y - p.vy * 0.01, p.radius * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
     }
-
-    // 2. Render Projectile Core
-    ctx.save();
-    ctx.fillStyle = '#0F172A';
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Outer molten brass ring
-    ctx.strokeStyle = '#F59E0B';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    // Glowing spark
-    ctx.fillStyle = '#EF4444';
-    ctx.beginPath();
-    ctx.arc(p.x - p.vx * 0.01, p.y - p.vy * 0.01, p.radius * 0.4, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.restore();
   }
 
   public calculateAimGuide(
