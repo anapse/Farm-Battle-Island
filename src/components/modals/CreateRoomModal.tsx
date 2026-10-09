@@ -74,7 +74,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                   key={value}
                   type="button"
                   onClick={() => setAiDifficulty(value)}
-                  className={`p-2 rounded-lg text-left border transition cursor-pointer ${aiDifficulty === value ? 'bg-amber-700 border-[#d0b56f] text-white' : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'}`}
+                  className={`p-3 rounded-xl text-left border-2 transition cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_3px_0_rgba(0,0,0,0.35)] ${aiDifficulty === value ? 'bg-[linear-gradient(180deg,#ffce70,#d97706_55%,#7c2d12)] border-[#ffe2a0] text-white' : 'bg-[linear-gradient(180deg,#46534c,#202822_65%,#101713)] border-[#8e9d8d] text-slate-100 hover:brightness-125'}`}
                 >
                   <span className="block text-xs font-black">{label}</span>
                   <span className="block text-[9px] mt-0.5 opacity-80">{description}</span>
@@ -94,7 +94,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             <button
               type="button"
               onClick={() => setTimeLimit('5_MIN')}
-              className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
+              className={`py-3 px-3 rounded-xl font-black text-sm uppercase tracking-wider border-2 transition cursor-pointer shadow-[inset_0_2px_0_rgba(255,255,255,0.3),inset_0_-3px_0_rgba(0,0,0,0.25),0_3px_0_rgba(0,0,0,0.35)] ${
                 timeLimit === '5_MIN'
                   ? 'bg-amber-700 border-[#9a8351] text-white shadow-md'
                   : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
@@ -177,7 +177,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         <div className="pt-1">
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg bg-[#806c42] hover:bg-[#927b4d] text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg border border-[#9a8351] flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
+            className="w-full py-4 rounded-xl bg-[linear-gradient(180deg,#ffce70,#f28c16_48%,#9a3412_85%,#511b0a)] hover:brightness-110 text-white font-black text-base uppercase tracking-wider shadow-[inset_0_2px_0_rgba(255,255,255,0.6),inset_0_-4px_0_rgba(0,0,0,0.25),0_5px_0_#4a1b08,0_8px_12px_rgba(0,0,0,0.5)] border-2 border-[#ffe2a0] flex items-center justify-center gap-3 active:translate-y-1 transition cursor-pointer"
           >
             <Check className="w-4 h-4 stroke-[3]" />
             <span>CREAR PARTIDA</span>
