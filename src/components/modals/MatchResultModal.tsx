@@ -68,7 +68,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/72 backdrop-blur-sm border border-slate-600/80 rounded-xl p-3 text-left space-y-2 shadow-2xl">
         <div className="flex justify-between items-center text-xs">
           <span className="text-slate-400 font-bold">Vencedor:</span>
-          <span className="text-emerald-400 font-black">{winnerName}</span>
+          <span className="text-[#9aaa7a] font-black">{winnerName}</span>
         </div>
         <div className="flex justify-between items-center text-xs">
           <span className="text-slate-400 font-bold">Derrotado:</span>
@@ -85,7 +85,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       <div className="relative z-10 flex flex-col gap-2 max-w-[280px] w-full mx-auto pb-1">
         <button
           onClick={onPlayAgain}
-          className="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider shadow-md border border-emerald-500 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
+          className="w-full py-2.5 rounded-lg bg-[#687b58] hover:bg-[#789064] text-white font-bold text-xs uppercase tracking-wider shadow-md border border-emerald-500 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>JUGAR DE NUEVO</span>
@@ -93,7 +93,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
 
         <button
           onClick={onBackToMenu}
-          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 flex items-center justify-center gap-2 transition cursor-pointer"
+          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] flex items-center justify-center gap-2 transition cursor-pointer"
         >
           <Home className="w-3.5 h-3.5" />
           <span>MENÚ PRINCIPAL</span>
