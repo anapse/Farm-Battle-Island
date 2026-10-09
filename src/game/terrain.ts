@@ -249,13 +249,13 @@ export class TerrainManager {
       }
     }
 
-    // LEGO Rule for Scenery Objects:
-    // If the supporting block is destroyed, the object is immediately destroyed as well
+    // Scenery loses support and falls under gravity instead of disappearing.
     for (const obj of this.sceneryObjects) {
-      if (obj.isDestroyed) continue;
+      if (obj.isDestroyed || obj.isFalling) continue;
       const supportingBlock = this.blocks.find(b => b.id === obj.supportedByBlockId);
       if (!supportingBlock || supportingBlock.isDestroyed) {
-        obj.isDestroyed = true;
+        obj.isFalling = true;
+        obj.vy = 0;
       }
     }
 
@@ -327,6 +327,25 @@ export class TerrainManager {
     }
 
     return highestSolidY;
+  }
+
+  /** Advance falling decorations and land them on the next solid surface. */
+  public update(dt: number) {
+    const gravity = 1100;
+    for (const obj of this.sceneryObjects) {
+      if (obj.isDestroyed || !obj.isFalling) continue;
+      obj.vy = (obj.vy || 0) + gravity * dt;
+      obj.y += obj.vy * dt;
+      const groundY = this.getGroundYAt(obj.x);
+      if (obj.y >= groundY) {
+        obj.y = groundY;
+        obj.vy = 0;
+        obj.isFalling = false;
+        const support = this.blocks.find(b => !b.isDestroyed && obj.x >= b.x && obj.x <= b.x + b.width && Math.abs((b.y) - groundY) < 1);
+        if (support) obj.supportedByBlockId = support.id;
+        else obj.isDestroyed = true;
+      }
+    }
   }
 
   /**
