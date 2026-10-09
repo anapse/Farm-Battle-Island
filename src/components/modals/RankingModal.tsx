@@ -52,14 +52,14 @@ export const RankingModal: React.FC<RankingModalProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             onClick={loadData}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
             title="Recargar"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={onClose}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -71,7 +71,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
         <span className="col-span-2 text-center">POS</span>
         <span className="col-span-4">JUGADOR</span>
         <span className="col-span-2 text-right">PUNTOS</span>
-        <span className="col-span-2 text-right text-emerald-500">VIC</span>
+        <span className="col-span-2 text-right text-[#8fa878]">VIC</span>
         <span className="col-span-2 text-right text-red-500">DER</span>
       </div>
 
@@ -86,9 +86,9 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               key={player.playerName + index}
               className={`grid grid-cols-12 gap-1 items-center px-2.5 py-1.5 rounded-lg text-xs transition border ${
                 isCurrent
-                  ? 'bg-amber-950/80 border-amber-600 text-amber-200 font-bold shadow-sm'
+                  ? 'bg-amber-950/80 border-[#9a8351] text-amber-200 font-bold shadow-sm'
                   : isTop3
-                  ? 'bg-[#1d211c]/88 border-slate-700 text-white font-semibold'
+                  ? 'bg-[#1d211c]/88 border-[#555a4e] text-white font-semibold'
                   : 'bg-slate-950/60 border-slate-800 text-slate-300'
               }`}
             >
@@ -117,7 +117,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               </div>
 
               {/* Victorias */}
-              <div className="col-span-2 text-right font-mono font-bold text-emerald-500">
+              <div className="col-span-2 text-right font-mono font-bold text-[#8fa878]">
                 {player.victories}
               </div>
 
@@ -134,7 +134,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       <div className="relative z-10 text-center pt-2">
         <button
           onClick={onClose}
-          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
         >
           Cerrar
         </button>
