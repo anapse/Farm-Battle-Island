@@ -107,10 +107,10 @@ export class GameCanvasEngine {
     if (!player) return {};
 
     if (powerUp === 'heal_10') {
-      player.hp = Math.min(100, player.hp + 10);
+      player.hp = Math.min(player.maxHp, player.hp + Math.round(player.maxHp * 0.10));
       return { newHp: player.hp };
     } else if (powerUp === 'heal_20') {
-      player.hp = Math.min(100, player.hp + 20);
+      player.hp = Math.min(player.maxHp, player.hp + Math.round(player.maxHp * 0.20));
       return { newHp: player.hp };
     } else if (powerUp === 'shield') {
       player.hasShield = true;
