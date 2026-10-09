@@ -709,8 +709,8 @@ export class GameEngine {
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    const width = 190;
-    const height = 127;
+    const width = 247;
+    const height = 165;
 
     // The source sprite faces the opposite direction from the flight path.
     // Mirror it so the stork visibly flies forward from left to right.
