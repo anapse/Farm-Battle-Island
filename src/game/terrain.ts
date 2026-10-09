@@ -399,7 +399,11 @@ export class TerrainManager {
     const groundTile = spriteManager.getGroundTile(tileId);
     if (groundTile) {
       // Official Sliced Sprite Render - strictly preserves textures, colors, original design
-      ctx.drawImage(groundTile, x - 6, y - 6, width + 12, height + 12);
+      // Render blocks 50% larger, centered on their original collision cells.
+      // Slight overlap hides seams without changing physics or island spacing.
+      const renderWidth = width * 1.5;
+      const renderHeight = height * 1.5;
+      ctx.drawImage(groundTile, x + (width - renderWidth) / 2, y + (height - renderHeight) / 2, renderWidth, renderHeight);
       return;
     }
 
@@ -429,8 +433,9 @@ export class TerrainManager {
     const sprite = spriteManager.getDecoration(decoId);
     if (sprite) {
       // Mirror scenery on Player 2's island so both sides are visual reflections.
-      const dw = decoId === 'hut' ? 104 : (decoId === 'palm' ? 240 : (decoId === 'rocks' ? 170 : 145));
-      const dh = decoId === 'hut' ? 210 : (decoId === 'palm' ? 345 : (decoId === 'rocks' ? 115 : 135));
+      // All official decorations are enlarged by 50%.
+      const dw = (decoId === 'hut' ? 104 : (decoId === 'palm' ? 240 : (decoId === 'rocks' ? 170 : 145))) * 1.5;
+      const dh = (decoId === 'hut' ? 210 : (decoId === 'palm' ? 345 : (decoId === 'rocks' ? 115 : 135))) * 1.5;
       if (obj.islandIndex === 2) {
         ctx.save();
         ctx.translate(x * 2, 0);
