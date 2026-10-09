@@ -76,9 +76,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       <div className="relative z-10 flex items-center justify-start w-full pt-1">
         <button
           onClick={onContact}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
         >
-          <Mail className="w-4 h-4 text-amber-500" />
+          <Mail className="w-4 h-4 text-[#d0b56f]" />
           <span>CONTACTO</span>
         </button>
       </div>
@@ -102,11 +102,11 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         {/* Fallback typography when logo.png is not loaded yet */}
         {!logoLoaded && (
           <div className="flex flex-col items-center mb-1">
-            <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-amber-500 uppercase drop-shadow mb-1">
+            <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-[#d0b56f] uppercase drop-shadow mb-1">
               ANAPSE VIDEO GAMES
             </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] font-['Fredoka',sans-serif]">
-              FARM BATTLE <span className="text-amber-500">ISLAND</span>
+              FARM BATTLE <span className="text-[#d0b56f]">ISLAND</span>
             </h1>
           </div>
         )}
@@ -117,7 +117,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-emerald-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#82966c] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
@@ -126,7 +126,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* CREAR (Create Room Modal) */}
           <button
             onClick={() => handleActionClick('create_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-amber-600/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>CREAR</span>
@@ -135,7 +135,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* UNIRSE (Join Available Room Modal) */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-[#8f7a4e]/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Users className="w-4 h-4" />
             <span>UNIRSE</span>
@@ -144,7 +144,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-[#8f7a4e]/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Trophy className="w-4 h-4 text-yellow-600 fill-yellow-600" />
             <span>TOP 50</span>
@@ -170,8 +170,8 @@ export const MainMenu: React.FC<MainMenuProps> = ({
               <X className="w-4 h-4" />
             </button>
 
-            <div className="w-9 h-9 rounded-full bg-amber-700/15 border border-amber-600/40 flex items-center justify-center mx-auto mb-2">
-              <UserCheck className="w-4 h-4 text-amber-500" />
+            <div className="w-9 h-9 rounded-full bg-[#806c42]/15 border border-[#9a8351]/40 flex items-center justify-center mx-auto mb-2">
+              <UserCheck className="w-4 h-4 text-[#d0b56f]" />
             </div>
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider mb-2">
@@ -193,13 +193,13 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                 <button
                   type="button"
                   onClick={() => setPendingAction(null)}
-                  className="flex-1 py-1.5 px-3 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs uppercase transition cursor-pointer"
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-[#2b3028] hover:bg-[#3a4034] text-slate-300 font-bold text-xs uppercase transition cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase border border-emerald-600/70 shadow-md transition active:scale-95 cursor-pointer"
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-[#687b58] hover:bg-[#789064] text-white font-bold text-xs uppercase border border-[#82966c] shadow-md transition active:scale-95 cursor-pointer"
                 >
                   Continuar
                 </button>
