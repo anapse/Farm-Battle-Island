@@ -1,3 +1,4 @@
+import { getAssetUrl } from '../../utils/assets';
 import React from 'react';
 import { Users, Copy, Check, Clock, Shield } from 'lucide-react';
 import { OnlineMatch } from '../../types/game';
@@ -21,13 +22,13 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 text-center pt-2">
@@ -47,7 +48,7 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
         </div>
 
         {/* Room Code Badge */}
-        <div className="w-full bg-slate-950/85 backdrop-blur-md rounded-xl p-3 border border-amber-600/30 mb-3 flex flex-col items-center shadow-xl">
+        <div className="w-full bg-[#141713]/78 backdrop-blur-md rounded-xl p-3 border border-amber-600/30 mb-3 flex flex-col items-center shadow-xl">
           <span className="text-[10px] font-bold uppercase text-amber-500 tracking-wider mb-1">
             CÓDIGO DE SALA
           </span>
@@ -73,7 +74,7 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
         {/* Match Rules summary */}
         <div className="flex items-center gap-3 text-xs text-slate-300 bg-slate-950/70 px-3 py-1.5 rounded-lg border border-slate-800">
           <span className="flex items-center gap-1 font-bold text-amber-500">
-            <Clock className="w-3.5 h-3.5 text-cyan-400" />
+            <Clock className="w-3.5 h-3.5 text-[#b3a37a]" />
             {match.settings.timeLimit ? '5 Min' : '∞'}
           </span>
           <span>·</span>
@@ -88,7 +89,7 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
       <div className="relative z-10 text-center pb-1">
         <button
           onClick={onCancel}
-          className="w-full max-w-[280px] py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full max-w-[280px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
         >
           Cancelar Sala
         </button>
