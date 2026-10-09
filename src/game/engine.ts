@@ -529,17 +529,20 @@ export class GameEngine {
       }
     }
 
-    // 4. Update Players & Physics
+    // 4. Update terrain decorations (gravity after their support is destroyed).
+    this.terrain.update(dt);
+
+    // 5. Update Players & Physics
     this.players.update(dt, this.terrain, (deadPlayer) => {
       if (this.onPlayerDied) {
         this.onPlayerDied(deadPlayer.role);
       }
     });
 
-    // 4. Update Effects & Particles
+    // 6. Update Effects & Particles
     this.effects.update(dt);
 
-    // 5. Update Camera
+    // 7. Update Camera
     if (!this.isFiringSequence && this.camera.followMode !== 'manual') {
       const activePlayer = this.players.getPlayer(this.currentTurn);
       this.camera.setTarget(activePlayer.x, activePlayer.y - 40);
