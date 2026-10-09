@@ -181,7 +181,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         {onCancel && (
           <button
             onClick={onCancel}
-            className="min-h-11 py-2.5 px-4 rounded-xl bg-[#292d27]/95 hover:bg-[#353a31] text-[#ddd8c9] font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
+            className="min-h-11 py-2.5 px-4 rounded-lg bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] text-white font-black text-sm uppercase transition cursor-pointer"
           >
             Atrás
           </button>
