@@ -62,14 +62,14 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
               setIsRefreshing(true);
               setTimeout(() => setIsRefreshing(false), 500);
             }}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
             title="Actualizar"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={onClose}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -80,7 +80,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       <div className="relative z-10 flex-1 overflow-y-auto space-y-2 my-3 max-w-[340px] w-full mx-auto pr-1">
         {disambiguatedMatches.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 p-4">
-            <div className="w-12 h-12 rounded-full bg-[#1d211c]/82 border border-slate-700 flex items-center justify-center mb-2">
+            <div className="w-12 h-12 rounded-full bg-[#1d211c]/82 border border-[#555a4e] flex items-center justify-center mb-2">
               <Users className="w-6 h-6 text-slate-500" />
             </div>
             <p className="text-sm font-bold text-slate-300">No hay salas disponibles</p>
@@ -92,7 +92,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
           disambiguatedMatches.map(({ match, displayCreatorName }) => (
             <div
               key={match.matchId}
-              className="bg-[#141713]/72 backdrop-blur-md border border-slate-700/80 hover:border-[#8f7a4e] rounded-xl p-3 flex items-center justify-between transition shadow-md"
+              className="bg-[#141713]/72 backdrop-blur-md border border-[#555a4e]/80 hover:border-[#8f7a4e] rounded-xl p-3 flex items-center justify-between transition shadow-md"
             >
               <div className="flex flex-col">
                 <div className="font-black text-sm text-white flex items-center gap-1.5">
@@ -129,7 +129,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       <div className="relative z-10 text-center pb-1">
         <button
           onClick={onClose}
-          className="w-full max-w-[340px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full max-w-[340px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
         >
           Atrás
         </button>
