@@ -330,13 +330,20 @@ export async function selectCharacterOnline(
     if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado. Recarga la página e inténtalo de nuevo.');
     try {
       const matchRef = ref(rtdb, `activeMatches/${matchId}`);
+      // Prime the Realtime Database client cache before the transaction. Without
+      // this read, the first transaction callback can receive null even when the
+      // room was just created successfully on the server.
+      const initialSnapshot = await get(matchRef);
+      const initialMatch = initialSnapshot.exists() ? initialSnapshot.val() as OnlineMatch : null;
+      if (!initialMatch) throw new Error(`Partida no encontrada (${matchId}).`);
       let selectionError = '';
       const result = await runTransaction(matchRef, (current) => {
-        if (!current) {
-          selectionError = 'Partida no encontrada';
+        const source = (current || initialMatch) as OnlineMatch;
+        if (!source) {
+          selectionError = `Partida no encontrada (${matchId}).`;
           return;
         }
-        const remoteMatch = current as OnlineMatch;
+        const remoteMatch = source as OnlineMatch;
         const cachedMatch = getLocalMatches().find(m => m.matchId === matchId) || null;
         const match = hydrateMatch(remoteMatch, cachedMatch);
         const isP1 = match.player1.id === playerId;
