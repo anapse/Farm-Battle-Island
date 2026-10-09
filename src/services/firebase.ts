@@ -82,7 +82,19 @@ try {
 
 export async function ensureFirebaseAuth(): Promise<boolean> {
   if (!isConfigured || !auth) return false;
+
   await authReady;
+
+  // Firebase Auth can fail transiently during the first page load. Retry
+  // here instead of leaving the app with a null currentUser forever.
+  if (!auth.currentUser) {
+    try {
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.warn('Firebase anonymous auth retry failed:', error);
+    }
+  }
+
   return !!auth.currentUser;
 }
 
