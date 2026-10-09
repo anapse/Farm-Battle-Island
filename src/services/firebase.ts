@@ -1,5 +1,6 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getDatabase, Database } from 'firebase/database';
 import { getAuth, Auth, signInAnonymously } from 'firebase/auth';
 import firebaseConfigJson from '../../firebase-applet-config.json';
 
@@ -47,6 +48,7 @@ export function handleFirestoreError(
 
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
+let rtdb: Database | null = null;
 let auth: Auth | null = null;
 let isConfigured = false;
 let authReady: Promise<void> = Promise.resolve();
@@ -63,6 +65,10 @@ try {
     db = config.firestoreDatabaseId
       ? getFirestore(app, config.firestoreDatabaseId)
       : getFirestore(app);
+    // Realtime Database carries ephemeral active-match state; Firestore is reserved for rankings.
+    if (config.databaseURL) {
+      rtdb = getDatabase(app, config.databaseURL);
+    }
 
     auth = getAuth(app);
     isConfigured = true;
@@ -98,4 +104,4 @@ export async function ensureFirebaseAuth(): Promise<boolean> {
   return !!auth.currentUser;
 }
 
-export { app, db, auth, isConfigured };
+export { app, db, rtdb, auth, isConfigured };
