@@ -1,6 +1,6 @@
 export class WorldConfig {
   // Virtual World Dimensions (approx 2.5 mobile screens wide)
-  public static readonly WORLD_WIDTH = 2200;
+  public static readonly WORLD_WIDTH = 2400; // 50 columns x 48px; includes the full right island and sprite overhang
   public static readonly WORLD_HEIGHT = 1280;
 
   // Water & Depth levels
