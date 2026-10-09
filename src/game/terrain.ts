@@ -5,7 +5,7 @@ import { spriteManager, GroundTileId, DecorationId } from './spriteManager';
 export interface IslandMold {
   id: string;
   name: string;
-  // Heights (in blocks, from 2 to 7) for 20 columns
+  // Heights (in blocks) for compact 17-column islands
   columnHeights: number[];
   scenery: { colIndex: number; type: 'palm' | 'crate' | 'hut' | 'rock' }[];
   playerSpawnColIndex: number;
@@ -17,14 +17,13 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_1',
     name: 'Playa Tranquila',
     columnHeights: [
-      1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1
+      1, 2, 3, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1
     ],
     scenery: [
       { colIndex: 1, type: 'palm' },
       { colIndex: 5, type: 'crate' },
       { colIndex: 8, type: 'rock' },
       { colIndex: 12, type: 'crate' },
-      { colIndex: 18, type: 'palm' }
     ],
     playerSpawnColIndex: 5
   },
@@ -33,7 +32,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_2',
     name: 'Costa Rocosa',
     columnHeights: [
-      2, 3, 5, 5, 4, 4, 4, 4, 3, 3, 4, 4, 3, 2, 2, 1, 1, 1, 1, 1, 1
+      2, 3, 5, 5, 4, 4, 4, 4, 3, 3, 4, 4, 3, 2, 2, 1, 1
     ],
     scenery: [
       { colIndex: 3, type: 'rock' },
@@ -49,7 +48,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_3',
     name: 'Bahía Abierta',
     columnHeights: [
-      1, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1, 1, 1, 1, 1
+      1, 2, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1, 1
     ],
     scenery: [
       { colIndex: 3, type: 'palm' },
@@ -64,7 +63,7 @@ export const ISLAND_MOLDS: IslandMold[] = [
     id: 'isla_4',
     name: 'Arrecife Bajo',
     columnHeights: [
-      1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1
+      1, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1
     ],
     scenery: [
       { colIndex: 2, type: 'rock' },
@@ -150,7 +149,8 @@ export class TerrainManager {
     });
 
     // 2. Build Right Island (Player 2, Mirrored layout)
-    const rightStartCol = WorldConfig.RIGHT_ISLAND_START_COL;
+    // Anchor the shortened right island to the world's far-right edge, widening the center gap.
+    const rightStartCol = WorldConfig.TOTAL_COLUMNS - mold.columnHeights.length;
     for (let i = 0; i < mold.columnHeights.length; i++) {
       // Mirror columns from right to left
       const col = rightStartCol + (mold.columnHeights.length - 1 - i);
@@ -301,7 +301,7 @@ export class TerrainManager {
     if (islandIndex === 1) {
       col = WorldConfig.LEFT_ISLAND_START_COL + mold.playerSpawnColIndex;
     } else {
-      col = WorldConfig.RIGHT_ISLAND_START_COL + (mold.columnHeights.length - 1 - mold.playerSpawnColIndex);
+      col = WorldConfig.TOTAL_COLUMNS - 1 - mold.playerSpawnColIndex;
     }
 
     const groundY = this.getGroundYAt(col * bw + bw / 2);
