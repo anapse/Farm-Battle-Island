@@ -68,9 +68,10 @@ export const RankingModal: React.FC<RankingModalProps> = ({
 
       {/* Table Column Headers */}
       <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[10px] font-black uppercase text-amber-500/90 border-b border-slate-800 mt-2 bg-[#141713]/72 rounded-t-lg backdrop-blur-sm">
-        <span className="col-span-2 text-center">POS</span>
-        <span className="col-span-4">JUGADOR</span>
+        <span className="col-span-1 text-center">#</span>
+        <span className="col-span-3">JUGADOR</span>
         <span className="col-span-2 text-right">PUNTOS</span>
+        <span className="col-span-2 text-right">PJ</span>
         <span className="col-span-2 text-right text-[#8fa878]">VIC</span>
         <span className="col-span-2 text-right text-red-500">DER</span>
       </div>
@@ -84,7 +85,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
           return (
             <div
               key={player.playerName + index}
-              className={`grid grid-cols-12 gap-1 items-center px-2.5 py-1.5 rounded-lg text-xs transition border ${
+              className={`grid grid-cols-12 gap-1 items-center px-2 py-1.5 rounded-lg text-xs transition border ${
                 isCurrent
                   ? 'bg-amber-950/80 border-[#9a8351] text-amber-200 font-bold shadow-sm'
                   : isTop3
@@ -93,7 +94,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               }`}
             >
               {/* Posición */}
-              <div className="col-span-2 flex items-center justify-center font-mono font-black">
+              <div className="col-span-1 flex items-center justify-center font-mono font-black">
                 {index === 0 ? (
                   <span className="text-yellow-600 text-sm">🥇 1</span>
                 ) : index === 1 ? (
@@ -106,7 +107,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               </div>
 
               {/* Jugador */}
-              <div className="col-span-4 truncate font-bold text-slate-100">
+              <div className="col-span-3 truncate font-bold text-slate-100">
                 {player.playerName}
                 {isCurrent && <span className="ml-1 text-[9px] text-amber-500 font-black">(TÚ)</span>}
               </div>
@@ -114,6 +115,11 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               {/* Puntos */}
               <div className="col-span-2 text-right font-mono font-black text-amber-500">
                 {player.score.toLocaleString()}
+              </div>
+
+              {/* Partidas jugadas */}
+              <div className="col-span-2 text-right font-mono font-bold text-slate-300">
+                {player.matchesPlayed ?? (player.victories + player.defeats)}
               </div>
 
               {/* Victorias */}
