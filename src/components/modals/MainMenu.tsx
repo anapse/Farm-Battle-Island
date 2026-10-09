@@ -34,16 +34,17 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
   // Modal to prompt for player name before proceeding to action
   const [pendingAction, setPendingAction] = useState<'quick_play' | 'create_room' | 'join_room' | null>(null);
-  const [tempPlayerName, setTempPlayerName] = useState(playerName || 'Comandante');
+  const [tempPlayerName, setTempPlayerName] = useState(playerName || '');
 
   const handleActionClick = (action: 'quick_play' | 'create_room' | 'join_room') => {
-    setTempPlayerName(playerName || 'Comandante');
+    setTempPlayerName(playerName || '');
     setPendingAction(action);
   };
 
   const handleConfirmName = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    const finalName = tempPlayerName.trim() || 'Comandante';
+    const finalName = tempPlayerName.trim();
+    if (finalName.length < 2) return;
     onPlayerNameChange(finalName);
     const actionToRun = pendingAction;
     setPendingAction(null);
@@ -181,10 +182,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             <form onSubmit={handleConfirmName} className="space-y-3">
               <input
                 type="text"
+                required
+                minLength={2}
                 autoFocus
                 value={tempPlayerName}
                 onChange={(e) => setTempPlayerName(e.target.value)}
-                placeholder="Escribe tu alias..."
+                placeholder="Escribe tu alias (mín. 2 caracteres)..."
                 maxLength={18}
                 className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-bold text-white text-center focus:outline-none focus:border-amber-600 transition"
               />
