@@ -93,7 +93,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
 
         <button
           onClick={onBackToMenu}
-          className="w-full py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 flex items-center justify-center gap-2 transition cursor-pointer"
+          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 flex items-center justify-center gap-2 transition cursor-pointer"
         >
           <Home className="w-3.5 h-3.5" />
           <span>MENÚ PRINCIPAL</span>
