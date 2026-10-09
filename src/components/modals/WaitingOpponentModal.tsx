@@ -24,11 +24,11 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
       <img
         src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-100"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/5 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 text-center pt-2">
