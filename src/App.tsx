@@ -167,7 +167,7 @@ export default function App() {
   const [power, setPower] = useState(62);
   const [lastShotPower, setLastShotPower] = useState<number | null>(null);
   const [activePowerUp, setActivePowerUp] = useState<PowerUpType | null>(null);
-  const [powerUpSlots, setPowerUpSlots] = useState<(OfficialPowerUpId | null)[]>([null, null, null, null]);
+  const [powerUpSlots, setPowerUpSlots] = useState<(OfficialPowerUpId | null)[]>([null, null, null, null, null, null]);
   const [activeSlotIndex, setActiveSlotIndex] = useState<number | null>(null);
   const [tacticalToast, setTacticalToast] = useState<{ id: number; text: string; type: 'info' | 'success' | 'warn' } | null>(null);
 
@@ -1105,7 +1105,7 @@ export default function App() {
           )}
 
           {/* Canvas Game World */}
-          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[clamp(164px,22dvh,210px)] z-10 w-full">
+          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[clamp(205px,30dvh,250px)] z-10 w-full">
             <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />
           </div>
 
