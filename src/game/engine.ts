@@ -257,7 +257,7 @@ export class GameEngine {
       active: true,
       x: -180,
       y: 210,
-      speed: 250,
+      speed: 110,
       frameTime: 0,
       dropP1: false,
       dropP2: false
@@ -278,7 +278,7 @@ export class GameEngine {
       height: 56,
       collected: false,
       hasLanded: false,
-      vy: 65
+      vy: 155
     });
   }
 
@@ -498,6 +498,9 @@ export class GameEngine {
       if (crate.collected) continue;
 
       if (!crate.hasLanded) {
+        // The parachute starts slowly, then accelerates so the chest reaches
+        // the island in a reasonable time instead of hanging in the air.
+        crate.vy += 300 * dt;
         crate.y += crate.vy * dt;
         const groundY = this.terrain.getGroundYAt(crate.x);
         if (crate.y >= groundY - crate.height) {
@@ -706,7 +709,12 @@ export class GameEngine {
     ctx.imageSmoothingEnabled = false;
     const width = 190;
     const height = 127;
-    ctx.drawImage(frame, stork.x - width / 2, stork.y - height / 2, width, height);
+
+    // The source sprite faces the opposite direction from the flight path.
+    // Mirror it so the stork visibly flies forward from left to right.
+    ctx.translate(stork.x, stork.y);
+    ctx.scale(-1, 1);
+    ctx.drawImage(frame, -width / 2, -height / 2, width, height);
     ctx.restore();
   }
 
