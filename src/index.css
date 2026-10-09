@@ -46,3 +46,19 @@
 .animate-character-pop {
   animation: characterPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+
+/* Farm Battle Island — warm, muted UI palette.
+   Avoid saturated blue/neon accents in menus and controls. */
+:root {
+  --fbi-bg: #141713;
+  --fbi-panel: #1d211c;
+  --fbi-panel-soft: #292d27;
+  --fbi-sand: #d0b56f;
+  --fbi-sand-dark: #806c42;
+  --fbi-green: #687b58;
+  --fbi-green-light: #789064;
+  --fbi-red: #8f4d43;
+  --fbi-text: #eee9dc;
+  --fbi-muted: #aaa795;
+}
