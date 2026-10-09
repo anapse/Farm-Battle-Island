@@ -27,7 +27,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-2 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -40,7 +40,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       <div className="absolute inset-0 bg-black/5 pointer-events-none" />
 
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between pt-1">
+      <div className="relative z-10 flex items-center justify-between pt-1 shrink-0">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
             {isAiMode ? 'CONFIGURAR PARTIDA CONTRA IA' : 'CREAR PARTIDA'}
@@ -55,10 +55,10 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       </div>
 
       {/* Main Form Fields (Percentage / Flex layout) */}
-      <form onSubmit={handleSubmit} className="relative z-10 flex-1 flex flex-col justify-center gap-3 my-2 max-w-[320px] w-full mx-auto">
+      <form onSubmit={handleSubmit} className="relative z-10 flex-none flex flex-col justify-start gap-2.5 my-1 max-w-[340px] w-full mx-auto">
         
         {isAiMode && (
-          <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-[#9a8351]/30">
+          <div className="bg-[#101b20]/92 backdrop-blur-md p-3 rounded-xl border border-[#bda56b]/60">
             <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
               <span>DIFICULTAD DE LA IA:</span>
@@ -77,7 +77,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                   className={`p-3 rounded-xl text-left border-2 transition cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_3px_0_rgba(0,0,0,0.35)] ${aiDifficulty === value ? 'bg-[linear-gradient(180deg,#ffce70,#d97706_55%,#7c2d12)] border-[#ffe2a0] text-white' : 'bg-[linear-gradient(180deg,#46534c,#202822_65%,#101713)] border-[#8e9d8d] text-slate-100 hover:brightness-125'}`}
                 >
                   <span className="block text-xs font-black">{label}</span>
-                  <span className="block text-[9px] mt-0.5 opacity-80">{description}</span>
+                  <span className="block text-[11px] leading-snug mt-1 opacity-95">{description}</span>
                 </button>
               ))}
             </div>
@@ -108,7 +108,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 if (lives === 'INFINITE') return;
                 setTimeLimit('INFINITE');
               }}
-              className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
+              className={`py-3 px-3 rounded-xl font-black text-sm uppercase tracking-wider border-2 transition cursor-pointer shadow-[inset_0_2px_0_rgba(255,255,255,0.25),0_3px_0_rgba(0,0,0,0.35)] ${
                 timeLimit === 'INFINITE'
                   ? 'bg-amber-700 border-[#9a8351] text-white shadow-md'
                   : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
@@ -160,14 +160,14 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 key={island.id}
                 type="button"
                 onClick={() => setIslandId(island.id)}
-                className={`p-2 rounded-lg text-left border transition text-xs cursor-pointer ${
+                className={`p-2.5 rounded-xl text-left border-2 transition text-sm cursor-pointer ${
                   islandId === island.id
                     ? 'bg-[#293225]/92 border-[#82966c] text-white shadow-sm'
                     : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="font-black text-[11px] text-amber-500">{island.title}</div>
-                <div className="text-[10px] text-slate-400 truncate">{island.subtitle}</div>
+                <div className="text-xs text-slate-200 truncate">{island.subtitle}</div>
               </button>
             ))}
           </div>
