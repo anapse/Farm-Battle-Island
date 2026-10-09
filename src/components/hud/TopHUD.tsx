@@ -148,11 +148,11 @@ export const TopHUD: React.FC<TopHUDProps> = ({
       <div className="flex justify-end mt-1 pointer-events-auto">
         <button
           onClick={onSurrenderClick}
-          className="bg-red-950/95 hover:bg-red-900 text-white border-2 border-red-500 text-[10px] sm:text-xs font-black px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg"
+          className="bg-[linear-gradient(180deg,#b85b50,#7f2929_65%,#421818)] hover:brightness-110 text-white border-2 border-[#e79a8c] text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#351313,0_5px_8px_rgba(0,0,0,0.4)]"
           title="Salir de la partida (se computa derrota)"
         >
           <Flag className="w-3 h-3 text-red-400" />
-          Rendirse / Salir
+          SALIR
         </button>
       </div>
     </header>
