@@ -6,7 +6,7 @@
       ".read": "auth != null",
       "$matchId": {
         ".read": "auth != null",
-        ".write": "auth != null && ((!data.exists() && newData.child('player1/authUid').val() === auth.uid) || (data.exists() && (data.child('player1/authUid').val() === auth.uid || data.child('player2/authUid').val() === auth.uid)))",
+        ".write": "auth != null && ((!data.exists() && newData.child('player1/authUid').val() === auth.uid) || (data.exists() && (data.child('player1/authUid').val() === auth.uid || data.child('player2/authUid').val() === auth.uid || (data.child('status').val() === 'waiting' && data.child('player2').val() == null && newData.child('player1/authUid').val() === data.child('player1/authUid').val() && newData.child('player2/authUid').val() === auth.uid && newData.child('status').val() === 'starting'))))",
         ".validate": "newData.hasChildren(['matchId', 'player1', 'gameState', 'status']) && newData.child('matchId').val() === $matchId"
       }
     }
