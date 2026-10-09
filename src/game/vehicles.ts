@@ -68,7 +68,7 @@ export class VehicleRenderer {
       ctx.save();
       ctx.translate(0, idleOscillation);
 
-      const size = 136; // ~3.1 blocks wide & high: clear, prominent and proportionate
+      const size = 204; // 50% larger official character sprite
 
       // Official personajes.png sprites face LEFT by default.
       // Player 1 must face RIGHT toward the rival; Player 2 must face LEFT.
