@@ -611,6 +611,10 @@ export default function App() {
   // ACTION: JUGAR (Quick Play vs AI)
   const handleQuickPlay = async () => {
     try {
+      // Detach the finished match before creating the new one so its
+      // Firestore subscription cannot interfere with the replay flow.
+      setOnlineMatch(null);
+      setMatchResult(null);
       // A new match starts completely clean: no power-ups, no previous
       // marked shot, no previous selection or combat state.
       setPowerUpSlots([null, null, null, null]);
@@ -1040,6 +1044,7 @@ export default function App() {
           winnerCharacterId={matchResult.winnerCharacterId}
           onPlayAgain={() => {
             setMatchResult(null);
+            setOnlineMatch(null);
             setPowerUpSlots([null, null, null, null]);
             setActivePowerUp(null);
             setActiveSlotIndex(null);
