@@ -85,7 +85,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       <div className="relative z-10 flex flex-col gap-2 max-w-[280px] w-full mx-auto pb-1">
         <button
           onClick={onPlayAgain}
-          className="w-full min-h-12 py-3 rounded-xl bg-[#687b58] hover:bg-[#789064] text-white font-black text-sm uppercase tracking-wider shadow-md border border-emerald-500 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
+          className="w-full min-h-11 py-2.5 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>JUGAR DE NUEVO</span>
