@@ -5,7 +5,7 @@
     "activeMatches": {
       ".read": "auth != null",
       "$matchId": {
-        ".write": "auth != null && (auth.uid === data.child('player1/authUid').val() || auth.uid === data.child('player2/authUid').val() || auth.uid === newData.child('player1/authUid').val() || auth.uid === newData.child('player2/authUid').val())",
+        ".write": "auth != null && (auth.uid === data.child('player1/authUid').val() || auth.uid === data.child('player2/authUid').val() || (!data.exists() && auth.uid === newData.child('player1/authUid').val()) || (data.exists() && data.child('player2').val() == null && data.child('player1/authUid').val() === newData.child('player1/authUid').val() && auth.uid === newData.child('player2/authUid').val()))",
         ".validate": "newData.hasChildren(['matchId', 'player1', 'gameState', 'status'])"
       }
     }
