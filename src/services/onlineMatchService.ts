@@ -153,9 +153,9 @@ export async function createOnlineMatch(params: {
   islandId: string;
   isAiMatch?: boolean;
 }): Promise<OnlineMatch> {
-  await ensureFirebaseAuth();
+  const firebaseAuthenticated = await ensureFirebaseAuth();
   const { playerId } = getPlayerIdentity(params.creatorPlayerName);
-  const authUid = auth?.currentUser?.uid || undefined;
+  const authUid = firebaseAuthenticated ? auth?.currentUser?.uid : undefined;
   const matchId = `M_${Math.floor(100000 + Math.random() * 900000)}`;
 
   const player1: OnlinePlayer = {
@@ -232,7 +232,7 @@ export async function createOnlineMatch(params: {
   };
 
   // 1. Save to Firestore if available
-  if (db && isConfigured) {
+  if (db && isConfigured && authUid) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
       await setDoc(matchDocRef, {
@@ -257,11 +257,11 @@ export async function createOnlineMatch(params: {
  * Protections: Two players cannot take the same slot. Full match cannot be joined.
  */
 export async function joinOnlineMatch(matchId: string, joinerPlayerName: string): Promise<OnlineMatch> {
-  await ensureFirebaseAuth();
+  const firebaseAuthenticated = await ensureFirebaseAuth();
   const { playerId } = getPlayerIdentity(joinerPlayerName);
-  const authUid = auth?.currentUser?.uid || undefined;
+  const authUid = firebaseAuthenticated ? auth?.currentUser?.uid : undefined;
 
-  if (db && isConfigured) {
+  if (db && isConfigured && authUid) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
       return await runTransaction(db, async (transaction) => {
