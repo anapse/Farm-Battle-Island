@@ -1,7 +1,48 @@
 import { Particle, BlastWave, DamageNumber } from './types';
+import { getAssetUrl } from '../utils/assets';
+
+type SoundId =
+  | 'bg_music'
+  | 'click'
+  | 'start'
+  | 'shot_double'
+  | 'shot_triple'
+  | 'shot_explosive'
+  | 'shot_grenade'
+  | 'explosion_small'
+  | 'explosion_medium'
+  | 'explosion_large'
+  | 'explosion_explosive'
+  | 'explosion_grenade';
 
 export class EffectManager {
   private audioContext: AudioContext | null = null;
+  private soundBuffers = new Map<SoundId, AudioBuffer>();
+  private loadingSounds = new Map<SoundId, Promise<AudioBuffer | null>>();
+  private musicSource: AudioBufferSourceNode | null = null;
+  private musicGain: GainNode | null = null;
+  private audioPrimed = false;
+
+  private readonly soundFiles: Record<SoundId, string> = {
+    bg_music: 'bg_music.wav',
+    click: 'click.wav',
+    start: 'start.wav',
+    shot_double: 'shot_double.wav',
+    shot_triple: 'shot_triple.wav',
+    shot_explosive: 'shot_explosive.wav',
+    shot_grenade: 'shot_grenade.wav',
+    explosion_small: 'explosion_small.wav',
+    explosion_medium: 'explosion_medium.wav',
+    explosion_large: 'explosion_large.wav',
+    explosion_explosive: 'explosion_explosive.wav',
+    explosion_grenade: 'explosion_grenade.wav'
+  };
+
+  constructor() {
+    // Preload the complete sound pack. The game still works if one asset
+    // fails to load because the procedural fallback sounds remain available.
+    void this.preloadSounds();
+  }
 
   private getAudioContext(): AudioContext | null {
     if (typeof window === 'undefined') return null;
@@ -15,6 +56,73 @@ export class EffectManager {
       return this.audioContext;
     } catch {
       return null;
+    }
+  }
+
+  private async loadSound(id: SoundId): Promise<AudioBuffer | null> {
+    const cached = this.soundBuffers.get(id);
+    if (cached) return cached;
+
+    const existing = this.loadingSounds.get(id);
+    if (existing) return existing;
+
+    const promise = (async () => {
+      try {
+        const response = await fetch(getAssetUrl(`assets/sonido/${this.soundFiles[id]}`));
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.arrayBuffer();
+        const ctx = this.getAudioContext();
+        if (!ctx) return null;
+        const buffer = await ctx.decodeAudioData(data);
+        this.soundBuffers.set(id, buffer);
+        return buffer;
+      } catch {
+        return null;
+      } finally {
+        this.loadingSounds.delete(id);
+      }
+    })();
+
+    this.loadingSounds.set(id, promise);
+    return promise;
+  }
+
+  private async preloadSounds() {
+    await Promise.all(
+      (Object.keys(this.soundFiles) as SoundId[]).map((id) => this.loadSound(id))
+    );
+  }
+
+  private playSound(id: SoundId, volume = 1, loop = false) {
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+
+    const buffer = this.soundBuffers.get(id);
+    if (!buffer) {
+      void this.loadSound(id).then((loaded) => {
+        if (loaded) this.playSound(id, volume, loop);
+      });
+      return;
+    }
+
+    const source = ctx.createBufferSource();
+    const gain = ctx.createGain();
+
+    source.buffer = buffer;
+    source.loop = loop;
+    // The original files are intentionally amplified through a gain node.
+    // Values above 1 are safe here and make quiet WAV assets much more audible.
+    gain.gain.setValueAtTime(Math.max(0, volume), ctx.currentTime);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start();
+
+    if (loop) {
+      if (this.musicSource) {
+        try { this.musicSource.stop(); } catch {}
+      }
+      this.musicSource = source;
+      this.musicGain = gain;
     }
   }
 
@@ -36,16 +144,80 @@ export class EffectManager {
     osc.stop(now + duration + 0.02);
   }
 
-  public playShot(power = 60) {
-    this.playTone(210 + power * 1.2, 75, 0.18, 0.055, 'sawtooth');
+  private startMusic() {
+    if (this.musicSource) return;
+    this.playSound('bg_music', 0.22, true);
   }
 
-  public playImpact() {
-    this.playTone(120, 45, 0.25, 0.09, 'square');
+  public primeAudio() {
+    if (this.audioPrimed) return;
+    this.audioPrimed = true;
+    const ctx = this.getAudioContext();
+    if (!ctx) return;
+    void ctx.resume();
+    this.startMusic();
+    this.playSound('start', 1.8);
+  }
+
+  public playClick() {
+    this.primeAudio();
+    this.playSound('click', 1.8);
+  }
+
+  public playShot(power = 60, powerUpType?: string | null) {
+    this.primeAudio();
+
+    if (powerUpType === 'double_hit') {
+      this.playSound('shot_double', 2.2);
+      return;
+    }
+    if (powerUpType === 'triple_hit') {
+      this.playSound('shot_triple', 2.2);
+      return;
+    }
+    if (powerUpType === 'mega_bomb') {
+      this.playSound('shot_explosive', 2.2);
+      return;
+    }
+    if (powerUpType === 'grenade') {
+      this.playSound('shot_grenade', 2.2);
+      return;
+    }
+
+    // There is no normal-shot WAV in the supplied pack, so keep a louder
+    // procedural cannon sound as the fallback for the standard missile.
+    this.playTone(210 + power * 1.2, 75, 0.18, 0.14, 'sawtooth');
+  }
+
+  public playImpact(isWater = false, explosionRadius = 70, powerUpType?: string | null) {
+    this.primeAudio();
+
+    if (powerUpType === 'grenade') {
+      this.playSound('explosion_grenade', 2.4);
+      return;
+    }
+    if (powerUpType === 'mega_bomb') {
+      this.playSound('explosion_explosive', 2.4);
+      return;
+    }
+
+    if (isWater) {
+      this.playSound('explosion_medium', 2.0);
+      return;
+    }
+
+    const id: SoundId =
+      explosionRadius >= 125 ? 'explosion_large' :
+      explosionRadius >= 80 ? 'explosion_medium' :
+      'explosion_small';
+
+    this.playSound(id, 2.2);
   }
 
   public playPickup() {
-    this.playTone(520, 900, 0.16, 0.035, 'sine');
+    this.primeAudio();
+    this.playSound('click', 1.7);
+    this.playTone(620, 1050, 0.16, 0.07, 'sine');
   }
 
   public playGrenadeBounce() {
@@ -58,7 +230,7 @@ export class EffectManager {
     osc.frequency.setValueAtTime(180, now);
     osc.frequency.exponentialRampToValueAtTime(85, now + 0.09);
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.008);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.008);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -76,7 +248,7 @@ export class EffectManager {
     osc.frequency.setValueAtTime(95, now);
     osc.frequency.exponentialRampToValueAtTime(55, now + 0.16);
     gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.035, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.055, now + 0.015);
     gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.17);
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -85,21 +257,11 @@ export class EffectManager {
   }
 
   public playGrenadeExplosion() {
-    const ctx = this.getAudioContext();
-    if (!ctx) return;
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(110, now);
-    osc.frequency.exponentialRampToValueAtTime(38, now + 0.34);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.3, now + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.44);
+    this.primeAudio();
+    // Keep the supplied grenade explosion as the main sound; this lower
+    // procedural layer adds extra punch without replacing the asset.
+    this.playSound('explosion_grenade', 2.4);
+    this.playTone(110, 38, 0.42, 0.18, 'sawtooth');
   }
 
   public particles: Particle[] = [];
@@ -107,7 +269,6 @@ export class EffectManager {
   public damageNumbers: DamageNumber[] = [];
 
   public createExplosion(x: number, y: number, radius: number, isWater: boolean = false) {
-    // 1. Expanding shockwave ring
     this.blastWaves.push({
       x,
       y,
@@ -118,12 +279,11 @@ export class EffectManager {
       isWater
     });
 
-    // 2. Mathematical particle spark cloud (no AI sprites)
     const particleCount = isWater ? 30 : 25;
     for (let i = 0; i < particleCount; i++) {
       const angle = Math.random() * Math.PI * 2;
       const speed = Math.random() * (isWater ? 240 : 180) + 40;
-      const color = isWater 
+      const color = isWater
         ? (Math.random() > 0.5 ? '#E0F2FE' : '#38BDF8')
         : (Math.random() > 0.6 ? '#EF4444' : (Math.random() > 0.3 ? '#F59E0B' : '#78350F'));
 
@@ -131,7 +291,7 @@ export class EffectManager {
         x,
         y,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - (isWater ? 120 : 40), // water splashes upwards
+        vy: Math.sin(angle) * speed - (isWater ? 120 : 40),
         radius: Math.random() * 4 + 2,
         color,
         alpha: 1.0,
@@ -153,17 +313,13 @@ export class EffectManager {
   }
 
   public update(dt: number) {
-    // 1. Update blast waves
     for (let i = this.blastWaves.length - 1; i >= 0; i--) {
       const bw = this.blastWaves[i];
       bw.currentRadius += (bw.maxRadius - bw.currentRadius) * 12 * dt;
       bw.alpha -= dt * 2.2;
-      if (bw.alpha <= 0) {
-        this.blastWaves.splice(i, 1);
-      }
+      if (bw.alpha <= 0) this.blastWaves.splice(i, 1);
     }
 
-    // 2. Update particles
     const gravity = 400;
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
@@ -172,27 +328,19 @@ export class EffectManager {
       p.x += p.vx * dt;
       p.y += p.vy * dt;
       p.alpha = Math.max(0, 1 - p.life / p.maxLife);
-
-      if (p.life >= p.maxLife) {
-        this.particles.splice(i, 1);
-      }
+      if (p.life >= p.maxLife) this.particles.splice(i, 1);
     }
 
-    // 3. Update damage numbers
     for (let i = this.damageNumbers.length - 1; i >= 0; i--) {
       const dn = this.damageNumbers[i];
       dn.life += dt;
-      dn.y -= dt * 45; // float upwards
+      dn.y -= dt * 45;
       dn.alpha = Math.max(0, 1 - dn.life / 0.9);
-
-      if (dn.life >= 0.9) {
-        this.damageNumbers.splice(i, 1);
-      }
+      if (dn.life >= 0.9) this.damageNumbers.splice(i, 1);
     }
   }
 
   public render(ctx: CanvasRenderingContext2D) {
-    // 1. Render Shockwave Rings
     for (const bw of this.blastWaves) {
       ctx.save();
       ctx.globalAlpha = Math.max(0, bw.alpha);
@@ -203,7 +351,6 @@ export class EffectManager {
       ctx.stroke();
 
       if (bw.isWater) {
-        // Water splash dome
         ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
         ctx.beginPath();
         ctx.arc(bw.x, bw.y, bw.currentRadius * 0.8, Math.PI, Math.PI * 2);
@@ -212,7 +359,6 @@ export class EffectManager {
       ctx.restore();
     }
 
-    // 2. Render Mathematical Particles
     for (const p of this.particles) {
       ctx.save();
       ctx.globalAlpha = Math.max(0, p.alpha);
@@ -223,7 +369,6 @@ export class EffectManager {
       ctx.restore();
     }
 
-    // 3. Render Damage Numbers
     for (const dn of this.damageNumbers) {
       ctx.save();
       ctx.globalAlpha = Math.max(0, dn.alpha);
