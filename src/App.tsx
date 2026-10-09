@@ -75,7 +75,7 @@ export default function App() {
   // Background music: try autoplay on startup and resume on first user interaction if blocked.
   const backgroundMusicRef = useRef<HTMLAudioElement | null>(null);
   useEffect(() => {
-    const audio = new Audio('/assets/sonido/fondo%20sonido.mp3');
+    const audio = new Audio('/assets/sonido/fondosonido.mp3');
     audio.loop = true;
     audio.volume = 0.28;
     backgroundMusicRef.current = audio;
