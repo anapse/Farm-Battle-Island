@@ -80,8 +80,8 @@ function saveLocalMatch(match: OnlineMatch): void {
 }
 
 /**
- * Firestore stores only lobby/match-control data for active matches.
- * Combat state (HP, lives and damage score) stays local to the running match.
+ * Realtime Database carries only temporary active-match communication.
+ * Firestore is reserved for the final ranking and basic statistics.
  */
 function toPersistentPlayer(player: OnlinePlayer) {
   const {
@@ -103,7 +103,7 @@ function hydratePlayer(
   return {
     ...player,
     id: player.id || cached?.id || '',
-    name: player.name || cached?.name || 'Comandante',
+    name: player.name || cached?.name || 'Jugador',
     characterId: player.characterId ?? cached?.characterId ?? null,
     characterSelected: player.characterSelected ?? cached?.characterSelected ?? false,
     hp: cached?.hp ?? 100,
@@ -773,22 +773,9 @@ export async function surrenderMatchOnline(matchId: string, surrenderingPlayerId
 }
 
 /**
- * Presence Heartbeat to detect real disconnects
+ * No persistent presence tracking: the game does not create presence documents.
+ * Active-match communication is handled by Realtime Database subscriptions.
  */
-export async function sendPresenceHeartbeat(matchId: string, playerId: string): Promise<void> {
-  if (db && isConfigured && await ensureFirebaseAuth()) {
-    try {
-      const presenceId = auth?.currentUser?.uid || playerId;
-      const presenceDocRef = doc(db, 'presence', presenceId);
-      await setDoc(presenceDocRef, {
-        playerId,
-        authUid: auth?.currentUser?.uid || null,
-        matchId,
-        lastSeenAt: Date.now(),
-        status: 'online'
-      }, { merge: true });
-    } catch {
-      // Non-critical background ping
-    }
-  }
+export async function sendPresenceHeartbeat(_matchId: string, _playerId: string): Promise<void> {
+  // Intentionally empty. No heartbeat or presence record is saved.
 }
