@@ -118,7 +118,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(260px,38dvh,300px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-[radial-gradient(ellipse_at_top,rgba(203,135,66,0.17),transparent_58%),repeating-linear-gradient(115deg,rgba(255,255,255,0.018)_0px,rgba(255,255,255,0.018)_2px,transparent_2px,transparent_7px),linear-gradient(180deg,#343936_0%,#252a27_18%,#171b19_55%,#0d100f_100%)] border-t-2 border-[#bd8748] shadow-[0_-8px_24px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,224,170,0.32)] px-2 sm:px-3 py-1 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(188px,27dvh,224px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-[radial-gradient(ellipse_at_top,rgba(203,135,66,0.17),transparent_58%),repeating-linear-gradient(115deg,rgba(255,255,255,0.018)_0px,rgba(255,255,255,0.018)_2px,transparent_2px,transparent_7px),linear-gradient(180deg,#343936_0%,#252a27_18%,#171b19_55%,#0d100f_100%)] border-t-2 border-[#bd8748] shadow-[0_-8px_24px_rgba(0,0,0,0.72),inset_0_1px_0_rgba(255,224,170,0.32)] px-2 sm:px-3 py-1 text-slate-100">
       
       {/* Tornillos decorativos y textura de metal envejecido; no interceptan los controles */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-2 top-0.5 flex justify-between opacity-75">
@@ -130,7 +130,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
         <div className="col-span-3 row-start-1 flex flex-col justify-center min-w-0 w-full">
-          <span className="text-sm sm:text-base font-black uppercase tracking-widest text-[#f5c77d] mb-0 font-['Fredoka',sans-serif] drop-shadow-[0_1px_2px_#000]">
+          <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#f5c77d] mb-0 font-['Fredoka',sans-serif] drop-shadow-[0_1px_2px_#000]">
             POWER-UP
           </span>
           <div className="flex items-center justify-center gap-1 sm:gap-1.5 bg-[linear-gradient(180deg,#080c0a,#19221c_48%,#090c0a)] p-1 rounded-md border border-[#9d7946] shadow-[inset_0_2px_8px_rgba(0,0,0,0.95),0_1px_0_rgba(255,207,115,0.2),0_2px_5px_rgba(0,0,0,0.35)]">
@@ -147,7 +147,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                     }
                   }}
                   disabled={!isMyTurn || !hasItem}
-                  className={`flex-1 min-w-0 max-w-14 h-10 sm:h-12 rounded-md flex items-center justify-center transition relative border-2 ${
+                  className={`flex-1 min-w-0 max-w-14 h-7 sm:h-8 rounded-sm flex items-center justify-center transition relative border-2 ${
                     isSelected
                       ? 'border-[#ffe27a] ring-1 ring-amber-300 bg-gradient-to-b from-[#49d968] to-[#12642b] shadow-[0_0_10px_#f59e0b,inset_0_0_8px_rgba(255,255,190,0.22)]'
                       : hasItem
@@ -203,22 +203,22 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         {/* 2. VIENTO & ÁNGULO ZONE (Pure visual readout - angle controlled by mouse) */}
         {/* 2. WIND COMPASS + AIM ANGLE */}
         <div className="col-start-1 row-start-2 flex flex-col items-center justify-center gap-0 min-w-0">
-          <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-[#f5c77d]">VIENTO</span>
-          <div className="relative w-[66px] h-[66px] sm:w-[72px] sm:h-[72px] rounded-full border-[3px] border-[#171b1b] bg-[radial-gradient(circle_at_30%_22%,#8ceaff_0%,#168bd0_38%,#07518c_72%,#061c2c_100%)] shadow-[inset_0_2px_3px_rgba(255,255,255,0.55),inset_0_-4px_6px_rgba(0,0,0,0.4),0_0_0_2px_#a66b32,0_3px_6px_rgba(0,0,0,0.75)] flex items-center justify-center" title={`Brújula del viento: ${wind.speed} km/h`}>
-            <span className="text-3xl sm:text-4xl font-black text-red-600 drop-shadow" style={{ transform: wind.direction > 0 ? 'rotate(0deg)' : 'rotate(180deg)' }}>➜</span>
+          <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#f5c77d]">VIENTO</span>
+          <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full border-[3px] border-[#171b1b] bg-[radial-gradient(circle_at_30%_22%,#8ceaff_0%,#168bd0_38%,#07518c_72%,#061c2c_100%)] shadow-[inset_0_2px_3px_rgba(255,255,255,0.55),inset_0_-4px_6px_rgba(0,0,0,0.4),0_0_0_2px_#a66b32,0_3px_6px_rgba(0,0,0,0.75)] flex items-center justify-center" title={`Brújula del viento: ${wind.speed} km/h`}>
+            <span className="text-xl sm:text-2xl font-black text-red-600 drop-shadow" style={{ transform: wind.direction > 0 ? 'rotate(0deg)' : 'rotate(180deg)' }}>➜</span>
           </div>
           <span className="text-[8px] sm:text-[9px] font-black text-[#c4d7e8] whitespace-nowrap">{wind.speed} km/h</span>
         </div>
 
         <div className="col-start-2 row-start-2 flex items-center justify-center min-w-0">
-          <div className="min-w-[117px] sm:min-w-[141px] px-3 py-2 bg-[linear-gradient(180deg,#43e77a_0%,#148544_48%,#075329_100%)] border-[3px] border-[#171c18] shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_0_0_1px_#b87936,0_2px_5px_rgba(0,0,0,0.7)] text-center">
-            <span className="text-2xl sm:text-3xl font-black text-black">{angle}°</span>
+          <div className="min-w-[78px] sm:min-w-[94px] px-2 py-1 bg-[linear-gradient(180deg,#43e77a_0%,#148544_48%,#075329_100%)] border-[3px] border-[#171c18] shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_0_0_1px_#b87936,0_2px_5px_rgba(0,0,0,0.7)] text-center">
+            <span className="text-lg sm:text-xl font-black text-black">{angle}°</span>
           </div>
         </div>
 
         {/* 3. FUERZA ZONE: Flexible Bar */}
         <div className="col-span-3 row-start-3 min-w-0 w-full flex flex-col justify-center px-0 pb-0">
-          <div className="flex items-center justify-between text-sm sm:text-base font-black uppercase text-[#e4c28a] mb-0 font-['Fredoka',sans-serif]">
+          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase text-[#e4c28a] mb-0 font-['Fredoka',sans-serif]">
             <span>{isHoldingFire ? 'CARGANDO...' : 'FUERZA'}</span>
             <span className={`font-mono font-bold ${isHoldingFire ? 'text-yellow-300 scale-110' : 'text-amber-200'}`}>
               {power}%
@@ -234,7 +234,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                 value={power}
                 onChange={(e) => onPowerChange(Number(e.target.value))}
                 disabled={!isMyTurn || isFiring}
-                className={`w-full accent-amber-400 h-3 sm:h-4 bg-slate-950 rounded-lg appearance-none cursor-pointer border transition-all ${
+                className={`w-full accent-amber-400 h-2 sm:h-2.5 bg-slate-950 rounded-lg appearance-none cursor-pointer border transition-all ${
                   isHoldingFire ? 'border-yellow-300 shadow-[0_0_10px_#f59e0b]' : 'border-amber-600/70'
                 }`}
               />
@@ -263,7 +263,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             onPointerUp={handleFirePointerUp}
             onPointerLeave={handleFirePointerLeave}
             disabled={!isMyTurn || isFiring}
-            className={`w-[96px] h-[96px] sm:w-[114px] sm:h-[114px] rounded-full border-[3px] border-black shadow-[inset_0_3px_4px_rgba(255,255,255,0.35),inset_0_-6px_8px_rgba(0,0,0,0.25),0_2px_5px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center transition-all select-none touch-none ${
+            className={`w-[64px] h-[64px] sm:w-[76px] sm:h-[76px] rounded-full border-[3px] border-black shadow-[inset_0_3px_4px_rgba(255,255,255,0.35),inset_0_-6px_8px_rgba(0,0,0,0.25),0_2px_5px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center transition-all select-none touch-none ${
               !isMyTurn || isFiring
                 ? 'bg-gradient-to-b from-slate-600 to-slate-900 opacity-40 cursor-not-allowed'
                 : isHoldingFire
@@ -273,7 +273,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             title={!isMyTurn ? 'Esperando turno' : isFiring ? 'Disparo en curso...' : 'Mantén presionado para cargar fuerza, suelta para disparar'}
           >
             <Flame className={`w-5 h-5 text-amber-100 fill-amber-200 ${isHoldingFire ? 'scale-115 animate-bounce' : ''}`} />
-            <span className="text-sm font-black uppercase tracking-tight text-white drop-shadow font-['Fredoka',sans-serif] leading-tight">
+            <span className="text-[9px] font-black uppercase tracking-tight text-white drop-shadow font-['Fredoka',sans-serif] leading-tight">
               {isHoldingFire ? '¡SUELTA!' : isFiring ? 'EN VUELO' : 'FIRE'}
             </span>
           </button>
