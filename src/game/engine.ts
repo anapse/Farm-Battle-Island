@@ -256,7 +256,7 @@ export class GameEngine {
     this.storkFlight = {
       active: true,
       x: -180,
-      y: 150,
+      y: 210,
       speed: 250,
       frameTime: 0,
       dropP1: false,
@@ -273,7 +273,7 @@ export class GameEngine {
       id: `crate_${islandIndex}_${Date.now()}_${Math.round(x)}`,
       islandIndex,
       x,
-      y: 200,
+      y: 260,
       width: 80,
       height: 56,
       collected: false,
@@ -704,8 +704,8 @@ export class GameEngine {
 
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    const width = 168;
-    const height = 112;
+    const width = 190;
+    const height = 127;
     ctx.drawImage(frame, stork.x - width / 2, stork.y - height / 2, width, height);
     ctx.restore();
   }
