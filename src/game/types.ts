@@ -34,6 +34,8 @@ export interface SceneryObject {
   height: number;
   supportedByBlockId: string;
   isDestroyed: boolean;
+  vy?: number;
+  isFalling?: boolean;
 }
 
 export interface SupplyCrate {
