@@ -1,4 +1,4 @@
-import { ref, set, update, onValue, runTransaction, remove } from 'firebase/database';
+import { ref, set, update, onValue, runTransaction, remove, get } from 'firebase/database';
 import { rtdb, auth, isConfigured, ensureFirebaseAuth } from './firebase';
 import { 
   OnlineMatch, 
