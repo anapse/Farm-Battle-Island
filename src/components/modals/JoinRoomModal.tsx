@@ -2,6 +2,7 @@ import { getAssetUrl } from '../../utils/assets';
 import React, { useState, useEffect } from 'react';
 import { subscribeToAvailableMatches } from '../../services/onlineMatchService';
 import { OnlineMatch } from '../../types/game';
+import { getIslandById } from '../../config/islands';
 import { X, Users, RefreshCw, Clock, Shield, ArrowRight, PlusCircle } from 'lucide-react';
 
 interface JoinRoomModalProps {
@@ -102,6 +103,9 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
                   <span>{displayCreatorName}</span>
                 </div>
 
+                <div className="mt-1 text-[10px] text-emerald-300 font-black uppercase tracking-wide">
+                  🏝️ {getIslandById(match.settings.islandId).title} · {getIslandById(match.settings.islandId).name}
+                </div>
                 <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-300">
                   <span className="flex items-center gap-0.5 text-amber-500 font-bold">
                     <Clock className="w-3 h-3 text-[#9b8b62]" />
