@@ -22,6 +22,7 @@ export class EffectManager {
   private musicSource: AudioBufferSourceNode | null = null;
   private musicGain: GainNode | null = null;
   private audioPrimed = false;
+  private muted = false;
 
   private readonly soundFiles: Record<SoundId, string> = {
     bg_music: 'fondosonido.mp3',
@@ -52,7 +53,7 @@ export class EffectManager {
         if (!AudioCtor) return null;
         this.audioContext = new AudioCtor();
       }
-      if (this.audioContext.state === 'suspended') void this.audioContext.resume();
+      if (this.audioContext.state === 'suspended' && !this.muted) void this.audioContext.resume();
       return this.audioContext;
     } catch {
       return null;
@@ -93,7 +94,19 @@ export class EffectManager {
     );
   }
 
+  public setMuted(muted: boolean) {
+    this.muted = muted;
+    if (muted) {
+      if (this.audioContext && this.audioContext.state === 'running') void this.audioContext.suspend();
+      if (this.musicSource) { try { this.musicSource.stop(); } catch {} this.musicSource = null; this.musicGain = null; }
+      return;
+    }
+    if (this.audioContext && this.audioContext.state === 'suspended') void this.audioContext.resume();
+    if (this.audioPrimed) this.startMusic();
+  }
+
   private playSound(id: SoundId, volume = 1, loop = false) {
+    if (this.muted) return;
     const ctx = this.getAudioContext();
     if (!ctx) return;
 
@@ -127,6 +140,7 @@ export class EffectManager {
   }
 
   private playTone(start: number, end: number, duration: number, volume: number, type: OscillatorType = 'triangle') {
+    if (this.muted) return;
     const ctx = this.getAudioContext();
     if (!ctx) return;
     const now = ctx.currentTime;
@@ -150,7 +164,7 @@ export class EffectManager {
   }
 
   public primeAudio() {
-    if (this.audioPrimed) return;
+    if (this.muted || this.audioPrimed) return;
     this.audioPrimed = true;
     const ctx = this.getAudioContext();
     if (!ctx) return;
