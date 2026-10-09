@@ -50,6 +50,15 @@ export class GameEngine {
   public islandId: string;
 
   private waveOffset: number = 0;
+  private storkFlight: {
+    active: boolean;
+    x: number;
+    y: number;
+    speed: number;
+    frameTime: number;
+    dropP1: boolean;
+    dropP2: boolean;
+  } | null = null;
 
   private onTurnComplete?: () => void;
   private onPlayerHit?: (target: 'player1' | 'player2', damage: number) => void;
@@ -241,37 +250,36 @@ export class GameEngine {
   }
 
   public triggerStorkSupplyDrop() {
-    const p1Spawn = this.terrain.getSpawnPosition(1);
-    const p2Spawn = this.terrain.getSpawnPosition(2);
-
-    this.supplyCrates = [
-      {
-        id: `crate_p1_${Date.now()}`,
-        islandIndex: 1,
-        x: p1Spawn.x + 36,
-        y: 210,
-        width: 80,
-        height: 56,
-        collected: false,
-        hasLanded: false,
-        vy: 65
-      },
-      {
-        id: `crate_p2_${Date.now()}`,
-        islandIndex: 2,
-        x: p2Spawn.x - 36,
-        y: 210,
-        width: 28,
-        height: 28,
-        collected: false,
-        hasLanded: false,
-        vy: 65
-      }
-    ];
+    // The stork crosses the whole battlefield below the HUD. Each chest is
+    // released from the stork when it reaches the corresponding island.
+    this.supplyCrates = [];
+    this.storkFlight = {
+      active: true,
+      x: -180,
+      y: 150,
+      speed: 250,
+      frameTime: 0,
+      dropP1: false,
+      dropP2: false
+    };
 
     if (this.onStorkEvent) {
       this.onStorkEvent();
     }
+  }
+
+  private releaseStorkCrate(islandIndex: 1 | 2, x: number) {
+    this.supplyCrates.push({
+      id: `crate_${islandIndex}_${Date.now()}_${Math.round(x)}`,
+      islandIndex,
+      x,
+      y: 200,
+      width: 80,
+      height: 56,
+      collected: false,
+      hasLanded: false,
+      vy: 65
+    });
   }
 
   private handleProjectileImpact(
@@ -462,7 +470,30 @@ export class GameEngine {
       }
     }
 
-    // 3. Update Falling & Grounded Supply Crates
+    // 3. Update the stork flight and release chests directly underneath it.
+    if (this.storkFlight?.active) {
+      const stork = this.storkFlight;
+      stork.x += stork.speed * dt;
+      stork.frameTime += dt;
+
+      const p1X = this.terrain.getSpawnPosition(1).x + 36;
+      const p2X = this.terrain.getSpawnPosition(2).x - 36;
+
+      if (!stork.dropP1 && stork.x >= p1X) {
+        this.releaseStorkCrate(1, p1X);
+        stork.dropP1 = true;
+      }
+      if (!stork.dropP2 && stork.x >= p2X) {
+        this.releaseStorkCrate(2, p2X);
+        stork.dropP2 = true;
+      }
+      if (stork.x > WorldConfig.WORLD_WIDTH + 220) {
+        stork.active = false;
+        this.storkFlight = null;
+      }
+    }
+
+    // 4. Update Falling & Grounded Supply Crates
     for (const crate of this.supplyCrates) {
       if (crate.collected) continue;
 
@@ -536,7 +567,8 @@ export class GameEngine {
     // 4. Animated Water Layer
     this.renderWater();
 
-    // 4.5 Render Supply Crates (Stork Drop)
+    // 4.5 Render Stork and its falling supply crates.
+    this.renderStork(ctx);
     this.renderSupplyCrates(ctx);
 
     // 5. Players & Vehicles
@@ -661,6 +693,21 @@ export class GameEngine {
     ctx.lineTo(0, waterY + 12);
     ctx.closePath();
     ctx.fill();
+  }
+
+  private renderStork(ctx: CanvasRenderingContext2D) {
+    const stork = this.storkFlight;
+    if (!stork?.active) return;
+
+    const frame = spriteManager.getStorkFrame(Math.floor(stork.frameTime * 8));
+    if (!frame) return;
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    const width = 168;
+    const height = 112;
+    ctx.drawImage(frame, stork.x - width / 2, stork.y - height / 2, width, height);
+    ctx.restore();
   }
 
   private renderSupplyCrates(ctx: CanvasRenderingContext2D) {
