@@ -68,7 +68,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
             onClick={onCycleSound}
             title={`Sonido: ${soundLevel === 'high' ? 'Alto' : soundLevel === 'medium' ? 'Medio' : soundLevel === 'low' ? 'Bajo' : 'Apagado'}. Pulsa para cambiar`}
             aria-label="Cambiar volumen"
-            className="text-slate-300 hover:text-white px-2 py-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer flex items-center gap-1"
+            className="text-white hover:brightness-110 px-3 py-2 rounded-xl bg-[linear-gradient(180deg,#ffe08a,#d68a18_52%,#76400b)] border-2 border-[#fff0b5] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#512b08] transition cursor-pointer flex items-center gap-2"
           >
             {soundLevel === 'off' ? <VolumeX className="w-4 h-4" /> : soundLevel === 'low' ? <Volume1 className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             <span className="text-[9px] font-black">{soundLevel === 'high' ? 'ALTO' : soundLevel === 'medium' ? 'MEDIO' : soundLevel === 'low' ? 'BAJO' : 'OFF'}</span>
@@ -78,14 +78,14 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
               setIsRefreshing(true);
               setTimeout(() => setIsRefreshing(false), 500);
             }}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
+            className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#526a7d,#243b4b_65%,#111f2a)] border-2 border-[#9cc9df] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_0_#101b22] transition cursor-pointer"
             title="Actualizar"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={onClose}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
+            className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#526a7d,#243b4b_65%,#111f2a)] border-2 border-[#9cc9df] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_0_#101b22] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
