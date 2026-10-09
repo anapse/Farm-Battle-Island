@@ -660,30 +660,21 @@ export async function concludeMatchOnline(params: {
   loserPlayerId: string;
   reason: 'lives_depleted' | 'time_expired' | 'voluntary_surrender' | 'opponent_disconnected';
 }): Promise<OnlineMatch | null> {
-  // Combat HP/lives/score are local match state. Firestore is only the
-  // authoritative place for the finished result metadata.
+  // Firestore is never used for live match state. Realtime Database temporarily
+  // arbitrates the finish so both clients cannot count the same result twice.
   const localBeforeFinish = getLocalMatches().find(m => m.matchId === params.matchId) || null;
-  if (localBeforeFinish?.gameState.processedForRanking) {
-    return localBeforeFinish;
-  }
+  if (localBeforeFinish?.gameState.processedForRanking) return localBeforeFinish;
 
   let finalMatch: OnlineMatch | null = localBeforeFinish;
-  let finishClaimed = true;
+  let finishClaimed = !rtdb || !isConfigured;
 
-  if (db && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
     try {
-      const matchDocRef = doc(db, 'matches', params.matchId);
-      const claimed = await runTransaction(db, async (transaction) => {
-        const snap = await transaction.get(matchDocRef);
-        if (!snap.exists()) return false;
-
-        const match = snap.data() as OnlineMatch;
-
-        // Protection: If already finished, return as-is to prevent duplicate calculations
-        if (match.status === 'finished' || match.gameState.processedForRanking) {
-          return false;
-        }
-
+      const matchRef = ref(rtdb, `activeMatches/${params.matchId}`);
+      const result = await runTransaction(matchRef, (current) => {
+        if (!current) return;
+        const match = current as OnlineMatch;
+        if (match.status === 'finished' || match.gameState.processedForRanking) return;
         match.status = 'finished';
         match.gameState.winnerPlayerId = params.winnerPlayerId;
         match.gameState.loserPlayerId = params.loserPlayerId;
@@ -691,26 +682,28 @@ export async function concludeMatchOnline(params: {
         match.gameState.finishedAt = Date.now();
         match.gameState.processedForRanking = true;
         match.updatedAt = Date.now();
-
-        transaction.update(matchDocRef, {
-          status: match.status,
-          'gameState.winnerPlayerId': match.gameState.winnerPlayerId,
-          'gameState.loserPlayerId': match.gameState.loserPlayerId,
-          'gameState.finishReason': match.gameState.finishReason,
-          'gameState.finishedAt': match.gameState.finishedAt,
-          'gameState.processedForRanking': match.gameState.processedForRanking,
-          updatedAt: match.updatedAt
-        });
-        return true;
-      });
-      finishClaimed = claimed;
+        return {
+          ...match,
+          player1: toPersistentPlayer(match.player1),
+          player2: match.player2 ? toPersistentPlayer(match.player2) : null
+        };
+      }, { applyLocally: false });
+      finishClaimed = result.committed;
+      if (result.snapshot.exists()) {
+        finalMatch = hydrateMatch(result.snapshot.val() as OnlineMatch, localBeforeFinish);
+      }
+      // Finished room data is temporary and removed after clients have time to show results.
+      if (result.committed) {
+        setTimeout(() => {
+          void remove(matchRef).catch((e) => console.warn('Temporary match cleanup failed:', e));
+        }, 120000);
+      }
     } catch (e) {
-      console.warn('Firestore concludeMatch error, handling locally:', e);
+      console.warn('Realtime Database concludeMatch error, handling locally:', e);
     }
   }
 
-  // Always finalize the local cache as well. Firestore may successfully
-  // claim the finish while this browser still has the active combat snapshot.
+  // Always finalize the local cache as well; remote match state is temporary.
   // Without this local transition the result modal/ranking can remain stuck.
   const local = getLocalMatches().find(m => m.matchId === params.matchId);
   if (!local) return finalMatch;
@@ -735,9 +728,9 @@ export async function concludeMatchOnline(params: {
 
   finalMatch = local;
 
-  // Update TOP 50 Leaderboard & Stats only once. Firestore's finished flag
-  // is the idempotency gate when multiple clients finish the same match.
-  if (finalMatch && finalMatch.gameState.processedForRanking && (finishClaimed || !db || !isConfigured)) {
+  // Persist only the final ranking statistics to Firestore. Realtime Database's
+  // finished flag prevents both clients from counting the same result.
+  if (finalMatch && finalMatch.gameState.processedForRanking && finishClaimed) {
     const isWinnerP1 = finalMatch.player1.id === params.winnerPlayerId;
     const winner = isWinnerP1 ? finalMatch.player1 : finalMatch.player2;
     const loser = isWinnerP1 ? finalMatch.player2 : finalMatch.player1;
@@ -750,7 +743,7 @@ export async function concludeMatchOnline(params: {
     }
 
     if (params.reason === 'voluntary_surrender' || params.reason === 'opponent_disconnected') {
-      trackRoomAbandoned(loser?.name || 'Rival', winner?.name || 'Comandante');
+      trackRoomAbandoned(loser?.name || 'Rival', winner?.name || 'Jugador');
     } else {
       trackRoomCompleted(winner?.characterId || null, loser?.characterId || null);
     }
