@@ -63,6 +63,7 @@ export default function App() {
 
   // Current active online match
   const [onlineMatch, setOnlineMatch] = useState<OnlineMatch | null>(null);
+  const [pendingAiSettings, setPendingAiSettings] = useState(false);
   const [playerRole, setPlayerRole] = useState<'player1' | 'player2'>('player1');
 
   // Pending room settings during creation flow
@@ -651,7 +652,7 @@ export default function App() {
     }
   }, [angle, power, onlineMatch?.gameState.currentTurnPlayerId, onlineMatch?.gameState.wind, playerRole]);
 
-  // ACTION: JUGAR (Quick Play vs AI)
+  // ACTION: JUGAR CONTRA IA — primero configurar tiempo, vidas e isla.
   const handleQuickPlay = async (requestedName?: string) => {
     const activePlayerName = (requestedName ?? playerName).trim();
     if (activePlayerName.length < 2) {
@@ -659,13 +660,15 @@ export default function App() {
       return;
     }
     handlePlayerNameChange(activePlayerName);
+    setPendingAiSettings(true);
+    setScreen('create_room');
+  };
+
+  const handleAiSettingsConfigured = async (timeLimit: GameTimeOption, lives: GameLivesOption, islandId: string) => {
+    setPendingAiSettings(false);
     try {
-      // Detach the finished match before creating the new one so its
-      // active-match subscription cannot interfere with the replay flow.
       setOnlineMatch(null);
       setMatchResult(null);
-      // A new match starts completely clean: no power-ups, no previous
-      // marked shot, no previous selection or combat state.
       setPowerUpSlots([null, null, null, null]);
       setActivePowerUp(null);
       setActiveSlotIndex(null);
@@ -677,10 +680,10 @@ export default function App() {
       lastExpiredMatchRef.current = '';
 
       const match = await createOnlineMatch({
-        creatorPlayerName: activePlayerName,
-        timeLimitSeconds: 300,
-        lives: 3,
-        islandId: 'isla_1',
+        creatorPlayerName: playerName,
+        timeLimitSeconds: timeLimit === '5_MIN' ? 300 : null,
+        lives,
+        islandId,
         isAiMatch: true
       });
       setOnlineMatch(match);
@@ -689,6 +692,7 @@ export default function App() {
       setScreen('char_select');
     } catch (e) {
       alert((e as Error).message);
+      setScreen('menu');
     }
   };
 
@@ -942,8 +946,8 @@ export default function App() {
       {screen === 'create_room' && (
         <CreateRoomModal
           creatorName={playerName}
-          onClose={() => setScreen('menu')}
-          onCreate={handleSettingsConfigured}
+          onClose={() => { setPendingAiSettings(false); setScreen('menu'); }}
+          onCreate={pendingAiSettings ? handleAiSettingsConfigured : handleSettingsConfigured}
         />
       )}
 
