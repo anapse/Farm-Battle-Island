@@ -853,12 +853,35 @@ export default function App() {
     if (!item) return;
 
     if (item === 'corazon' || item === 'corazon_doble') {
+      const healAmount = item === 'corazon_doble' ? 20 : 10;
       const healType = item === 'corazon_doble' ? 'heal_20' : 'heal_10';
-      const healed = engineRef.current?.applyPowerUp(playerRole, healType);
-      showTacticalToast(
-        item === 'corazon_doble' ? '+20% de vida restaurada ❤️❤️' : '+10% de vida restaurada ❤️',
-        'success'
-      );
+      const localResult = engineRef.current?.applyPowerUp(playerRole, healType);
+
+      // The HUD reads HP from onlineMatch, not directly from the canvas engine.
+      // Update both states so the healing is immediately visible and persists
+      // through the online-match subscription.
+      setOnlineMatch(prev => {
+        if (!prev) return prev;
+        const isP1 = playerRole === 'player1';
+        const currentPlayer = isP1 ? prev.player1 : prev.player2;
+        if (!currentPlayer) return prev;
+        const baseHp = currentPlayer.hp;
+        const nextHp = Math.min(currentPlayer.maxHp, baseHp + Math.round(currentPlayer.maxHp * healAmount / 100));
+        if (nextHp === baseHp) {
+          showTacticalToast('La salud ya está al máximo ❤️', 'info');
+          return prev;
+        }
+        if (localResult?.newHp === undefined) {
+          engineRef.current?.getEngine().players.getPlayer(playerRole);
+        }
+        showTacticalToast(
+          item === 'corazon_doble' ? `+20 de vida restaurada ❤️❤️` : `+10 de vida restaurada ❤️`,
+          'success'
+        );
+        return isP1
+          ? { ...prev, player1: { ...prev.player1, hp: nextHp } }
+          : { ...prev, player2: { ...prev.player2!, hp: nextHp } };
+      });
       setPowerUpSlots(prev => {
         const next = [...prev];
         next[index] = null;
