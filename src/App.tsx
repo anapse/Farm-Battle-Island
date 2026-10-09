@@ -1143,6 +1143,7 @@ export default function App() {
           surrenderMessage={matchResult.surrenderMessage}
           winnerCharacterId={matchResult.winnerCharacterId}
           onPlayAgain={() => {
+            const wasAiMatch = Boolean(onlineMatch?.isAiMatch);
             setMatchResult(null);
             setOnlineMatch(null);
             setPowerUpSlots([null, null, null, null]);
@@ -1150,7 +1151,10 @@ export default function App() {
             setActiveSlotIndex(null);
             setLastShotPower(null);
             setPendingCreation(null);
-            setScreen('join_room');
+            // Replay the same mode: AI matches return to AI settings;
+            // online matches return to the multiplayer lobby.
+            setPendingAiSettings(wasAiMatch);
+            setScreen(wasAiMatch ? 'create_room' : 'join_room');
           }}
           onBackToMenu={handleBackToMenu}
         />
