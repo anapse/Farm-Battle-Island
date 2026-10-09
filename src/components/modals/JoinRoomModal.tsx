@@ -91,22 +91,22 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
           disambiguatedMatches.map(({ match, displayCreatorName }) => (
             <div
               key={match.matchId}
-              className="bg-slate-950/80 backdrop-blur-md border border-slate-700/80 hover:border-sky-400 rounded-xl p-3 flex items-center justify-between transition shadow-md"
+              className="bg-slate-950/80 backdrop-blur-md border border-slate-700/80 hover:border-sky-700 rounded-xl p-3 flex items-center justify-between transition shadow-md"
             >
               <div className="flex flex-col">
                 <div className="font-black text-sm text-white flex items-center gap-1.5">
-                  <span className="text-amber-400">👑</span>
+                  <span className="text-amber-500">👑</span>
                   <span>{displayCreatorName}</span>
                 </div>
 
                 <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-300">
-                  <span className="flex items-center gap-0.5 text-amber-300 font-bold">
-                    <Clock className="w-3 h-3 text-cyan-400" />
+                  <span className="flex items-center gap-0.5 text-amber-500 font-bold">
+                    <Clock className="w-3 h-3 text-cyan-600" />
                     {match.settings.timeLimit ? '5 MIN' : '∞'}
                   </span>
                   <span className="text-slate-500">·</span>
-                  <span className="flex items-center gap-0.5 text-red-300 font-bold">
-                    <Shield className="w-3 h-3 text-red-400" />
+                  <span className="flex items-center gap-0.5 text-red-500 font-bold">
+                    <Shield className="w-3 h-3 text-red-500" />
                     {match.settings.lives} {match.settings.lives === 1 ? 'vida' : 'vidas'}
                   </span>
                 </div>
@@ -114,7 +114,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
 
               <button
                 onClick={() => onJoin(match.matchId)}
-                className="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-black text-xs uppercase tracking-wider shadow border border-sky-300 flex items-center gap-1 active:scale-95 transition cursor-pointer"
+                className="px-3 py-1.5 rounded-lg bg-sky-700 hover:bg-sky-600 text-white font-black text-xs uppercase tracking-wider shadow border border-sky-700 flex items-center gap-1 active:scale-95 transition cursor-pointer"
               >
                 <span>UNIR</span>
                 <ArrowRight className="w-3 h-3" />
