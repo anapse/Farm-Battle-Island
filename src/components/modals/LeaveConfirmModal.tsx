@@ -12,7 +12,7 @@ export const LeaveConfirmModal: React.FC<LeaveConfirmModalProps> = ({
   onConfirmLeave
 }) => {
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-2 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
