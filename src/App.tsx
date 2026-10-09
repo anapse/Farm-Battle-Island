@@ -64,6 +64,8 @@ export default function App() {
   // Current active online match
   const [onlineMatch, setOnlineMatch] = useState<OnlineMatch | null>(null);
   const [pendingAiSettings, setPendingAiSettings] = useState(false);
+  const [soundLevel, setSoundLevel] = useState<'high' | 'medium' | 'low' | 'off'>('high');
+  const soundLevelRef = useRef<'high' | 'medium' | 'low' | 'off'>('high');
   const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'medium' | 'hard' | 'very_hard'>('medium');
   const [playerRole, setPlayerRole] = useState<'player1' | 'player2'>('player1');
 
@@ -84,10 +86,11 @@ export default function App() {
   useEffect(() => {
     const audio = new Audio(`${import.meta.env.BASE_URL}assets/sonido/fondosonido.mp3`);
     audio.loop = true;
-    audio.volume = 0.28;
+    audio.volume = 0.65;
     backgroundMusicRef.current = audio;
 
     const tryPlay = () => {
+      if (soundLevelRef.current === 'off') return;
       void audio.play().catch(() => {
         // Browsers may block autoplay until the player interacts with the page.
       });
@@ -116,6 +119,32 @@ export default function App() {
       backgroundMusicRef.current = null;
     };
   }, []);
+
+  // Shared volume control for the menu, lobby and background music.
+  useEffect(() => {
+    soundLevelRef.current = soundLevel;
+    const audio = backgroundMusicRef.current;
+    if (!audio) return;
+    const volumes = { high: 0.65, medium: 0.35, low: 0.12, off: 0 };
+    audio.volume = volumes[soundLevel];
+    if (soundLevel === 'off') {
+      audio.pause();
+    } else {
+      void audio.play().catch(() => {
+        // The browser may require a user gesture before resuming audio.
+      });
+    }
+  }, [soundLevel]);
+
+  const cycleSoundLevel = () => {
+    setSoundLevel(current => {
+      const next = current === 'high' ? 'medium'
+        : current === 'medium' ? 'low'
+        : current === 'low' ? 'off' : 'high';
+      soundLevelRef.current = next;
+      return next;
+    });
+  };
 
   // Initialize official sprites on app startup
   useEffect(() => {
@@ -952,6 +981,8 @@ export default function App() {
           onContact={() => setShowContact(true)}
           playerName={playerName}
           onPlayerNameChange={handlePlayerNameChange}
+          soundLevel={soundLevel}
+          onCycleSound={cycleSoundLevel}
         />
       )}
 
@@ -972,6 +1003,8 @@ export default function App() {
           onClose={() => setScreen('menu')}
           onJoin={handleJoinSelectedMatch}
           onCreateRoom={handleOpenCreateRoom}
+          soundLevel={soundLevel}
+          onCycleSound={cycleSoundLevel}
         />
       )}
 
