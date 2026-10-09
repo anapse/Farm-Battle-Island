@@ -127,6 +127,10 @@ export class GameCanvasEngine {
     this.engine.players.movePlayer(role, deltaX, this.engine.terrain);
   }
 
+  public setMuted(muted: boolean) {
+    this.engine.effects.setMuted(muted);
+  }
+
   public resize(width: number, height: number) {
     this.engine.resize(width, height);
   }
