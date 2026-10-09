@@ -42,7 +42,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between pt-1">
         <div className="flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-amber-400 fill-amber-400" />
+          <Trophy className="w-5 h-5 text-amber-700 fill-amber-600" />
           <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
             TOP 50
           </h2>
@@ -66,12 +66,12 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       </div>
 
       {/* Table Column Headers */}
-      <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[10px] font-black uppercase text-amber-300/90 border-b border-slate-800 mt-2 bg-slate-950/80 rounded-t-lg backdrop-blur-sm">
+      <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[10px] font-black uppercase text-amber-500/90 border-b border-slate-800 mt-2 bg-slate-950/80 rounded-t-lg backdrop-blur-sm">
         <span className="col-span-2 text-center">POS</span>
         <span className="col-span-4">JUGADOR</span>
         <span className="col-span-2 text-right">PUNTOS</span>
-        <span className="col-span-2 text-right text-emerald-400">VIC</span>
-        <span className="col-span-2 text-right text-red-400">DER</span>
+        <span className="col-span-2 text-right text-emerald-500">VIC</span>
+        <span className="col-span-2 text-right text-red-500">DER</span>
       </div>
 
       {/* Ranking List */}
@@ -85,7 +85,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               key={player.playerName + index}
               className={`grid grid-cols-12 gap-1 items-center px-2.5 py-1.5 rounded-lg text-xs transition border ${
                 isCurrent
-                  ? 'bg-amber-950/80 border-amber-400 text-amber-100 font-bold shadow-sm'
+                  ? 'bg-amber-950/80 border-amber-600 text-amber-200 font-bold shadow-sm'
                   : isTop3
                   ? 'bg-slate-900/90 border-slate-700 text-white font-semibold'
                   : 'bg-slate-950/60 border-slate-800 text-slate-300'
@@ -94,11 +94,11 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               {/* Posición */}
               <div className="col-span-2 flex items-center justify-center font-mono font-black">
                 {index === 0 ? (
-                  <span className="text-yellow-400 text-sm">🥇 1</span>
+                  <span className="text-yellow-600 text-sm">🥇 1</span>
                 ) : index === 1 ? (
                   <span className="text-slate-300 text-sm">🥈 2</span>
                 ) : index === 2 ? (
-                  <span className="text-amber-600 text-sm">🥉 3</span>
+                  <span className="text-amber-700 text-sm">🥉 3</span>
                 ) : (
                   <span className="text-slate-500 font-mono text-[11px]">{index + 1}</span>
                 )}
@@ -107,21 +107,21 @@ export const RankingModal: React.FC<RankingModalProps> = ({
               {/* Jugador */}
               <div className="col-span-4 truncate font-bold text-slate-100">
                 {player.playerName}
-                {isCurrent && <span className="ml-1 text-[9px] text-amber-400 font-black">(TÚ)</span>}
+                {isCurrent && <span className="ml-1 text-[9px] text-amber-500 font-black">(TÚ)</span>}
               </div>
 
               {/* Puntos */}
-              <div className="col-span-2 text-right font-mono font-black text-amber-300">
+              <div className="col-span-2 text-right font-mono font-black text-amber-500">
                 {player.score.toLocaleString()}
               </div>
 
               {/* Victorias */}
-              <div className="col-span-2 text-right font-mono font-bold text-emerald-400">
+              <div className="col-span-2 text-right font-mono font-bold text-emerald-500">
                 {player.victories}
               </div>
 
               {/* Derrotas */}
-              <div className="col-span-2 text-right font-mono font-bold text-red-400">
+              <div className="col-span-2 text-right font-mono font-bold text-red-500">
                 {player.defeats}
               </div>
             </div>
