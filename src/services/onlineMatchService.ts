@@ -510,15 +510,14 @@ export async function sendShotOnline(params: {
     timestamp: Date.now()
   };
 
-  if (db && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
     try {
-      const matchDocRef = doc(db, 'matches', params.matchId);
-      await updateDoc(matchDocRef, {
-        'gameState.lastShot': shotEvent,
+      await update(ref(rtdb, `activeMatches/${params.matchId}`), {
+        'gameState/lastShot': shotEvent,
         updatedAt: Date.now()
       });
     } catch (e) {
-      console.warn('Firestore sendShot error:', e);
+      console.warn('Realtime Database sendShot error:', e);
     }
   }
 
@@ -590,16 +589,15 @@ export async function registerImpactOnline(params: {
     return getLocalMatches().find(m => m.matchId === params.matchId) || local;
   }
 
-  if (db && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
     try {
-      const matchDocRef = doc(db, 'matches', params.matchId);
-      await updateDoc(matchDocRef, {
-        'gameState.lastImpact': impactEvent,
+      await update(ref(rtdb, `activeMatches/${params.matchId}`), {
+        'gameState/lastImpact': impactEvent,
         updatedAt: Date.now()
       });
     } catch (e) {
-      // Local state was already updated; Firestore failure must not freeze the HUD.
-      console.warn('Firestore registerImpact error:', e);
+      // Local state was already updated; realtime sync failure must not freeze the HUD.
+      console.warn('Realtime Database registerImpact error:', e);
     }
   }
 
@@ -634,15 +632,17 @@ export async function changeTurnOnline(
     saveLocalMatch(local);
   }
 
-  if (db && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
     try {
-      const matchDocRef = doc(db, 'matches', matchId);
-      await updateDoc(matchDocRef, {
-        ...updatePayload,
-        'gameState.turnStartedAt': local?.gameState.turnStartedAt || updatePayload['gameState.turnStartedAt']
+      await update(ref(rtdb, `activeMatches/${matchId}`), {
+        'gameState/currentTurnPlayerId': updatePayload['gameState.currentTurnPlayerId'],
+        'gameState/turnStartedAt': local?.gameState.turnStartedAt || updatePayload['gameState.turnStartedAt'],
+        'gameState/wind/speed': newWindSpeed,
+        'gameState/wind/direction': newWindDirection,
+        updatedAt: updatePayload.updatedAt
       });
     } catch (e) {
-      console.warn('Firestore changeTurn error:', e);
+      console.warn('Realtime Database changeTurn error:', e);
     }
   }
 
