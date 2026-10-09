@@ -182,7 +182,7 @@ export class GameEngine {
     // 2. Cannon recoil & muzzle flash particles
     shooter.recoilOffset = 14;
     this.effects.createExplosion(shooter.x + shooter.facing * 32, shooter.y - 18, 16, false);
-    this.effects.playShot(power);
+    this.effects.playShot(shooter.power);
 
     // Determine shot attributes based on power-up
     let mass = 1.0;
