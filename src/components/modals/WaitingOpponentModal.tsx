@@ -41,14 +41,14 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-2 max-w-[280px] w-full mx-auto">
         <div className="relative w-20 h-20 mb-4 flex items-center justify-center">
           <div className="absolute inset-0 rounded-full bg-amber-700/10 animate-ping" />
-          <div className="absolute inset-1 rounded-full border-2 border-dashed border-amber-600 animate-spin" />
-          <div className="w-12 h-12 rounded-full bg-amber-700/20 border border-amber-600 flex items-center justify-center shadow-lg">
+          <div className="absolute inset-1 rounded-full border-2 border-dashed border-[#9a8351] animate-spin" />
+          <div className="w-12 h-12 rounded-full bg-amber-700/20 border border-[#9a8351] flex items-center justify-center shadow-lg">
             <Users className="w-6 h-6 text-amber-500 animate-pulse" />
           </div>
         </div>
 
         {/* Room Code Badge */}
-        <div className="w-full bg-[#141713]/78 backdrop-blur-md rounded-xl p-3 border border-amber-600/30 mb-3 flex flex-col items-center shadow-xl">
+        <div className="w-full bg-[#141713]/78 backdrop-blur-md rounded-xl p-3 border border-[#9a8351]/30 mb-3 flex flex-col items-center shadow-xl">
           <span className="text-[10px] font-bold uppercase text-amber-500 tracking-wider mb-1">
             CÓDIGO DE SALA
           </span>
@@ -58,14 +58,14 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
             </span>
             <button
               onClick={handleCopyCode}
-              className="p-1.5 rounded-lg bg-amber-800 hover:bg-amber-700 text-amber-200 transition active:scale-95 cursor-pointer"
+              className="p-1.5 rounded-lg bg-[#6f5b38] hover:bg-[#806c42] text-amber-200 transition active:scale-95 cursor-pointer"
               title="Copiar código"
             >
               {copied ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
           {copied && (
-            <span className="text-[10px] text-emerald-500 font-bold mt-1">
+            <span className="text-[10px] text-[#8fa878] font-bold mt-1">
               ¡Copiado!
             </span>
           )}
@@ -89,7 +89,7 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
       <div className="relative z-10 text-center pb-1">
         <button
           onClick={onCancel}
-          className="w-full max-w-[280px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full max-w-[280px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
         >
           Cancelar Sala
         </button>
