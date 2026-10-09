@@ -76,9 +76,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       <div className="relative z-10 flex items-center justify-start w-full pt-1">
         <button
           onClick={onContact}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-950/80 hover:bg-amber-900 text-amber-200 border border-amber-600/70 text-xs font-bold tracking-wider uppercase transition shadow-md active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white border border-amber-400/90 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
         >
-          <Mail className="w-3.5 h-3.5 text-amber-400" />
+          <Mail className="w-4 h-4 text-amber-300" />
           <span>CONTACTO</span>
         </button>
       </div>
@@ -112,41 +112,41 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         )}
 
         {/* Action Buttons Menu - Slim, refined design */}
-        <div className="flex flex-col gap-2 w-full max-w-[220px] mt-3">
+        <div className="flex flex-col gap-2.5 w-full max-w-[240px] mt-3">
           
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-emerald-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-emerald-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Play className="w-3.5 h-3.5 fill-white" />
+            <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
           </button>
 
           {/* CREAR (Create Room Modal) */}
           <button
             onClick={() => handleActionClick('create_room')}
-            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-amber-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-amber-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <PlusCircle className="w-3.5 h-3.5" />
+            <PlusCircle className="w-4 h-4" />
             <span>CREAR</span>
           </button>
 
           {/* UNIRSE (Join Available Room Modal) */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-sky-600 to-blue-500 hover:from-sky-500 hover:to-blue-400 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-sky-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-sky-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Users className="w-3.5 h-3.5" />
+            <Users className="w-4 h-4" />
             <span>UNIRSE</span>
           </button>
 
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full py-2 px-4 rounded-lg bg-gradient-to-r from-purple-700 to-indigo-600 hover:from-purple-600 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm tracking-wider uppercase border border-purple-400/80 shadow-md flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-purple-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Trophy className="w-3.5 h-3.5 text-yellow-300 fill-yellow-300" />
+            <Trophy className="w-4 h-4 text-yellow-300 fill-yellow-300" />
             <span>TOP 50</span>
           </button>
 
@@ -154,7 +154,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="relative z-10 text-center text-[10px] text-amber-200/70 font-semibold drop-shadow pb-1">
+      <div className="relative z-10 text-center text-[11px] text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] font-semibold drop-shadow pb-1">
         <span>© ANAPSE VIDEO GAMES</span>
       </div>
 
