@@ -26,7 +26,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
   onBackToMenu
 }) => {
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -65,9 +65,9 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       </div>
 
       {/* Outcome Stats Box */}
-      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/72 backdrop-blur-sm border border-slate-600/80 rounded-xl p-3 text-left space-y-2 shadow-2xl">
-        <div className="flex justify-between items-center text-xs">
-          <span className="text-slate-400 font-bold">Vencedor:</span>
+      <div className="relative z-10 my-auto max-w-[320px] w-full mx-auto bg-slate-950/90 backdrop-blur-sm border border-slate-600/80 rounded-xl p-3 text-left space-y-2 shadow-2xl">
+        <div className="flex justify-between items-center gap-3 text-sm">
+          <span className="text-slate-200 font-bold">Vencedor:</span>
           <span className="text-[#9aaa7a] font-black">{winnerName}</span>
         </div>
         <div className="flex justify-between items-center text-xs">
@@ -85,7 +85,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       <div className="relative z-10 flex flex-col gap-2 max-w-[280px] w-full mx-auto pb-1">
         <button
           onClick={onPlayAgain}
-          className="w-full py-2.5 rounded-lg bg-[#687b58] hover:bg-[#789064] text-white font-bold text-xs uppercase tracking-wider shadow-md border border-emerald-500 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
+          className="w-full min-h-12 py-3 rounded-xl bg-[#687b58] hover:bg-[#789064] text-white font-black text-sm uppercase tracking-wider shadow-md border border-emerald-500 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>JUGAR DE NUEVO</span>
@@ -93,7 +93,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
 
         <button
           onClick={onBackToMenu}
-          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] flex items-center justify-center gap-2 transition cursor-pointer"
+          className="w-full min-h-12 py-3 rounded-xl bg-[#1d211c]/95 hover:bg-slate-800 text-white font-black text-sm uppercase border-2 border-[#8e9d8d] flex items-center justify-center gap-2 transition cursor-pointer"
         >
           <Home className="w-3.5 h-3.5" />
           <span>MENÚ PRINCIPAL</span>
