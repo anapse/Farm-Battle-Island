@@ -28,7 +28,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
 
   const nameCounts: Record<string, number> = {};
   const disambiguatedMatches = availableMatches.map((match) => {
-    const rawName = match.creatorPlayerName || match.player1.name || 'Comandante';
+    const rawName = match.creatorPlayerName || match.player1.name || 'Jugador';
     const lower = rawName.toLowerCase();
     nameCounts[lower] = (nameCounts[lower] || 0) + 1;
     const count = nameCounts[lower];
