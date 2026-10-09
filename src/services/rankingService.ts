@@ -15,18 +15,18 @@ const RANKING_STORAGE_KEY = 'fbi_top50_rankings';
 
 // Seed initial leaderboard so Top 50 is lively and realistic
 const DEFAULT_RANKINGS: PlayerRanking[] = [
-  { playerName: 'Capitán Coco', score: 3840, victories: 48, defeats: 6, lastPlayedAt: '2026-10-07' },
-  { playerName: 'Isla Feroz', score: 3250, victories: 41, defeats: 9, lastPlayedAt: '2026-10-07' },
-  { playerName: 'Mortero Pro', score: 2980, victories: 37, defeats: 12, lastPlayedAt: '2026-10-06' },
-  { playerName: 'Bananazooka', score: 2710, victories: 34, defeats: 14, lastPlayedAt: '2026-10-06' },
-  { playerName: 'Tortuga Blindada', score: 2540, victories: 31, defeats: 11, lastPlayedAt: '2026-10-05' },
-  { playerName: 'Gallo Loco', score: 2390, victories: 29, defeats: 15, lastPlayedAt: '2026-10-05' },
-  { playerName: 'Bambú Strike', score: 2210, victories: 27, defeats: 13, lastPlayedAt: '2026-10-04' },
-  { playerName: 'Conejo Veloz', score: 2050, victories: 25, defeats: 18, lastPlayedAt: '2026-10-04' },
-  { playerName: 'Mapache Táctico', score: 1920, victories: 23, defeats: 16, lastPlayedAt: '2026-10-03' },
-  { playerName: 'Tirador Tropical', score: 1840, victories: 22, defeats: 19, lastPlayedAt: '2026-10-03' },
-  { playerName: 'Cañón Playero', score: 1720, victories: 20, defeats: 14, lastPlayedAt: '2026-10-02' },
-  { playerName: 'Arrecife Master', score: 1580, victories: 18, defeats: 12, lastPlayedAt: '2026-10-01' }
+  { playerName: 'Capitán Coco', score: 3840, victories: 48, defeats: 6 },
+  { playerName: 'Isla Feroz', score: 3250, victories: 41, defeats: 9 },
+  { playerName: 'Mortero Pro', score: 2980, victories: 37, defeats: 12 },
+  { playerName: 'Bananazooka', score: 2710, victories: 34, defeats: 14 },
+  { playerName: 'Tortuga Blindada', score: 2540, victories: 31, defeats: 11 },
+  { playerName: 'Gallo Loco', score: 2390, victories: 29, defeats: 15 },
+  { playerName: 'Bambú Strike', score: 2210, victories: 27, defeats: 13 },
+  { playerName: 'Conejo Veloz', score: 2050, victories: 25, defeats: 18 },
+  { playerName: 'Mapache Táctico', score: 1920, victories: 23, defeats: 16 },
+  { playerName: 'Tirador Tropical', score: 1840, victories: 22, defeats: 19 },
+  { playerName: 'Cañón Playero', score: 1720, victories: 20, defeats: 14 },
+  { playerName: 'Arrecife Master', score: 1580, victories: 18, defeats: 12 }
 ];
 
 /**
@@ -100,15 +100,16 @@ export async function recordMatchRankingResult(
   earnedPoints: number, 
   isVictory: boolean
 ): Promise<PlayerRanking> {
-  const cleanName = playerName.trim() || 'Comandante';
-  const docId = cleanName.toLowerCase().replace(/[^a-z0-9_-]/g, '_');
+  const cleanName = playerName.trim();
+  if (cleanName.length < 2) throw new Error('El alias debe tener al menos 2 caracteres.');
+  const docId = cleanName.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9_-]/g, '_').slice(0, 64);
 
   let currentRecord: PlayerRanking = {
     playerName: cleanName,
     score: earnedPoints,
     victories: isVictory ? 1 : 0,
     defeats: isVictory ? 0 : 1,
-    lastPlayedAt: new Date().toISOString().split('T')[0]
+    matchesPlayed: 1
   };
 
   if (db && isConfigured) {
@@ -123,7 +124,7 @@ export async function recordMatchRankingResult(
           score: Math.max(0, (previous.score || 0) + earnedPoints),
           victories: (previous.victories || 0) + (isVictory ? 1 : 0),
           defeats: (previous.defeats || 0) + (isVictory ? 0 : 1),
-          lastPlayedAt: new Date().toISOString().split('T')[0]
+          matchesPlayed: (previous.matchesPlayed ?? ((previous.victories || 0) + (previous.defeats || 0))) + 1
         };
       }
 
@@ -160,7 +161,7 @@ export async function recordMatchRankingResult(
       score: Math.max(0, localList[existingIdx].score + earnedPoints),
       victories: localList[existingIdx].victories + (isVictory ? 1 : 0),
       defeats: localList[existingIdx].defeats + (isVictory ? 0 : 1),
-      lastPlayedAt: new Date().toISOString().split('T')[0]
+      matchesPlayed: (localList[existingIdx].matchesPlayed ?? (localList[existingIdx].victories + localList[existingIdx].defeats)) + 1
     };
     currentRecord = localList[existingIdx];
   } else {
@@ -184,6 +185,7 @@ export function recordMatchResult(playerName: string, isVictory: boolean, earned
     playerName,
     score: earnedPoints,
     victories: isVictory ? 1 : 0,
-    defeats: isVictory ? 0 : 1
+    defeats: isVictory ? 0 : 1,
+    matchesPlayed: 1
   };
 }
