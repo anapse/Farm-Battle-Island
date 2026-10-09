@@ -248,7 +248,8 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
   const { playerId } = getPlayerIdentity(joinerPlayerName);
   const authUid = firebaseAuthenticated ? auth?.currentUser?.uid : undefined;
 
-  if (rtdb && isConfigured && authUid) {
+  if (rtdb && isConfigured) {
+    if (!authUid) throw new Error('Firebase no está autenticado. Recarga la página e inténtalo de nuevo.');
     try {
       const matchRef = ref(rtdb, `activeMatches/${matchId}`);
       let joinError = '';
@@ -281,8 +282,9 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
       saveLocalMatch(merged);
       return merged;
     } catch (e) {
-      console.warn('Realtime Database join failed, falling back to local memory:', e);
+      console.error('Realtime Database join failed:', e);
       if (e instanceof Error && /ya no existe|completa|propia partida/.test(e.message)) throw e;
+      throw e instanceof Error ? e : new Error('No se pudo unir a la partida online.');
     }
   }
 
@@ -324,7 +326,8 @@ export async function selectCharacterOnline(
   playerId: string, 
   characterId: CharacterId
 ): Promise<OnlineMatch> {
-  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured) {
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado. Recarga la página e inténtalo de nuevo.');
     try {
       const matchRef = ref(rtdb, `activeMatches/${matchId}`);
       let selectionError = '';
