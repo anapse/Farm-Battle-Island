@@ -34,32 +34,50 @@ export class CollisionSystem {
     }
 
     // 2. Opposing player collision.
-    // Sweep the projectile's whole movement segment against a forgiving
-    // circular hitbox. Checking only the current point lets fast bullets
-    // tunnel through a character between frames.
+    // Use a tall hitbox from the character's head to its feet, and sweep
+    // the projectile segment through it so fast shots cannot pass between frames.
     for (const player of players) {
       if (player.role === shooterRole) continue;
       if (player.lifeState !== 'active') continue;
 
-      const pCenterX = player.x;
-      const pCenterY = player.y - 42;
-      const hitRadius = radius + 34;
+      // player.y is the ground anchor; the rendered character extends upward.
+      // Expand the hitbox by projectile radius so the missile itself can touch it.
+      const hitbox = {
+        minX: player.x - 48 - radius,
+        maxX: player.x + 48 + radius,
+        minY: player.y - 184 - radius,
+        maxY: player.y + 8 + radius
+      };
       const dx = x - previousX;
       const dy = y - previousY;
-      const segmentLengthSq = dx * dx + dy * dy;
-      const t = segmentLengthSq > 0
-        ? Math.max(0, Math.min(1, ((pCenterX - previousX) * dx + (pCenterY - previousY) * dy) / segmentLengthSq))
-        : 0;
-      const closestX = previousX + t * dx;
-      const closestY = previousY + t * dy;
-      const dist = Math.hypot(closestX - pCenterX, closestY - pCenterY);
+      let t0 = 0;
+      let t1 = 1;
+      const clip = (p: number, q: number): boolean => {
+        if (Math.abs(p) < 1e-9) return q >= 0;
+        const t = q / p;
+        if (p < 0) {
+          if (t > t1) return false;
+          if (t > t0) t0 = t;
+        } else {
+          if (t < t0) return false;
+          if (t < t1) t1 = t;
+        }
+        return true;
+      };
 
-      if (dist <= hitRadius) {
+      const intersects = clip(-dx, previousX - hitbox.minX) &&
+        clip(dx, hitbox.maxX - previousX) &&
+        clip(-dy, previousY - hitbox.minY) &&
+        clip(dy, hitbox.maxY - previousY);
+
+      if (intersects) {
+        const hitX = previousX + t0 * dx;
+        const hitY = previousY + t0 * dy;
         return {
           hit: true,
           type: 'player',
-          hitX: closestX,
-          hitY: closestY,
+          hitX,
+          hitY,
           hitPlayer: player
         };
       }
