@@ -49,7 +49,7 @@ export default function App() {
   });
 
   const [playerName, setPlayerName] = useState<string>(() => {
-    return localStorage.getItem('fbi_stored_player_name') || 'Comandante';
+    return localStorage.getItem('fbi_stored_player_name') || '';
   });
 
   const [myPlayerId] = useState<string>(() => {
@@ -256,7 +256,7 @@ export default function App() {
         setMatchResult({
           isVictory: isWinner,
           earnedPoints: isWinner ? (winnerPlayer?.score || 150) : (loserPlayer?.score || 50),
-          winnerName: winnerPlayer?.name || 'Comandante',
+          winnerName: winnerPlayer?.name || 'Jugador',
           loserName: loserPlayer?.name || 'Rival',
           isSurrender: !!surrenderMsg,
           surrenderMessage: surrenderMsg,
