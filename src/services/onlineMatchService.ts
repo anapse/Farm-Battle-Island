@@ -264,7 +264,7 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
   if (db && isConfigured && authUid) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
-      return await runTransaction(db, async (transaction) => {
+      const updatedMatch = await runTransaction(db, async (transaction) => {
         const snap = await transaction.get(matchDocRef);
         if (!snap.exists()) {
           throw new Error('La partida ya no existe.');
@@ -373,8 +373,6 @@ export async function selectCharacterOnline(
           throw new Error('¡Ese personaje ya fue elegido por tu rival! Selecciona otro.');
         }
 
-        trackCharacterPick(characterId);
-
         if (isP1) {
           match.player1.characterId = characterId;
           match.player1.characterSelected = true;
@@ -419,9 +417,15 @@ export async function selectCharacterOnline(
 
         updates.updatedAt = match.updatedAt;
         transaction.update(matchDocRef, updates);
-        saveLocalMatch(match);
         return match;
-      });
+      }, { maxAttempts: 10 });
+
+      // Keep local cache and analytics outside the transaction callback because
+      // Firestore may execute that callback more than once when players update
+      // the same match concurrently.
+      saveLocalMatch(updatedMatch);
+      trackCharacterPick(characterId);
+      return updatedMatch;
     } catch (e) {
       console.warn('Firestore selectCharacter error, fallback to local:', e);
     }
