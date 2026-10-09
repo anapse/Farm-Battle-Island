@@ -129,7 +129,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full min-h-14 py-4 px-4 rounded-xl bg-[linear-gradient(180deg,#ff9a7d_0%,#ed3e2e_42%,#a91819_78%,#5c1118_100%)] hover:brightness-110 text-white font-black text-base sm:text-lg tracking-wider uppercase border-2 border-[#ffc0a2] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-5px_0_rgba(70,0,0,0.3),0_5px_0_#511015,0_9px_14px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_2px_0_#511015] cursor-pointer"
+            className="w-full min-h-12 py-3 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
@@ -138,7 +138,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* MULTIJUGADOR: lobby con salas y creación en una sola pantalla */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full min-h-14 py-4 px-4 rounded-xl bg-[linear-gradient(180deg,#f3a3ff_0%,#b92be0_42%,#7412a8_78%,#3c075e_100%)] hover:brightness-110 text-white font-black text-base sm:text-lg tracking-wider uppercase border-2 border-[#f0b8ff] shadow-[inset_0_2px_0_rgba(255,255,255,0.7),inset_0_-5px_0_rgba(30,0,60,0.35),0_5px_0_#35084d,0_9px_14px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
+            className="w-full min-h-12 py-3 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
           >
             <Users className="w-4 h-4" />
             <span>MULTIJUGADOR</span>
@@ -147,7 +147,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full min-h-14 py-4 px-4 rounded-xl bg-[linear-gradient(180deg,#9ce8ff_0%,#1599ec_42%,#07519c_78%,#06294f_100%)] hover:brightness-110 text-white font-black text-base sm:text-lg tracking-wider uppercase border-2 border-[#b8f1ff] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-5px_0_rgba(0,0,0,0.28),0_5px_0_#06254b,0_9px_14px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
+            className="w-full min-h-12 py-3 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
           >
             <Trophy className="w-4 h-4 text-yellow-600 fill-yellow-600" />
             <span>TOP 50</span>
