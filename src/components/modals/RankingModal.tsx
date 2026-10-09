@@ -28,7 +28,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
   }, []);
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -52,7 +52,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             onClick={loadData}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
+            className="text-white hover:brightness-125 p-2.5 rounded-xl bg-[linear-gradient(180deg,#526a7d,#243b4b_65%,#111f2a)] border-2 border-[#9cc9df] shadow-md transition cursor-pointer"
             title="Recargar"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -67,7 +67,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       </div>
 
       {/* Table Column Headers */}
-      <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[10px] font-black uppercase text-amber-500/90 border-b border-slate-800 mt-2 bg-[#141713]/72 rounded-t-lg backdrop-blur-sm">
+      <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[11px] sm:text-xs font-black uppercase text-amber-200 border-b border-slate-800 mt-2 bg-[#141713]/72 rounded-t-lg backdrop-blur-sm">
         <span className="col-span-1 text-center">#</span>
         <span className="col-span-3">JUGADOR</span>
         <span className="col-span-2 text-right">PUNTOS</span>
@@ -85,7 +85,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
           return (
             <div
               key={player.playerName + index}
-              className={`grid grid-cols-12 gap-1 items-center px-2 py-1.5 rounded-lg text-xs transition border ${
+              className={`grid grid-cols-12 gap-1 items-center px-2 py-2.5 rounded-lg text-sm transition border ${
                 isCurrent
                   ? 'bg-amber-950/80 border-[#9a8351] text-amber-200 font-bold shadow-sm'
                   : isTop3
@@ -140,7 +140,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       <div className="relative z-10 text-center pt-2">
         <button
           onClick={onClose}
-          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
+          className="w-full min-h-11 py-3 rounded-xl bg-[#1d211c]/95 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
         >
           Cerrar
         </button>
