@@ -8,5 +8,6 @@
   "messagingSenderId": "677518846314",
   "measurementId": "",
   "oAuthClientId": "677518846314-cujd9l0fenk0p77vkf5j2qvr58amv60e.apps.googleusercontent.com",
-  "recaptchaSiteKey": ""
+  "recaptchaSiteKey": "",
+  "databaseURL": "https://gen-lang-client-0164582744-default-rtdb.firebaseio.com"
 }
