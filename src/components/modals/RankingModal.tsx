@@ -44,7 +44,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       <div className="relative z-10 flex items-center justify-between pt-1">
         <div className="flex items-center gap-2">
           <Trophy className="w-5 h-5 text-amber-700 fill-amber-600" />
-          <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
+          <h2 className="text-lg sm:text-2xl font-black text-white font-['Fredoka',sans-serif] leading-tight bg-slate-950/65 rounded-lg px-2 py-1 drop-shadow-[0_2px_3px_rgba(0,0,0,1)]">
             TOP 50
           </h2>
         </div>
@@ -89,8 +89,8 @@ export const RankingModal: React.FC<RankingModalProps> = ({
                 isCurrent
                   ? 'bg-amber-950/80 border-[#9a8351] text-amber-200 font-bold shadow-sm'
                   : isTop3
-                  ? 'bg-[#1d211c]/88 border-[#555a4e] text-white font-semibold'
-                  : 'bg-slate-950/60 border-slate-800 text-slate-300'
+                  ? 'bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] text-white font-semibold'
+                  : 'bg-slate-950/85 border-slate-700 text-white'
               }`}
             >
               {/* Posición */}
@@ -140,7 +140,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       <div className="relative z-10 text-center pt-2">
         <button
           onClick={onClose}
-          className="w-full min-h-11 py-3 rounded-xl bg-[#1d211c]/95 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
+          className="w-full min-h-11 py-2.5 rounded-lg bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] text-white font-black text-sm uppercase transition cursor-pointer"
         >
           Cerrar
         </button>
