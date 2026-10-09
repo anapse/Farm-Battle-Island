@@ -7,20 +7,23 @@ import { X, Clock, ShieldCheck, MapPin, Check } from 'lucide-react';
 interface CreateRoomModalProps {
   creatorName: string;
   onClose: () => void;
-  onCreate: (timeLimit: GameTimeOption, lives: GameLivesOption, islandId: string) => void;
+  onCreate: (timeLimit: GameTimeOption, lives: GameLivesOption, islandId: string, aiDifficulty?: 'easy' | 'medium' | 'hard' | 'very_hard') => void;
+  isAiMode?: boolean;
 }
 
 export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   onClose,
-  onCreate
+  onCreate,
+  isAiMode = false
 }) => {
   const [timeLimit, setTimeLimit] = useState<GameTimeOption>('5_MIN');
   const [lives, setLives] = useState<GameLivesOption>(3);
   const [islandId, setIslandId] = useState<string>('isla_1');
+  const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'medium' | 'hard' | 'very_hard'>('medium');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onCreate(timeLimit, lives, islandId);
+    onCreate(timeLimit, lives, islandId, aiDifficulty);
   };
 
   return (
@@ -40,7 +43,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       <div className="relative z-10 flex items-center justify-between pt-1">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
-            CREAR PARTIDA
+            {isAiMode ? 'CONFIGURAR PARTIDA CONTRA IA' : 'CREAR PARTIDA'}
           </h2>
         </div>
         <button
@@ -54,6 +57,33 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       {/* Main Form Fields (Percentage / Flex layout) */}
       <form onSubmit={handleSubmit} className="relative z-10 flex-1 flex flex-col justify-center gap-3 my-2 max-w-[320px] w-full mx-auto">
         
+        {isAiMode && (
+          <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-[#9a8351]/30">
+            <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+              <span>DIFICULTAD DE LA IA:</span>
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                ['easy', 'FÁCIL', 'Falla aprox. 20%'],
+                ['medium', 'MEDIO', 'Falla aprox. 10%'],
+                ['hard', 'DIFÍCIL', 'Casi siempre acierta'],
+                ['very_hard', 'MUY DIFÍCIL', 'Usa power-ups']
+              ] as const).map(([value, label, description]) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setAiDifficulty(value)}
+                  className={`p-2 rounded-lg text-left border transition cursor-pointer ${aiDifficulty === value ? 'bg-amber-700 border-[#d0b56f] text-white' : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'}`}
+                >
+                  <span className="block text-xs font-black">{label}</span>
+                  <span className="block text-[9px] mt-0.5 opacity-80">{description}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* TIEMPO Selection */}
         <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-[#9a8351]/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
