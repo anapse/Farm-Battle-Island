@@ -415,17 +415,15 @@ export async function selectCharacterOnline(
  * Real-time match state listener
  */
 export function subscribeToOnlineMatch(
-  matchId: string, 
+  matchId: string,
   callback: (match: OnlineMatch | null) => void
 ): () => void {
-  let unsubFirestore: (() => void) | null = null;
-
-  if (db && isConfigured) {
+  let unsubscribeRealtime: (() => void) | null = null;
+  if (rtdb && isConfigured) {
     try {
-      const matchDocRef = doc(db, 'matches', matchId);
-      unsubFirestore = onSnapshot(matchDocRef, (snap) => {
-        if (snap.exists()) {
-          const remote = snap.data() as OnlineMatch;
+      unsubscribeRealtime = onValue(ref(rtdb, `activeMatches/${matchId}`), (snapshot) => {
+        if (snapshot.exists()) {
+          const remote = snapshot.val() as OnlineMatch;
           const cached = getLocalMatches().find(m => m.matchId === matchId) || null;
           const match = hydrateMatch(remote, cached);
           saveLocalMatch(match);
@@ -433,33 +431,19 @@ export function subscribeToOnlineMatch(
         } else {
           callback(null);
         }
-      }, (err) => {
-        console.warn('Firestore match subscribe error:', err);
-      });
+      }, (err) => console.warn('Realtime Database match subscription error:', err));
     } catch (e) {
-      console.warn('Failed to subscribe to firestore match:', e);
+      console.warn('Failed to subscribe to realtime match:', e);
     }
   }
-
-  // Cross-tab broadcast listener for local instances
   const channelListener = (e: MessageEvent) => {
-    if (e.data && e.data.matchId === matchId) {
-      callback(e.data.match);
-    }
+    if (e.data && e.data.matchId === matchId) callback(e.data.match);
   };
-
-  if (localChannel) {
-    localChannel.addEventListener('message', channelListener);
-  }
-
-  // Initial call with local cached match
+  if (localChannel) localChannel.addEventListener('message', channelListener);
   const initial = getLocalMatches().find(m => m.matchId === matchId);
-  if (initial) {
-    callback(initial);
-  }
-
+  if (initial) callback(initial);
   return () => {
-    if (unsubFirestore) unsubFirestore();
+    if (unsubscribeRealtime) unsubscribeRealtime();
     if (localChannel) localChannel.removeEventListener('message', channelListener);
   };
 }
@@ -470,51 +454,33 @@ export function subscribeToOnlineMatch(
 export function subscribeToAvailableMatches(
   callback: (matches: OnlineMatch[]) => void
 ): () => void {
-  let unsubFirestore: (() => void) | null = null;
-
-  if (db && isConfigured) {
+  let unsubscribeRealtime: (() => void) | null = null;
+  if (rtdb && isConfigured) {
     try {
-      const q = query(
-        collection(db, 'matches'),
-        where('status', '==', 'waiting'),
-        limit(25)
-      );
-
-      unsubFirestore = onSnapshot(q, (snapshot) => {
+      unsubscribeRealtime = onValue(ref(rtdb, 'activeMatches'), (snapshot) => {
         const matches: OnlineMatch[] = [];
-        snapshot.forEach((doc) => {
-          const remote = doc.data() as OnlineMatch;
-          matches.push(hydrateMatch(remote));
-        });
+        if (snapshot.exists()) {
+          snapshot.forEach((child) => {
+            const match = child.val() as OnlineMatch;
+            if (match.status === 'waiting' && !match.player2) matches.push(hydrateMatch(match));
+          });
+        }
         callback(matches);
       }, (err) => {
-        console.warn('Firestore available matches error:', err);
-        // Fallback to local
-        const local = getLocalMatches().filter(m => m.status === 'waiting');
-        callback(local);
+        console.warn('Realtime Database available matches error:', err);
+        callback(getLocalMatches().filter(m => m.status === 'waiting'));
       });
     } catch (e) {
-      console.warn('Failed query available matches:', e);
-      const local = getLocalMatches().filter(m => m.status === 'waiting');
-      callback(local);
+      console.warn('Failed to subscribe to realtime matches:', e);
+      callback(getLocalMatches().filter(m => m.status === 'waiting'));
     }
   } else {
-    // Pure local
-    const local = getLocalMatches().filter(m => m.status === 'waiting');
-    callback(local);
+    callback(getLocalMatches().filter(m => m.status === 'waiting'));
   }
-
-  const channelListener = () => {
-    const local = getLocalMatches().filter(m => m.status === 'waiting');
-    callback(local);
-  };
-
-  if (localChannel) {
-    localChannel.addEventListener('message', channelListener);
-  }
-
+  const channelListener = () => callback(getLocalMatches().filter(m => m.status === 'waiting'));
+  if (localChannel) localChannel.addEventListener('message', channelListener);
   return () => {
-    if (unsubFirestore) unsubFirestore();
+    if (unsubscribeRealtime) unsubscribeRealtime();
     if (localChannel) localChannel.removeEventListener('message', channelListener);
   };
 }
