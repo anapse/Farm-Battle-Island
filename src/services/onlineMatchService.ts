@@ -16,6 +16,15 @@ import { trackRoomCreated, trackRoomCompleted, trackRoomAbandoned, trackCharacte
 const PLAYER_ID_KEY = 'fbi_persistent_player_id';
 let localMatchesCache: OnlineMatch[] = [];
 
+// Remove the old persistent match cache created by previous app versions.
+if (typeof window !== 'undefined') {
+  try {
+    localStorage.removeItem('fbi_local_matches_cache');
+  } catch {
+    // Storage can be unavailable in private browsing; gameplay still runs in memory.
+  }
+}
+
 // BroadcastChannel for instant local cross-tab sync as offline/local companion
 let localChannel: BroadcastChannel | null = null;
 if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
