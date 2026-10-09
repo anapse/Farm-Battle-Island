@@ -220,7 +220,7 @@ export interface PlayerRanking {
   score: number;
   victories: number;
   defeats: number;
-  lastPlayedAt?: string;
+  matchesPlayed: number;
 }
 
 export interface AdminMetrics {
