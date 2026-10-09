@@ -218,7 +218,8 @@ export async function createOnlineMatch(params: {
   };
 
   // Active-match state is temporary realtime data, never written to Firestore.
-  if (rtdb && isConfigured && authUid) {
+  if (rtdb && isConfigured) {
+    if (!authUid) throw new Error('Firebase no está autenticado. Recarga la página e inténtalo de nuevo.');
     try {
       await set(ref(rtdb, `activeMatches/${matchId}`), {
         ...newMatch,
@@ -226,7 +227,8 @@ export async function createOnlineMatch(params: {
         player2: player2 ? toPersistentPlayer(player2) : null
       });
     } catch (e) {
-      console.warn('Realtime Database create warning, falling back to local sync:', e);
+      console.error('Realtime Database create failed:', e);
+      throw e instanceof Error ? e : new Error('No se pudo crear la partida online.');
     }
   }
 
@@ -373,8 +375,9 @@ export async function selectCharacterOnline(
       trackCharacterPick(characterId);
       return updatedMatch;
     } catch (e) {
-      console.warn('Realtime Database selectCharacter error, fallback to local:', e);
+      console.error('Realtime Database selectCharacter failed:', e);
       if (e instanceof Error && /Partida no encontrada|No perteneces|ya fue elegido/.test(e.message)) throw e;
+      throw e instanceof Error ? e : new Error('No se pudo seleccionar el personaje online.');
     }
   }
 
@@ -509,14 +512,22 @@ export async function sendShotOnline(params: {
     timestamp: Date.now()
   };
 
-  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured) {
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado.');
     try {
+      const matchSnapshot = await get(ref(rtdb, `activeMatches/${params.matchId}`));
+      const remoteMatch = matchSnapshot.val() as OnlineMatch | null;
+      const player = params.shooterRole === 'player1' ? remoteMatch?.player1 : remoteMatch?.player2;
+      if (!player || player.id !== params.playerId || player.authUid !== auth.currentUser.uid) {
+        throw new Error('No estás autorizado para disparar en esta partida.');
+      }
       await update(ref(rtdb, `activeMatches/${params.matchId}`), {
         'gameState/lastShot': shotEvent,
         updatedAt: Date.now()
       });
     } catch (e) {
-      console.warn('Realtime Database sendShot error:', e);
+      console.error('Realtime Database sendShot failed:', e);
+      throw e instanceof Error ? e : new Error('No se pudo sincronizar el disparo online.');
     }
   }
 
@@ -588,15 +599,22 @@ export async function registerImpactOnline(params: {
     return getLocalMatches().find(m => m.matchId === params.matchId) || local;
   }
 
-  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured) {
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado.');
     try {
+      const matchSnapshot = await get(ref(rtdb, `activeMatches/${params.matchId}`));
+      const remoteMatch = matchSnapshot.val() as OnlineMatch | null;
+      const sessionUid = auth.currentUser.uid;
+      if (!remoteMatch || ![remoteMatch.player1, remoteMatch.player2].some(player => player?.authUid === sessionUid)) {
+        throw new Error('No estás autorizado para registrar impactos en esta partida.');
+      }
       await update(ref(rtdb, `activeMatches/${params.matchId}`), {
         'gameState/lastImpact': impactEvent,
         updatedAt: Date.now()
       });
     } catch (e) {
-      // Local state was already updated; realtime sync failure must not freeze the HUD.
-      console.warn('Realtime Database registerImpact error:', e);
+      console.error('Realtime Database registerImpact failed:', e);
+      throw e instanceof Error ? e : new Error('No se pudo sincronizar el impacto online.');
     }
   }
 
@@ -631,8 +649,14 @@ export async function changeTurnOnline(
     saveLocalMatch(local);
   }
 
-  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured) {
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado.');
     try {
+      const matchSnapshot = await get(ref(rtdb, `activeMatches/${matchId}`));
+      const remoteMatch = matchSnapshot.val() as OnlineMatch | null;
+      if (!remoteMatch || ![remoteMatch.player1, remoteMatch.player2].some(player => player?.authUid === auth.currentUser?.uid)) {
+        throw new Error('No estás autorizado para cambiar el turno de esta partida.');
+      }
       await update(ref(rtdb, `activeMatches/${matchId}`), {
         'gameState/currentTurnPlayerId': updatePayload['gameState.currentTurnPlayerId'],
         'gameState/turnStartedAt': local?.gameState.turnStartedAt || updatePayload['gameState.turnStartedAt'],
@@ -641,7 +665,8 @@ export async function changeTurnOnline(
         updatedAt: updatePayload.updatedAt
       });
     } catch (e) {
-      console.warn('Realtime Database changeTurn error:', e);
+      console.error('Realtime Database changeTurn failed:', e);
+      throw e instanceof Error ? e : new Error('No se pudo sincronizar el cambio de turno.');
     }
   }
 
@@ -667,7 +692,8 @@ export async function concludeMatchOnline(params: {
   let finalMatch: OnlineMatch | null = localBeforeFinish;
   let finishClaimed = !rtdb || !isConfigured;
 
-  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured) {
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado; no se puede confirmar la finalización online.');
     try {
       const matchRef = ref(rtdb, `activeMatches/${params.matchId}`);
       const result = await runTransaction(matchRef, (current) => {
@@ -698,7 +724,8 @@ export async function concludeMatchOnline(params: {
         }, 120000);
       }
     } catch (e) {
-      console.warn('Realtime Database concludeMatch error, handling locally:', e);
+      console.error('Realtime Database concludeMatch failed:', e);
+      throw e instanceof Error ? e : new Error('No se pudo confirmar la finalización online.');
     }
   }
 
