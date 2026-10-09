@@ -249,9 +249,28 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             )}
           </div>   </div>
 
-        {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
+        {/* 4. FIRE BUTTON ZONE */}
         <div className="col-start-3 row-start-2 flex items-center justify-end min-w-0">
-
+          <button
+            onPointerDown={handleFirePointerDown}
+            onPointerUp={handleFirePointerUp}
+            onPointerLeave={handleFirePointerLeave}
+            disabled={!isMyTurn || isFiring}
+            className={`w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full border-[4px] border-black shadow-[inset_0_3px_4px_rgba(255,255,255,0.35),inset_0_-6px_8px_rgba(0,0,0,0.25),0_2px_5px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center transition-all select-none touch-none ${
+              !isMyTurn || isFiring
+                ? 'bg-gradient-to-b from-slate-600 to-slate-900 opacity-40 cursor-not-allowed'
+                : isHoldingFire
+                ? 'bg-[#9f7b3f] border-white scale-105 shadow-[0_0_18px_rgba(194,154,82,0.25)] cursor-pointer'
+                : 'bg-gradient-to-b from-[#ff9b32] via-[#ff8124] to-[#f36a18] hover:brightness-110 active:scale-95 cursor-pointer'
+            }`}
+            title={!isMyTurn ? 'Esperando turno' : isFiring ? 'Disparo en curso...' : 'Mantén presionado para cargar fuerza, suelta para disparar'}
+          >
+            <Flame className={`w-5 h-5 text-amber-100 fill-amber-200 ${isHoldingFire ? 'scale-115 animate-bounce' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-tight text-white drop-shadow font-['Fredoka',sans-serif] leading-tight">
+              {isHoldingFire ? '¡SUELTA!' : isFiring ? 'EN VUELO' : 'FIRE'}
+            </span>
+          </button>
+        </div>
       </div>
 
     </footer>
