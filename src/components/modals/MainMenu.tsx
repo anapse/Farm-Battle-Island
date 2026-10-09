@@ -61,7 +61,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-40 flex flex-col justify-between gap-2 p-3 sm:p-4 bg-slate-950 select-none overflow-y-auto overscroll-contain">
+    <div className="absolute inset-0 z-40 flex flex-col justify-between gap-1 p-2 sm:p-3 bg-slate-950 select-none overflow-hidden">
       
       {/* Official 9:16 Menu Background Image (fondomenu.png) */}
       <img
@@ -96,14 +96,14 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       </div>
 
       {/* Main Studio Brand & Title Lockup */}
-      <div className="relative z-10 flex flex-col items-center text-center my-auto">
+      <div className="relative z-10 flex flex-col items-center text-center flex-1 min-h-0 justify-center">
         
         {/* Official 3D Logo (logo.png) */}
         <div className="max-w-[280px] w-full flex justify-center mb-1">
           <img
             src={getAssetUrl('assets/sprites/logo.png')}
             alt="Farm Battle Island Logo"
-            className={`max-h-[20vh] sm:max-h-[22vh] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-500 ${
+            className={`max-h-[15vh] sm:max-h-[18vh] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-500 ${
               logoLoaded ? 'block scale-100' : 'hidden scale-95'
             }`}
             onLoad={() => setLogoLoaded(true)}
@@ -124,12 +124,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         )}
 
         {/* Action Buttons Menu - Slim, refined design */}
-        <div className="flex flex-col gap-3 w-full max-w-[280px] mt-3">
+        <div className="flex flex-col gap-2 w-full max-w-[280px] mt-2">
           
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full min-h-12 py-3 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
+            className="w-full min-h-11 py-2.5 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
@@ -157,7 +157,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="relative z-10 text-center text-[11px] text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] font-semibold drop-shadow pb-1">
+      <div className="relative z-10 text-center text-[10px] text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)] font-semibold drop-shadow pb-1">
         <span>© ANAPSE VIDEO GAMES</span>
       </div>
 
