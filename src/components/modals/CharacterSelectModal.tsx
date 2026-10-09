@@ -67,11 +67,11 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       <img
         src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-100"
       />
 
       {/* Dark Vignette Overlay for maximum readability */}
-      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/5 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 text-center pt-1">
@@ -82,8 +82,8 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
 
       {/* Locked Alert if Rival selected this character */}
       {lockedCharacterId && (
-        <div className="relative z-10 mx-auto max-w-[280px] w-full bg-red-950/90 border border-red-500 rounded-lg px-2 py-0.5 flex items-center justify-center gap-1.5 text-[11px] text-red-200 shadow-md">
-          <Lock className="w-3.5 h-3.5 text-red-400 shrink-0" />
+        <div className="relative z-10 mx-auto max-w-[280px] w-full bg-[#4b2924]/85 border border-[#9a5a4f] rounded-lg px-2 py-0.5 flex items-center justify-center gap-1.5 text-[11px] text-[#e6c6bf] shadow-md">
+          <Lock className="w-3.5 h-3.5 text-[#b87869] shrink-0" />
           <span>Rival eligió a <strong className="text-white uppercase font-black">{lockedCharacterId}</strong></span>
         </div>
       )}
@@ -93,14 +93,14 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         <button
           type="button"
           onClick={() => moveCarousel(-1)}
-          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-[#141713]/78 border-2 border-amber-600/50 text-amber-500 flex items-center justify-center shadow-lg hover:bg-slate-900"
+          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-[#242820]/82 border border-[#9a8351] text-[#d0b56f] flex items-center justify-center shadow-lg hover:bg-[#30352b]"
           aria-label="Personaje anterior"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
 
         <div className={`w-[210px] h-[230px] rounded-2xl border-2 flex flex-col items-center justify-center p-3 backdrop-blur-sm shadow-xl ${
-          isLockedByRival ? 'border-red-700 bg-red-950/70 opacity-60' : 'border-amber-600 bg-[#141713]/72'
+          isLockedByRival ? 'border-red-700 bg-red-950/70 opacity-60' : 'border-[#9a8351] bg-[#141713]/72'
         }`}>
           <div
             className="w-[150px] h-[150px] transition-transform hover:scale-105"
@@ -111,7 +111,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
               backgroundRepeat: 'no-repeat'
             }}
           />
-          <span className="text-base font-black uppercase tracking-wider text-amber-500 font-['Fredoka',sans-serif]">
+          <span className="text-base font-black uppercase tracking-wider text-[#d0b56f] font-['Fredoka',sans-serif]">
             {selectedChar.name}
           </span>
           <span className="text-[10px] text-slate-300 mt-1">PERSONAJE {carouselIndex + 1} / {CHARACTERS.length}</span>
@@ -121,7 +121,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         <button
           type="button"
           onClick={() => moveCarousel(1)}
-          className="absolute right-0 z-20 w-10 h-10 rounded-full bg-[#141713]/78 border-2 border-amber-600/50 text-amber-500 flex items-center justify-center shadow-lg hover:bg-slate-900"
+          className="absolute right-0 z-20 w-10 h-10 rounded-full bg-[#242820]/82 border border-[#9a8351] text-[#d0b56f] flex items-center justify-center shadow-lg hover:bg-[#30352b]"
           aria-label="Siguiente personaje"
         >
           <ChevronRight className="w-6 h-6" />
@@ -129,11 +129,11 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       </div>
 
       {/* Balanced Attributes Panel */}
-      <div className="relative z-10 bg-[#141713]/78 backdrop-blur-md p-2 rounded-xl border border-amber-600/30 space-y-1 max-w-[300px] w-full mx-auto">
+      <div className="relative z-10 bg-[#141713]/78 backdrop-blur-md p-2 rounded-xl border border-[#9a8351]/40 space-y-1 max-w-[300px] w-full mx-auto">
         {/* Fuerza */}
         <div>
           <div className="flex justify-between text-[10px] font-black uppercase text-slate-300 mb-0.5">
-            <span className="flex items-center gap-1 text-red-400">
+            <span className="flex items-center gap-1 text-[#b87869]">
               <Zap className="w-3 h-3" />
               FUERZA
             </span>
@@ -141,7 +141,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
           </div>
           <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-red-700 to-amber-600 transition-all duration-300"
+              className="h-full bg-[#a15a43] transition-all duration-300"
               style={{ width: `${selectedChar.fuerza}%` }}
             />
           </div>
@@ -150,7 +150,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         {/* Resistencia */}
         <div>
           <div className="flex justify-between text-[10px] font-black uppercase text-slate-300 mb-0.5">
-            <span className="flex items-center gap-1 text-emerald-500">
+            <span className="flex items-center gap-1 text-[#8fa878]">
               <ShieldAlert className="w-3 h-3" />
               RESISTENCIA
             </span>
@@ -158,7 +158,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
           </div>
           <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-emerald-700 to-teal-600 transition-all duration-300"
+              className="h-full bg-[#687b58] transition-all duration-300"
               style={{ width: `${selectedChar.resistencia}%` }}
             />
           </div>
@@ -170,7 +170,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
             <Crosshair className="w-3 h-3" />
             ÁNGULO
           </span>
-          <span className="font-mono font-black text-amber-500">
+          <span className="font-mono font-black text-[#d0b56f]">
             {selectedChar.minAngle}° — {selectedChar.maxAngle}°
           </span>
         </div>
@@ -181,7 +181,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         {onCancel && (
           <button
             onClick={onCancel}
-            className="py-2 px-3.5 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
+            className="py-2 px-3.5 rounded-lg bg-[#292d27]/92 hover:bg-[#353a31] text-[#ddd8c9] font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
           >
             Atrás
           </button>
@@ -193,7 +193,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
           className={`flex-1 py-2 px-4 rounded-lg font-black text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition cursor-pointer ${
             isLockedByRival
               ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
-              : 'bg-emerald-700 hover:bg-emerald-600 text-white border border-emerald-600 active:scale-95 shadow-[0_3px_10px_rgba(16,185,129,0.18)]'
+              : 'bg-[#687b58] hover:bg-[#789064] text-white border border-[#82966c] active:scale-95 shadow-[0_3px_10px_rgba(104,123,88,0.22)]'
           }`}
         >
           {isLockedByRival ? (
