@@ -118,17 +118,22 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-gradient-to-b from-[#20291d] via-[#111912] to-[#090e0b] border-t-2 border-[#8f7a4e]/80 shadow-[0_-5px_24px_rgba(0,0,0,0.85)] px-2.5 sm:px-4 py-2 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden relative bg-[linear-gradient(135deg,rgba(255,153,51,0.12)_0%,transparent_18%,transparent_78%,rgba(190,78,20,0.16)_100%),repeating-linear-gradient(0deg,rgba(255,255,255,0.025)_0px,rgba(255,255,255,0.025)_1px,transparent_1px,transparent_4px),linear-gradient(180deg,#343b38_0%,#1b211e_22%,#111714_70%,#080b09_100%)] border-t-[3px] border-[#b87936] shadow-[0_-7px_28px_rgba(0,0,0,0.9),inset_0_2px_0_rgba(255,210,130,0.25)] px-2.5 sm:px-4 py-2 text-slate-100">
       
+      {/* Tornillos decorativos y textura de metal envejecido; no interceptan los controles */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-1 top-1 flex justify-between opacity-90">
+        <span className="h-2.5 w-2.5 rounded-full border border-[#f1c477] bg-[radial-gradient(circle_at_30%_25%,#fff0b2_0%,#8b5527_35%,#171b19_72%)] shadow-[0_1px_3px_#000]" />
+        <span className="h-2.5 w-2.5 rounded-full border border-[#f1c477] bg-[radial-gradient(circle_at_30%_25%,#fff0b2_0%,#8b5527_35%,#171b19_72%)] shadow-[0_1px_3px_#000]" />
+      </div>
       {/* Responsive unified HUD container - strictly contained inside viewport */}
-      <div className="w-full h-full min-h-0 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 px-0.5 sm:px-2">
+      <div className="relative z-10 w-full h-full min-h-0 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 px-0.5 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
         <div className="col-span-3 row-start-1 flex flex-col justify-center min-w-0 w-full">
-          <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#d6c17c] mb-0.5 font-['Fredoka',sans-serif]">
+          <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-[#ffd27b] mb-0.5 font-['Fredoka',sans-serif] drop-shadow-[0_1px_2px_#000]">
             POWER-UP
           </span>
-          <div className="flex items-center justify-center gap-1 sm:gap-1.5 bg-[#080d09]/90 p-1 rounded-md border border-[#79934b]/80 shadow-[inset_0_2px_5px_rgba(0,0,0,0.8)]">
+          <div className="flex items-center justify-center gap-1 sm:gap-1.5 bg-[linear-gradient(180deg,#090d0b,#202923_45%,#080b09)] p-1 rounded-md border border-[#b08a45] shadow-[inset_0_2px_7px_rgba(0,0,0,0.95),0_1px_0_rgba(255,207,115,0.18)]">
             {powerUpSlots.slice(0, 4).map((powerUpId, idx) => {
               const isSelected = activeSlotIndex === idx;
               const hasItem = powerUpId !== null;
@@ -144,9 +149,9 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                   disabled={!isMyTurn || !hasItem}
                   className={`flex-1 min-w-0 max-w-14 h-7 sm:h-8 rounded-sm flex items-center justify-center transition relative border-2 ${
                     isSelected
-                      ? 'border-[#ffe27a] ring-1 ring-amber-300 bg-gradient-to-b from-[#3cae54] to-[#16733a] shadow-[0_0_8px_#f59e0b]'
+                      ? 'border-[#ffe27a] ring-1 ring-amber-300 bg-gradient-to-b from-[#49d968] to-[#12642b] shadow-[0_0_10px_#f59e0b,inset_0_0_8px_rgba(255,255,190,0.22)]'
                       : hasItem
-                      ? 'border-[#1c1208] bg-gradient-to-b from-[#36b95c] to-[#15813e] hover:brightness-110 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]'
+                      ? 'border-[#427b36] bg-gradient-to-b from-[#36b95c] via-[#17783a] to-[#092d19] hover:brightness-125 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_0_5px_rgba(63,255,93,0.18)]'
                       : 'border-[#1b2415] bg-gradient-to-b from-[#1d6b36] to-[#0d3e24] cursor-default opacity-65'
                   }`}
                   title={hasItem ? `Power-Up: ${powerUpId}` : 'Slot Vacío'}
@@ -199,12 +204,12 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         {/* 2. WIND COMPASS + AIM ANGLE */}
         <div className="col-start-2 row-start-2 flex flex-col items-center justify-center gap-1 min-w-0">
           <div className="flex flex-col items-center gap-0.5">
-            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-black bg-gradient-to-b from-sky-400 to-sky-600 shadow-[inset_0_2px_2px_rgba(255,255,255,0.35),0_2px_4px_rgba(0,0,0,0.5)] flex items-center justify-center" title={`Brújula del viento: ${wind.speed} km/h`}>
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-[#171b1b] bg-[radial-gradient(circle_at_30%_22%,#8ceaff_0%,#168bd0_38%,#07518c_72%,#061c2c_100%)] shadow-[inset_0_2px_3px_rgba(255,255,255,0.55),inset_0_-4px_6px_rgba(0,0,0,0.4),0_0_0_2px_#a66b32,0_3px_6px_rgba(0,0,0,0.75)] flex items-center justify-center" title={`Brújula del viento: ${wind.speed} km/h`}>
               <span className="text-xl sm:text-2xl font-black text-red-600 drop-shadow" style={{ transform: wind.direction > 0 ? 'rotate(0deg)' : 'rotate(180deg)' }}>➜</span>
             </div>
             <span className="text-[8px] sm:text-[9px] font-black text-[#c4d7e8] whitespace-nowrap">{wind.speed} km/h</span>
           </div>
-          <div className="min-w-[78px] sm:min-w-[94px] px-2 py-1 bg-gradient-to-b from-[#20b45b] to-[#168342] border-[3px] border-black shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] text-center">
+          <div className="min-w-[78px] sm:min-w-[94px] px-2 py-1 bg-[linear-gradient(180deg,#43e77a_0%,#148544_48%,#075329_100%)] border-[3px] border-[#171c18] shadow-[inset_0_1px_0_rgba(255,255,255,0.4),0_0_0_1px_#b87936,0_2px_5px_rgba(0,0,0,0.7)] text-center">
             <span className="text-lg sm:text-xl font-black text-black">{angle}°</span>
           </div>
         </div>
@@ -242,7 +247,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
             </div>
             {onMarkLastShot && (
               <button type="button" onClick={onMarkLastShot} disabled={!isMyTurn || lastShotPower === null || isFiring}
-                className="shrink-0 rounded border border-[#8f7a4e]/60 bg-[#4b412b]/55 px-1.5 py-0.5 text-[8px] font-black text-[#d8cfb2] disabled:opacity-30"
+                className="shrink-0 rounded border border-[#d09a4b] bg-[linear-gradient(180deg,#5b5142,#292722_55%,#171916)] px-1.5 py-0.5 text-[8px] font-black text-[#f1d5a0] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_2px_3px_rgba(0,0,0,0.6)] hover:brightness-125 disabled:opacity-30"
                 title="Marcar la fuerza usada en el último tiro">
                 MARCAR
               </button>
@@ -261,7 +266,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                 ? 'bg-gradient-to-b from-slate-600 to-slate-900 opacity-40 cursor-not-allowed'
                 : isHoldingFire
                 ? 'bg-[#9f7b3f] border-white scale-105 shadow-[0_0_18px_rgba(194,154,82,0.25)] cursor-pointer'
-                : 'bg-gradient-to-b from-[#ff9b32] via-[#ff8124] to-[#f36a18] hover:brightness-110 active:scale-95 cursor-pointer'
+                : 'bg-[radial-gradient(circle_at_32%_20%,#ffd47b_0%,#ff9a28_24%,#e6530d_68%,#782608_100%)] border-[#21160f] ring-2 ring-[#b87936] hover:brightness-110 active:scale-95 cursor-pointer'
             }`}
             title={!isMyTurn ? 'Esperando turno' : isFiring ? 'Disparo en curso...' : 'Mantén presionado para cargar fuerza, suelta para disparar'}
           >
