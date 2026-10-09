@@ -247,56 +247,41 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
   const { playerId } = getPlayerIdentity(joinerPlayerName);
   const authUid = firebaseAuthenticated ? auth?.currentUser?.uid : undefined;
 
-  if (db && isConfigured && authUid) {
+  if (rtdb && isConfigured && authUid) {
     try {
-      const matchDocRef = doc(db, 'matches', matchId);
-      const updatedMatch = await runTransaction(db, async (transaction) => {
-        const snap = await transaction.get(matchDocRef);
-        if (!snap.exists()) {
-          throw new Error('La partida ya no existe.');
+      const matchRef = ref(rtdb, `activeMatches/${matchId}`);
+      let joinError = '';
+      const result = await runTransaction(matchRef, (current) => {
+        if (!current) {
+          joinError = 'La partida ya no existe.';
+          return;
         }
-
-        const data = snap.data() as OnlineMatch;
+        const data = current as OnlineMatch;
         if (data.status !== 'waiting' || data.player2 !== null) {
-          throw new Error('Esta partida ya está completa o ya ha comenzado.');
+          joinError = 'Esta partida ya está completa o ya ha comenzado.';
+          return;
         }
-
         if (data.player1.id === playerId) {
-          throw new Error('No puedes unirte como oponente a tu propia partida.');
+          joinError = 'No puedes unirte como oponente a tu propia partida.';
+          return;
         }
-
         const player2: OnlinePlayer = {
-          id: playerId,
-          authUid,
-          name: joinerPlayerName,
-          characterId: null,
-          characterSelected: false,
-          hp: 100,
-          maxHp: 100,
+          id: playerId, authUid, name: joinerPlayerName,
+          characterId: null, characterSelected: false,
+          hp: 100, maxHp: 100,
           lives: data.settings.lives === 'INFINITE' ? 999999 : data.settings.lives,
           maxLives: data.settings.lives === 'INFINITE' ? 999999 : data.settings.lives,
-          score: 0,
-          position: { x: 1720, y: 440 },
-          isReady: false
+          score: 0, position: { x: 1720, y: 440 }, isReady: false
         };
-
-        const updated: Partial<OnlineMatch> = {
-          player2,
-          status: 'starting',
-          updatedAt: Date.now()
-        };
-
-        transaction.update(matchDocRef, {
-          player2: toPersistentPlayer(player2),
-          status: 'starting',
-          updatedAt: updated.updatedAt
-        });
-        const merged = hydrateMatch({ ...data, ...updated, player2 } as OnlineMatch);
-        saveLocalMatch(merged);
-        return merged;
-      });
+        return { ...data, player2: toPersistentPlayer(player2), status: 'starting', updatedAt: Date.now() };
+      }, { applyLocally: false });
+      if (!result.committed) throw new Error(joinError || 'No se pudo unir a la partida.');
+      const merged = hydrateMatch(result.snapshot.val() as OnlineMatch);
+      saveLocalMatch(merged);
+      return merged;
     } catch (e) {
-      console.warn('Firestore transaction failed, falling back to local memory join:', e);
+      console.warn('Realtime Database join failed, falling back to local memory:', e);
+      if (e instanceof Error && /ya no existe|completa|propia partida/.test(e.message)) throw e;
     }
   }
 
