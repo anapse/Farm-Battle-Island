@@ -259,7 +259,7 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
           return;
         }
         const data = current as OnlineMatch;
-        if (data.status !== 'waiting' || data.player2 !== null) {
+        if (data.status !== 'waiting' || data.player2 != null) {
           joinError = 'Esta partida ya está completa o ya ha comenzado.';
           return;
         }
