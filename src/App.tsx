@@ -64,6 +64,7 @@ export default function App() {
   // Current active online match
   const [onlineMatch, setOnlineMatch] = useState<OnlineMatch | null>(null);
   const [pendingAiSettings, setPendingAiSettings] = useState(false);
+  const [aiDifficulty, setAiDifficulty] = useState<'easy' | 'medium' | 'hard' | 'very_hard'>('medium');
   const [playerRole, setPlayerRole] = useState<'player1' | 'player2'>('player1');
 
   // Pending room settings during creation flow
@@ -478,15 +479,20 @@ export default function App() {
           }
         }
 
-        // La IA no debe acertar siempre. La mayoría de sus tiros son buenos,
-        // pero algunos tienen error intencional para que siga siendo jugable.
-        const shouldMiss = Math.random() < 0.24;
+        // Dificultad configurable: fácil falla ~20%, medio ~10%, difícil casi nunca.
+        const difficulty = aiDifficulty;
+        const missChance = difficulty === 'easy' ? 0.20
+          : difficulty === 'medium' ? 0.10
+          : difficulty === 'hard' ? 0.02 : 0;
+        const shouldMiss = Math.random() < missChance;
         const angleError = shouldMiss
-          ? (Math.random() > 0.5 ? 1 : -1) * (7 + Math.random() * 12)
-          : (Math.random() - 0.5) * 2.5;
+          ? (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 16)
+          : difficulty === 'hard' || difficulty === 'very_hard'
+            ? (Math.random() - 0.5) * 0.8
+            : (Math.random() - 0.5) * 2.5;
         const powerError = shouldMiss
-          ? (Math.random() > 0.5 ? 1 : -1) * (8 + Math.random() * 15)
-          : (Math.random() - 0.5) * 4;
+          ? (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 18)
+          : (Math.random() - 0.5) * (difficulty === 'easy' ? 5 : difficulty === 'medium' ? 3 : 1);
 
         const aiAngle = Math.round(Math.max(20, Math.min(80, best.angle + angleError)));
         const aiPower = Math.round(Math.max(45, Math.min(100, best.power + powerError)));
@@ -495,12 +501,18 @@ export default function App() {
           player2Angle: aiAngle,
           player2Power: aiPower
         });
-        engineRef.current.fireShot('player2');
+
+        // Muy difícil aprovecha power-ups ofensivos de forma ocasional.
+        const veryHardPowerUps: PowerUpType[] = ['mega_bomb', 'precision', 'power_boost', 'fire_shot', 'double_hit', 'triple_hit', 'grenade'];
+        const aiPowerUp = difficulty === 'very_hard' && Math.random() < 0.65
+          ? veryHardPowerUps[Math.floor(Math.random() * veryHardPowerUps.length)]
+          : undefined;
+        engineRef.current.fireShot('player2', aiPowerUp);
       }, 1500);
 
       return () => clearTimeout(aiTimer);
     }
-  }, [screen, onlineMatch?.gameState.currentTurnPlayerId, onlineMatch?.isAiMatch, myPlayerId, matchResult]);
+  }, [screen, onlineMatch?.gameState.currentTurnPlayerId, onlineMatch?.isAiMatch, myPlayerId, matchResult, aiDifficulty]);
 
   // 6. Initialize Canvas Engine
   useEffect(() => {
@@ -664,7 +676,8 @@ export default function App() {
     setScreen('create_room');
   };
 
-  const handleAiSettingsConfigured = async (timeLimit: GameTimeOption, lives: GameLivesOption, islandId: string) => {
+  const handleAiSettingsConfigured = async (timeLimit: GameTimeOption, lives: GameLivesOption, islandId: string, difficulty: 'easy' | 'medium' | 'hard' | 'very_hard' = 'medium') => {
+    setAiDifficulty(difficulty);
     setPendingAiSettings(false);
     try {
       setOnlineMatch(null);
@@ -947,6 +960,7 @@ export default function App() {
         <CreateRoomModal
           creatorName={playerName}
           onClose={() => { setPendingAiSettings(false); setScreen('menu'); }}
+          isAiMode={pendingAiSettings}
           onCreate={pendingAiSettings ? handleAiSettingsConfigured : handleSettingsConfigured}
         />
       )}
