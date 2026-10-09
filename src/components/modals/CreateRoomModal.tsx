@@ -45,7 +45,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
+          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -55,7 +55,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       <form onSubmit={handleSubmit} className="relative z-10 flex-1 flex flex-col justify-center gap-3 my-2 max-w-[320px] w-full mx-auto">
         
         {/* TIEMPO Selection */}
-        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-[#9a8351]/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
             <Clock className="w-3.5 h-3.5 text-amber-500" />
             <span>TIEMPO:</span>
@@ -66,8 +66,8 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               onClick={() => setTimeLimit('5_MIN')}
               className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                 timeLimit === '5_MIN'
-                  ? 'bg-amber-700 border-amber-600 text-white shadow-md'
-                  : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  ? 'bg-amber-700 border-[#9a8351] text-white shadow-md'
+                  : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
               }`}
             >
               5 MINUTOS
@@ -80,8 +80,8 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               }}
               className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                 timeLimit === 'INFINITE'
-                  ? 'bg-amber-700 border-amber-600 text-white shadow-md'
-                  : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  ? 'bg-amber-700 border-[#9a8351] text-white shadow-md'
+                  : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
               }`}
             >
               ∞ INFINITO
@@ -90,7 +90,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
 
         {/* VIDAS Selection */}
-        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-[#9a8351]/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
             <span>VIDAS:</span>
@@ -108,8 +108,8 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 }}
                 className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                   lives === num
-                    ? 'bg-red-700 border-red-600 text-white shadow-md'
-                    : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
+                    ? 'bg-[#8f4d43] border-[#9a5a4f] text-white shadow-md'
+                    : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 {num === 'INFINITE' ? '∞ VIDAS' : `${num} ${num === 1 ? 'VIDA' : 'VIDAS'}`}
@@ -119,7 +119,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
 
         {/* MAPA / ESCENARIO Selection */}
-        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-[#9a8351]/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
             <MapPin className="w-3.5 h-3.5 text-amber-500" />
             <span>ESCENARIO:</span>
@@ -132,8 +132,8 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 onClick={() => setIslandId(island.id)}
                 className={`p-2 rounded-lg text-left border transition text-xs cursor-pointer ${
                   islandId === island.id
-                    ? 'bg-emerald-950/90 border-emerald-400 text-white shadow-sm'
-                    : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
+                    ? 'bg-[#293225]/92 border-[#82966c] text-white shadow-sm'
+                    : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="font-black text-[11px] text-amber-500">{island.title}</div>
@@ -147,7 +147,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         <div className="pt-1">
           <button
             type="submit"
-            className="w-full py-2.5 rounded-lg bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-600 hover:to-amber-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg border border-amber-600 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
+            className="w-full py-2.5 rounded-lg bg-[#806c42] hover:bg-[#927b4d] text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg border border-[#9a8351] flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
           >
             <Check className="w-4 h-4 stroke-[3]" />
             <span>CREAR PARTIDA</span>
