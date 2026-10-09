@@ -76,9 +76,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       <div className="relative z-10 flex items-center justify-start w-full pt-1">
         <button
           onClick={onContact}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white border border-amber-400/90 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
         >
-          <Mail className="w-4 h-4 text-amber-300" />
+          <Mail className="w-4 h-4 text-amber-500" />
           <span>CONTACTO</span>
         </button>
       </div>
@@ -102,11 +102,11 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         {/* Fallback typography when logo.png is not loaded yet */}
         {!logoLoaded && (
           <div className="flex flex-col items-center mb-1">
-            <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-amber-400 uppercase drop-shadow mb-1">
+            <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-amber-500 uppercase drop-shadow mb-1">
               ANAPSE VIDEO GAMES
             </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)] font-['Fredoka',sans-serif]">
-              FARM BATTLE <span className="text-amber-400">ISLAND</span>
+              FARM BATTLE <span className="text-amber-500">ISLAND</span>
             </h1>
           </div>
         )}
@@ -126,7 +126,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* CREAR (Create Room Modal) */}
           <button
             onClick={() => handleActionClick('create_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-amber-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-amber-600/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>CREAR</span>
@@ -135,7 +135,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* UNIRSE (Join Available Room Modal) */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-sky-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-sky-700/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Users className="w-4 h-4" />
             <span>UNIRSE</span>
@@ -144,9 +144,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-purple-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-purple-700/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
-            <Trophy className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+            <Trophy className="w-4 h-4 text-yellow-600 fill-yellow-600" />
             <span>TOP 50</span>
           </button>
 
@@ -161,7 +161,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       {/* Modal: Pedir Nombre de Jugador al presionar JUGAR, CREAR o UNIRSE */}
       {pendingAction !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-[280px] bg-slate-950/90 border border-amber-500/70 rounded-2xl shadow-2xl p-4 text-center relative overflow-hidden backdrop-blur-md">
+          <div className="w-full max-w-[280px] bg-slate-950/90 border border-amber-600/50 rounded-2xl shadow-2xl p-4 text-center relative overflow-hidden backdrop-blur-md">
             
             <button
               onClick={() => setPendingAction(null)}
@@ -170,8 +170,8 @@ export const MainMenu: React.FC<MainMenuProps> = ({
               <X className="w-4 h-4" />
             </button>
 
-            <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center mx-auto mb-2">
-              <UserCheck className="w-4 h-4 text-amber-400" />
+            <div className="w-9 h-9 rounded-full bg-amber-700/15 border border-amber-600/40 flex items-center justify-center mx-auto mb-2">
+              <UserCheck className="w-4 h-4 text-amber-500" />
             </div>
 
             <h3 className="text-sm font-black text-white uppercase tracking-wider mb-2">
@@ -186,7 +186,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                 onChange={(e) => setTempPlayerName(e.target.value)}
                 placeholder="Escribe tu alias..."
                 maxLength={18}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-bold text-white text-center focus:outline-none focus:border-amber-400 transition"
+                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm font-bold text-white text-center focus:outline-none focus:border-amber-600 transition"
               />
 
               <div className="flex gap-2">
@@ -199,7 +199,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-1.5 px-3 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase border border-emerald-400/80 shadow-md transition active:scale-95 cursor-pointer"
+                  className="flex-1 py-1.5 px-3 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase border border-emerald-600/70 shadow-md transition active:scale-95 cursor-pointer"
                 >
                   Continuar
                 </button>
