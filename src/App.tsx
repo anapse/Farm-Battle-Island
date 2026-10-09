@@ -930,7 +930,6 @@ export default function App() {
       {screen === 'menu' && (
         <MainMenu
           onQuickPlay={handleQuickPlay}
-          onCreateRoom={handleOpenCreateRoom}
           onJoinRoom={() => setScreen('join_room')}
           onRanking={() => setShowRanking(true)}
           onContact={() => setShowContact(true)}
@@ -954,6 +953,7 @@ export default function App() {
           joinerName={playerName}
           onClose={() => setScreen('menu')}
           onJoin={handleJoinSelectedMatch}
+          onCreateRoom={handleOpenCreateRoom}
         />
       )}
 
@@ -1098,7 +1098,8 @@ export default function App() {
             setActivePowerUp(null);
             setActiveSlotIndex(null);
             setLastShotPower(null);
-            void handleQuickPlay();
+            setPendingCreation(null);
+            setScreen('join_room');
           }}
           onBackToMenu={handleBackToMenu}
         />
