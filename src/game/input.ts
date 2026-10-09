@@ -78,6 +78,20 @@ export class InputHandler {
     };
   }
 
+  private isPointerOnPlayer(screenX: number, screenY: number): boolean {
+    const activePlayer = this.players.getPlayer(this.getCurrentTurn());
+    if (!activePlayer || activePlayer.lifeState !== 'active') return false;
+
+    const screen = this.worldToScreen(activePlayer.x, activePlayer.y - activePlayer.height * 0.5);
+    const halfW = Math.max(30, activePlayer.width * this.camera.zoom * 0.9);
+    const halfH = Math.max(24, activePlayer.height * this.camera.zoom * 1.2);
+
+    return (
+      Math.abs(screenX - screen.x) <= halfW &&
+      Math.abs(screenY - screen.y) <= halfH
+    );
+  }
+
   private isPointerOnAimHandle(screenX: number, screenY: number): boolean {
     const activePlayer = this.players.getPlayer(this.getCurrentTurn());
     if (!activePlayer || activePlayer.lifeState !== 'active') return false;
@@ -139,7 +153,9 @@ export class InputHandler {
     // IMPORTANT: only the visible aim circle starts an aim drag.
     // Clicking elsewhere keeps the aim exactly where it was.
     this.isAiming = this.isPointerOnAimHandle(x, y);
-    this.isMovingPlayer = !this.isAiming;
+    // Dragging anywhere on the battlefield must NOT move the tank.
+    // Movement starts only when the pointer begins directly on the active tank.
+    this.isMovingPlayer = !this.isAiming && this.isPointerOnPlayer(x, y);
     this.isPanningCamera = false;
 
     if (this.isAiming) {
