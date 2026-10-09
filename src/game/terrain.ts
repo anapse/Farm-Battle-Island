@@ -409,10 +409,18 @@ export class TerrainManager {
 
     const sprite = spriteManager.getDecoration(decoId);
     if (sprite) {
-      // Official Sliced Decoration Render placed squarely on top of the supporting ground block
+      // Mirror scenery on Player 2's island so both sides are visual reflections.
       const dw = decoId === 'hut' ? 104 : (decoId === 'palm' ? 240 : (decoId === 'rocks' ? 170 : 145));
       const dh = decoId === 'hut' ? 210 : (decoId === 'palm' ? 345 : (decoId === 'rocks' ? 115 : 135));
-      ctx.drawImage(sprite, x - dw / 2, y - dh + 14, dw, dh);
+      if (obj.islandIndex === 2) {
+        ctx.save();
+        ctx.translate(x * 2, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(sprite, x - dw / 2, y - dh + 14, dw, dh);
+        ctx.restore();
+      } else {
+        ctx.drawImage(sprite, x - dw / 2, y - dh + 14, dw, dh);
+      }
     }
   }
 }
