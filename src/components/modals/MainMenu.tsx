@@ -129,7 +129,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#82966c] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-3.5 px-4 rounded-xl bg-[linear-gradient(180deg,#ff9a7d_0%,#ed3e2e_42%,#a91819_78%,#5c1118_100%)] hover:brightness-110 text-white font-black text-base sm:text-lg tracking-wider uppercase border-2 border-[#ffc0a2] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-5px_0_rgba(70,0,0,0.3),0_5px_0_#511015,0_9px_14px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 active:shadow-[inset_0_2px_0_rgba(255,255,255,0.4),0_2px_0_#511015] cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
@@ -138,7 +138,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* MULTIJUGADOR: lobby con salas y creación en una sola pantalla */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-3.5 px-4 rounded-xl bg-[linear-gradient(180deg,#f3a3ff_0%,#b92be0_42%,#7412a8_78%,#3c075e_100%)] hover:brightness-110 text-white font-black text-base sm:text-lg tracking-wider uppercase border-2 border-[#f0b8ff] shadow-[inset_0_2px_0_rgba(255,255,255,0.7),inset_0_-5px_0_rgba(30,0,60,0.35),0_5px_0_#35084d,0_9px_14px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
           >
             <Users className="w-4 h-4" />
             <span>MULTIJUGADOR</span>
