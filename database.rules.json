@@ -7,72 +7,7 @@
       "$matchId": {
         ".read": "auth != null",
         ".write": "auth != null && ((!data.exists() && newData.child('player1/authUid').val() === auth.uid) || (data.exists() && (data.child('player1/authUid').val() === auth.uid || data.child('player2/authUid').val() === auth.uid)))",
-        ".validate": "newData.hasChildren(['matchId', 'player1', 'gameState', 'status']) && newData.child('matchId').val() === $matchId",
-        "matchId": {
-          ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())"
-        },
-        "creatorPlayerId": {
-          ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())"
-        },
-        "creatorPlayerName": {
-          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40 && (!data.exists() || newData.val() === data.val())"
-        },
-        "createdAt": {
-          ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())"
-        },
-        "updatedAt": {
-          ".validate": "newData.isNumber()"
-        },
-        "isAiMatch": {
-          ".validate": "newData.isBoolean()"
-        },
-        "settings": {
-          ".validate": "newData.hasChildren(['timeLimit', 'lives', 'islandId'])"
-        },
-        "player1": {
-          ".validate": "newData.hasChildren(['id', 'authUid', 'name', 'characterId', 'characterSelected', 'position', 'isReady']) && newData.child('authUid').val() === (data.exists() ? data.child('authUid').val() : auth.uid)",
-          "id": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100 && (!data.exists() || newData.val() === data.val())" },
-          "authUid": { ".validate": "newData.isString() && newData.val().length > 0 && (!data.exists() || newData.val() === data.val())" },
-          "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40 && (!data.exists() || newData.val() === data.val())" },
-          "characterId": { ".validate": "newData.val() == null || newData.val() === 'mono' || newData.val() === 'tortuga' || newData.val() === 'gallina' || newData.val() === 'panda' || newData.val() === 'conejo' || newData.val() === 'mapache'" },
-          "characterSelected": { ".validate": "newData.isBoolean()" },
-          "position": { ".validate": "newData.hasChildren(['x', 'y'])" },
-          "isReady": { ".validate": "newData.isBoolean()" }
-        },
-        "player2": {
-          ".validate": "newData.val() == null || (newData.hasChildren(['id', 'authUid', 'name', 'characterId', 'characterSelected', 'position', 'isReady']) && newData.child('authUid').isString() && newData.child('authUid').val() !== newData.parent().child('player1/authUid').val() && (!data.exists() || data.val() == null || newData.child('authUid').val() === data.child('authUid').val()))",
-          "id": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100 && (!data.exists() || newData.val() === data.val())" },
-          "authUid": { ".validate": "newData.isString() && newData.val().length > 0 && (!data.exists() || newData.val() === data.val())" },
-          "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 40 && (!data.exists() || newData.val() === data.val())" },
-          "characterId": { ".validate": "newData.val() == null || newData.val() === 'mono' || newData.val() === 'tortuga' || newData.val() === 'gallina' || newData.val() === 'panda' || newData.val() === 'conejo' || newData.val() === 'mapache'" },
-          "characterSelected": { ".validate": "newData.isBoolean()" },
-          "position": { ".validate": "newData.hasChildren(['x', 'y'])" },
-          "isReady": { ".validate": "newData.isBoolean()" }
-        },
-        "status": {
-          ".validate": "newData.isString() && (newData.val() === 'waiting' || newData.val() === 'starting' || newData.val() === 'playing' || newData.val() === 'finished' || newData.val() === 'cancelled')"
-        },
-        "gameState": {
-          ".validate": "newData.hasChildren(['currentTurnPlayerId', 'turnStartedAt', 'turnDuration', 'matchStartedAt', 'matchEndAt', 'wind', 'lastShot', 'lastImpact', 'winnerPlayerId', 'loserPlayerId', 'finishReason', 'finishedAt'])",
-          "currentTurnPlayerId": { ".validate": "newData.isString()" },
-          "turnStartedAt": { ".validate": "newData.isNumber()" },
-          "turnDuration": { ".validate": "newData.isNumber()" },
-          "matchStartedAt": { ".validate": "newData.isNumber()" },
-          "matchEndAt": { ".validate": "newData.val() == null || newData.isNumber()" },
-          "wind": {
-            ".validate": "newData.hasChildren(['speed', 'direction', 'angleDeg'])",
-            "speed": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
-            "direction": { ".validate": "newData.isNumber() && (newData.val() === -1 || newData.val() === 1)" },
-            "angleDeg": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 90" }
-          },
-          "lastShot": { ".validate": "newData.val() == null || newData.hasChildren(['shotId', 'shooterPlayerId', 'shooterRole', 'angle', 'power', 'powerUpType', 'windSpeed', 'windDirection', 'timestamp'])" },
-          "lastImpact": { ".validate": "newData.val() == null || newData.hasChildren(['shotId', 'hitX', 'hitY', 'damage', 'targetPlayerId', 'isWater', 'timestamp'])" },
-          "winnerPlayerId": { ".validate": "newData.val() == null || newData.isString()" },
-          "loserPlayerId": { ".validate": "newData.val() == null || newData.isString()" },
-          "finishReason": { ".validate": "newData.val() == null || newData.val() === 'lives_depleted' || newData.val() === 'time_expired' || newData.val() === 'voluntary_surrender' || newData.val() === 'opponent_disconnected'" },
-          "finishedAt": { ".validate": "newData.val() == null || newData.isNumber()" },
-          "processedForRanking": { ".validate": "newData.isBoolean()" }
-        }
+        ".validate": "newData.hasChildren(['matchId', 'player1', 'gameState', 'status']) && newData.child('matchId').val() === $matchId"
       }
     }
   }
