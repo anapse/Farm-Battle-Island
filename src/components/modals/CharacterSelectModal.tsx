@@ -71,7 +71,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       />
 
       {/* Dark Vignette Overlay for maximum readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 text-center pt-1">
@@ -93,14 +93,14 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         <button
           type="button"
           onClick={() => moveCarousel(-1)}
-          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-slate-950/85 border-2 border-amber-600/50 text-amber-500 flex items-center justify-center shadow-lg hover:bg-slate-900"
+          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-[#141713]/78 border-2 border-amber-600/50 text-amber-500 flex items-center justify-center shadow-lg hover:bg-slate-900"
           aria-label="Personaje anterior"
         >
           <ChevronLeft className="w-6 h-6" />
         </button>
 
         <div className={`w-[210px] h-[230px] rounded-2xl border-2 flex flex-col items-center justify-center p-3 backdrop-blur-sm shadow-xl ${
-          isLockedByRival ? 'border-red-700 bg-red-950/70 opacity-60' : 'border-amber-600 bg-slate-950/80'
+          isLockedByRival ? 'border-red-700 bg-red-950/70 opacity-60' : 'border-amber-600 bg-[#141713]/72'
         }`}>
           <div
             className="w-[150px] h-[150px] transition-transform hover:scale-105"
@@ -121,7 +121,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         <button
           type="button"
           onClick={() => moveCarousel(1)}
-          className="absolute right-0 z-20 w-10 h-10 rounded-full bg-slate-950/85 border-2 border-amber-600/50 text-amber-500 flex items-center justify-center shadow-lg hover:bg-slate-900"
+          className="absolute right-0 z-20 w-10 h-10 rounded-full bg-[#141713]/78 border-2 border-amber-600/50 text-amber-500 flex items-center justify-center shadow-lg hover:bg-slate-900"
           aria-label="Siguiente personaje"
         >
           <ChevronRight className="w-6 h-6" />
@@ -129,7 +129,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       </div>
 
       {/* Balanced Attributes Panel */}
-      <div className="relative z-10 bg-slate-950/85 backdrop-blur-md p-2 rounded-xl border border-amber-600/30 space-y-1 max-w-[300px] w-full mx-auto">
+      <div className="relative z-10 bg-[#141713]/78 backdrop-blur-md p-2 rounded-xl border border-amber-600/30 space-y-1 max-w-[300px] w-full mx-auto">
         {/* Fuerza */}
         <div>
           <div className="flex justify-between text-[10px] font-black uppercase text-slate-300 mb-0.5">
@@ -166,7 +166,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
 
         {/* Rango de Ángulo */}
         <div className="flex items-center justify-between pt-0.5 border-t border-slate-800 text-[10px]">
-          <span className="flex items-center gap-1 text-sky-500 font-bold uppercase">
+          <span className="flex items-center gap-1 text-[#9b8b62] font-bold uppercase">
             <Crosshair className="w-3 h-3" />
             ÁNGULO
           </span>
@@ -181,7 +181,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         {onCancel && (
           <button
             onClick={onCancel}
-            className="py-2 px-3.5 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
+            className="py-2 px-3.5 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
           >
             Atrás
           </button>
