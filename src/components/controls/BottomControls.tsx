@@ -118,7 +118,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[18%] select-none box-border overflow-hidden bg-[#151813]/92 border-t-2 border-[#8f7a4e]/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-[#151813]/92 border-t-2 border-[#8f7a4e]/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
       <div className="w-full h-full min-h-0 grid grid-cols-[auto_minmax(0,1fr)_auto_auto] grid-rows-[1fr_auto] items-center gap-1 px-0.5 sm:px-2">
