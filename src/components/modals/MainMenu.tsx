@@ -96,14 +96,14 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       </div>
 
       {/* Main Studio Brand & Title Lockup */}
-      <div className="relative z-10 flex flex-col items-center text-center flex-1 min-h-0 justify-center">
+      <div className="relative z-10 flex flex-col items-center text-center flex-1 min-h-0 justify-center gap-0">
         
         {/* Official 3D Logo (logo.png) */}
-        <div className="max-w-[280px] w-full flex justify-center mb-1">
+        <div className="w-full max-w-[360px] flex flex-1 min-h-0 items-center justify-center mb-0">
           <img
             src={getAssetUrl('assets/sprites/logo.png')}
             alt="Farm Battle Island Logo"
-            className={`max-h-[15vh] sm:max-h-[18vh] object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-500 ${
+            className={`max-h-[38vh] sm:max-h-[42vh] max-w-full w-full object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.8)] transition-all duration-500 ${
               logoLoaded ? 'block scale-100' : 'hidden scale-95'
             }`}
             onLoad={() => setLogoLoaded(true)}
@@ -124,12 +124,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         )}
 
         {/* Action Buttons Menu - Slim, refined design */}
-        <div className="flex flex-col gap-2 w-full max-w-[280px] mt-2">
+        <div className="flex flex-col gap-1.5 w-full max-w-[280px] mt-0 shrink-0">
           
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full min-h-11 py-2.5 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
+            className="w-full min-h-9 py-1.5 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
@@ -138,7 +138,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* MULTIJUGADOR: lobby con salas y creación en una sola pantalla */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full min-h-12 py-3 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
+            className="w-full min-h-9 py-1.5 px-4 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition active:translate-y-0.5 cursor-pointer"
           >
             <Users className="w-4 h-4" />
             <span>MULTIJUGADOR</span>
