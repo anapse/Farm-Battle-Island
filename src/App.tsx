@@ -943,7 +943,7 @@ export default function App() {
           />
 
           {/* Active Turn Alert Banner */}
-          <div className="absolute top-16 left-0 right-0 z-20 flex justify-center pointer-events-none">
+          <div className="absolute top-[104px] left-0 right-0 z-20 flex justify-center pointer-events-none">
             {isMyTurn ? (
               <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 text-white font-black text-xs uppercase px-4 py-1 rounded-full shadow-lg border-2 border-emerald-300 animate-pulse tracking-wider">
                 ¡Tu Turno! Apunta y Dispara
@@ -957,7 +957,7 @@ export default function App() {
 
           {/* Tactical Notification Toast */}
           {tacticalToast && (
-            <div className="absolute top-24 left-0 right-0 z-40 flex justify-center pointer-events-none px-4">
+            <div className="absolute top-[132px] left-0 right-0 z-40 flex justify-center pointer-events-none px-4">
               <div className={`px-3 py-1.5 rounded-lg text-xs font-black shadow-xl border backdrop-blur-sm ${
                 tacticalToast.type === 'success' 
                   ? 'bg-emerald-950/90 text-emerald-200 border-emerald-500' 
