@@ -31,9 +31,9 @@ export const LeaveConfirmModal: React.FC<LeaveConfirmModalProps> = ({
       </div>
 
       {/* Warning Box */}
-      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/85 backdrop-blur-md border border-red-500/60 rounded-xl p-4 text-center shadow-2xl">
-        <div className="w-10 h-10 rounded-full bg-red-600/20 border border-red-500 flex items-center justify-center mx-auto mb-2">
-          <AlertTriangle className="w-5 h-5 text-red-400" />
+      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/85 backdrop-blur-md border border-red-700/50 rounded-xl p-4 text-center shadow-2xl">
+        <div className="w-10 h-10 rounded-full bg-red-700/15 border border-red-700 flex items-center justify-center mx-auto mb-2">
+          <AlertTriangle className="w-5 h-5 text-red-500" />
         </div>
 
         <p className="text-xs text-red-200 font-bold mb-1">
@@ -54,7 +54,7 @@ export const LeaveConfirmModal: React.FC<LeaveConfirmModalProps> = ({
         </button>
         <button
           onClick={onConfirmLeave}
-          className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase shadow-md border border-red-400 flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
+          className="flex-1 py-2 rounded-lg bg-red-700 hover:bg-red-600 text-white font-bold text-xs uppercase shadow-md border border-red-700 flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
         >
           <Flag className="w-3.5 h-3.5" />
           <span>Rendirse</span>
