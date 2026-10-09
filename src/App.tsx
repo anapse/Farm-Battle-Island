@@ -753,9 +753,13 @@ export default function App() {
     const item = powerUpSlots[index];
     if (!item) return;
 
-    if (item === 'corazon') {
-      engineRef.current?.applyPowerUp(playerRole, 'heal_10');
-      showTacticalToast('+10% de vida restaurada ❤️', 'success');
+    if (item === 'corazon' || item === 'corazon_doble') {
+      const healType = item === 'corazon_doble' ? 'heal_20' : 'heal_10';
+      const healed = engineRef.current?.applyPowerUp(playerRole, healType);
+      showTacticalToast(
+        item === 'corazon_doble' ? '+20% de vida restaurada ❤️❤️' : '+10% de vida restaurada ❤️',
+        'success'
+      );
       setPowerUpSlots(prev => {
         const next = [...prev];
         next[index] = null;
