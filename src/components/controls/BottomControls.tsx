@@ -9,7 +9,8 @@ export type OfficialPowerUpId =
   | 'bala_triple' 
   | 'bala_explosiva' 
   | 'granada' 
-  | 'corazon';
+  | 'corazon'
+  | 'corazon_doble';
 
 // Official balas.png (2 rows x 3 cols):
 // 0,0 = bala normal | 1,0 = bala doble | 2,0 = bala triple
@@ -20,7 +21,8 @@ const POWERUP_BG_POSITIONS: Record<OfficialPowerUpId, string> = {
   bala_triple: '100% 0%',
   bala_explosiva: '0% 100%',
   granada: '50% 100%',
-  corazon: '100% 100%'
+  corazon: '100% 100%',
+  corazon_doble: '100% 100%'
 };
 
 interface BottomControlsProps {
@@ -150,16 +152,39 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                   title={hasItem ? `Power-Up: ${powerUpId}` : 'Slot Vacío'}
                 >
                   {hasItem ? (
-                    // Strictly the official sliced transparent sprite from balas.png
-                    <div
-                      className="w-6 h-6 sm:w-7 sm:h-7 pointer-events-none drop-shadow"
-                      style={{
-                        backgroundImage: `url('${getAssetUrl('assets/sprites/balas.png')}')`,
-                        backgroundSize: '300% 200%',
-                        backgroundPosition: POWERUP_BG_POSITIONS[powerUpId] || '0% 0%',
-                        backgroundRepeat: 'no-repeat'
-                      }}
-                    />
+                    powerUpId === 'corazon_doble' ? (
+                      <div className="flex items-center gap-0.5 pointer-events-none drop-shadow">
+                        <div
+                          className="w-4 h-4 sm:w-5 sm:h-5"
+                          style={{
+                            backgroundImage: `url('${getAssetUrl('assets/sprites/balas.png')}')`,
+                            backgroundSize: '300% 200%',
+                            backgroundPosition: '100% 100%',
+                            backgroundRepeat: 'no-repeat'
+                          }}
+                        />
+                        <div
+                          className="w-4 h-4 sm:w-5 sm:h-5"
+                          style={{
+                            backgroundImage: `url('${getAssetUrl('assets/sprites/balas.png')}')`,
+                            backgroundSize: '300% 200%',
+                            backgroundPosition: '100% 100%',
+                            backgroundRepeat: 'no-repeat'
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      // Official sliced transparent sprite from balas.png
+                      <div
+                        className="w-6 h-6 sm:w-7 sm:h-7 pointer-events-none drop-shadow"
+                        style={{
+                          backgroundImage: `url('${getAssetUrl('assets/sprites/balas.png')}')`,
+                          backgroundSize: '300% 200%',
+                          backgroundPosition: POWERUP_BG_POSITIONS[powerUpId] || '0% 0%',
+                          backgroundRepeat: 'no-repeat'
+                        }}
+                      />
+                    )
                   ) : (
                     // Clean Empty Slot: No emojis, no lucide icons
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-700/60" />
