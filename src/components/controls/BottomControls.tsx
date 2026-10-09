@@ -121,7 +121,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
     <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-[#151813]/92 border-t-2 border-[#8f7a4e]/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
-      <div className="w-full h-full min-h-0 grid grid-cols-[auto_minmax(0,1fr)_auto_auto] grid-rows-[1fr_auto] items-center gap-1 px-0.5 sm:px-2">
+      <div className="w-full h-full min-h-0 grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_auto] grid-rows-[1fr_auto] items-center gap-1.5 px-0.5 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
         <div className="flex flex-col justify-center shrink-0 justify-self-start">
@@ -196,33 +196,33 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 2. VIENTO & ÁNGULO ZONE (Pure visual readout - angle controlled by mouse) */}
-        <div className="min-w-0 flex flex-col items-center justify-center px-0.5 sm:px-2 bg-black/40 py-1 rounded-lg border border-[#8f7a4e]/30 overflow-hidden">
-          <div className="flex items-center gap-0.5 sm:gap-2 min-w-0 whitespace-nowrap">
+        <div className="min-w-0 flex flex-col items-center justify-center px-1 sm:px-2 bg-gradient-to-b from-[#283b3a]/95 via-[#172522]/95 to-[#0b1414]/95 py-1.5 rounded-xl border border-[#7d9b86]/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_3px_8px_rgba(0,0,0,0.55)]">
+          <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 min-w-0">
             {/* Wind Readout */}
             <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-bold text-[#c4b88f] min-w-0">
-              <span className="text-[10px] sm:text-xs text-slate-400 font-sans">VIENTO:</span>
+              <span className="text-[8px] sm:text-xs text-[#a8c7cf] font-black font-sans">🧭</span>
               <span>{wind.speed} km/h</span>
               <span className="text-sm font-black text-[#b3a37a]">
                 {wind.direction > 0 ? '➡' : '⬅'}
               </span>
             </div>
             
-            <div className="w-[1px] h-4 bg-slate-700/80" />
+            <div className="hidden sm:block w-px h-4 bg-[#78908a]/70" />
 
             {/* Aim Angle Readout (Follows mouse position relative to vehicle) */}
             <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-black text-[#9aaa7a] min-w-0">
-              <span className="text-[10px] sm:text-xs text-slate-400 font-sans">ÁNGULO:</span>
+              <span className="text-[8px] sm:text-xs text-[#a8c7cf] font-black font-sans">ÁNG.</span>
               <span className="text-sm sm:text-base font-black text-amber-300">{angle}°</span>
             </div>
           </div>
 
           {/* Discreet Move Vehicle Buttons */}
           {onMove && (
-            <div className="flex items-center gap-1.5 mt-0.5">
+            <div className="flex items-center justify-center gap-1.5 mt-1">
               <button
                 onClick={() => onMove(-14)}
                 disabled={!isMyTurn}
-                className="px-2 py-0.2 rounded bg-[#293225]/85 hover:bg-[#3a4931] text-[#b4c19a] border border-[#687a53]/60 disabled:opacity-30 text-[10px] font-black transition active:scale-95"
+                className="min-w-7 px-2 py-0.5 rounded-md bg-gradient-to-b from-[#53694b] to-[#202d22] hover:from-[#687e5a] text-[#e0edcf] border border-[#8ea77c] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_2px_3px_rgba(0,0,0,0.5)] disabled:opacity-30 text-[10px] font-black transition active:translate-y-px active:shadow-none"
                 title="Mover tanque izquierda (A / ◀)"
               >
                 ◀
@@ -283,18 +283,18 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
           </div>   </div>
 
         {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
-        <div className="flex flex-col items-center justify-center shrink-0 min-w-0 col-start-4 row-start-1">
+        <div className="flex flex-col items-center justify-center shrink-0 min-w-0 col-start-3 row-start-1">
           <button
             onPointerDown={handleFirePointerDown}
             onPointerUp={handleFirePointerUp}
             onPointerLeave={handleFirePointerLeave}
             disabled={!isMyTurn || isFiring}
-            className={`w-13 h-13 sm:w-15 sm:h-15 w-[52px] h-[52px] sm:w-[58px] sm:h-[58px] rounded-full border-3 shadow-[0_0_14px_rgba(239,68,68,0.7)] flex flex-col items-center justify-center transition-all select-none touch-none ${
+            className={`w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-full border-[3px] shadow-[inset_0_2px_3px_rgba(255,255,255,0.3),inset_0_-5px_8px_rgba(0,0,0,0.4),0_0_14px_rgba(239,68,68,0.45)] flex flex-col items-center justify-center transition-all select-none touch-none ${
               !isMyTurn || isFiring
-                ? 'bg-slate-800 border-slate-600 opacity-40 cursor-not-allowed'
+                ? 'bg-gradient-to-b from-slate-600 to-slate-900 border-slate-500 opacity-40 cursor-not-allowed'
                 : isHoldingFire
                 ? 'bg-[#9f7b3f] border-white scale-105 shadow-[0_0_18px_rgba(194,154,82,0.25)] cursor-pointer'
-                : 'bg-[#9b5540] hover:brightness-105 active:scale-95 border-[#d2b875] cursor-pointer animate-pulse'
+                : 'bg-gradient-to-b from-[#f0bd66] via-[#b86b36] to-[#713a2a] hover:brightness-110 active:scale-95 border-[#ffe2a0] cursor-pointer'
             }`}
             title={
               !isMyTurn 
