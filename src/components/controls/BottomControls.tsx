@@ -118,17 +118,17 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-[#151813]/92 border-t-2 border-[#8f7a4e]/70 shadow-[0_-4px_24px_rgba(0,0,0,0.85)] backdrop-blur-md px-2.5 sm:px-4 py-2 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-gradient-to-b from-[#20291d] via-[#111912] to-[#090e0b] border-t-2 border-[#8f7a4e]/80 shadow-[0_-5px_24px_rgba(0,0,0,0.85)] px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Responsive unified HUD container - strictly contained inside viewport */}
-      <div className="w-full h-full min-h-0 grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_auto] grid-rows-[1fr_auto] items-center gap-1.5 px-0.5 sm:px-2">
+      <div className="w-full h-full min-h-0 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] grid-rows-[auto_minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 px-0.5 sm:px-2">
         
         {/* 1. POWER-UP ZONE: Compact slots that start strictly EMPTY (VACÍOS) */}
-        <div className="flex flex-col justify-center shrink-0 justify-self-start">
-          <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-[#c4ad73] mb-0.5 font-['Fredoka',sans-serif]">
+        <div className="col-span-3 row-start-1 flex flex-col justify-center min-w-0 w-full">
+          <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-wider text-[#d6c17c] mb-0.5 font-['Fredoka',sans-serif]">
             POWER-UP
           </span>
-          <div className="flex items-center gap-1 sm:gap-1.5 bg-black/50 p-1 rounded-lg border border-[#8f7a4e]/40">
+          <div className="flex items-center justify-center gap-1 sm:gap-1.5 bg-[#080d09]/90 p-1 rounded-md border border-[#79934b]/80 shadow-[inset_0_2px_5px_rgba(0,0,0,0.8)]">
             {powerUpSlots.slice(0, 4).map((powerUpId, idx) => {
               const isSelected = activeSlotIndex === idx;
               const hasItem = powerUpId !== null;
@@ -142,12 +142,12 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
                     }
                   }}
                   disabled={!isMyTurn || !hasItem}
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded flex items-center justify-center transition relative ${
+                  className={`flex-1 min-w-0 max-w-14 h-7 sm:h-8 rounded-sm flex items-center justify-center transition relative border-2 ${
                     isSelected
-                      ? 'border-2 border-[#d2b875] ring-2 ring-amber-400 bg-amber-950/60 shadow-[0_0_8px_#f59e0b]'
+                      ? 'border-[#ffe27a] ring-1 ring-amber-300 bg-gradient-to-b from-[#3cae54] to-[#16733a] shadow-[0_0_8px_#f59e0b]'
                       : hasItem
-                      ? 'border border-amber-500/60 bg-slate-900/90 hover:bg-slate-800'
-                      : 'border border-slate-700/60 bg-slate-950/80 cursor-default opacity-40'
+                      ? 'border-[#1c1208] bg-gradient-to-b from-[#36b95c] to-[#15813e] hover:brightness-110 shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]'
+                      : 'border-[#1b2415] bg-gradient-to-b from-[#1d6b36] to-[#0d3e24] cursor-default opacity-65'
                   }`}
                   title={hasItem ? `Power-Up: ${powerUpId}` : 'Slot Vacío'}
                 >
@@ -196,54 +196,39 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 2. VIENTO & ÁNGULO ZONE (Pure visual readout - angle controlled by mouse) */}
-        <div className="min-w-0 flex flex-col items-center justify-center px-1 sm:px-2 bg-gradient-to-b from-[#283b3a]/95 via-[#172522]/95 to-[#0b1414]/95 py-1.5 rounded-xl border border-[#7d9b86]/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_3px_8px_rgba(0,0,0,0.55)]">
-          <div className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-0.5 min-w-0">
+        <div className="col-start-2 row-start-2 min-w-[92px] flex flex-col items-center justify-center px-2 py-1 bg-gradient-to-b from-[#20a85b] to-[#16783c] border-[3px] border-[#0a160d] shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">
+          <div className="flex flex-col items-center justify-center gap-0.5 min-w-0">
             {/* Wind Readout */}
             <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-bold text-[#c4b88f] min-w-0">
-              <span className="text-[8px] sm:text-xs text-[#a8c7cf] font-black font-sans">🧭</span>
-              <span>{wind.speed} km/h</span>
-              <span className="text-sm font-black text-[#b3a37a]">
-                {wind.direction > 0 ? '➡' : '⬅'}
-              </span>
+              <span className="hidden">🧭</span>
+              <span className="text-[8px] sm:text-[10px]">{wind.speed} km/h {wind.direction > 0 ? '➡' : '⬅'}</span>
+              
             </div>
             
-            <div className="hidden sm:block w-px h-4 bg-[#78908a]/70" />
+            <div className="hidden" />
 
             {/* Aim Angle Readout (Follows mouse position relative to vehicle) */}
             <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-black text-[#9aaa7a] min-w-0">
-              <span className="text-[8px] sm:text-xs text-[#a8c7cf] font-black font-sans">ÁNG.</span>
-              <span className="text-sm sm:text-base font-black text-amber-300">{angle}°</span>
+              <span className="hidden">ÁNG.</span>
+              <span className="text-lg sm:text-xl font-black text-[#06130a]">{angle}°</span>
             </div>
           </div>
 
-          {/* Discreet Move Vehicle Buttons */}
+          {/* Circular movement controls matching the reference design */}
           {onMove && (
-            <div className="flex items-center justify-center gap-1.5 mt-1">
-              <button
-                onClick={() => onMove(-14)}
-                disabled={!isMyTurn}
-                className="min-w-7 px-2 py-0.5 rounded-md bg-gradient-to-b from-[#53694b] to-[#202d22] hover:from-[#687e5a] text-[#e0edcf] border border-[#8ea77c] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_2px_3px_rgba(0,0,0,0.5)] disabled:opacity-30 text-[10px] font-black transition active:translate-y-px active:shadow-none"
-                title="Mover tanque izquierda (A / ◀)"
-              >
-                ◀
-              </button>
-              <span className="text-[8px] sm:text-[9px] uppercase text-[#9aaa7a]/80 font-bold tracking-wider">
-                MOVER
-              </span>
-              <button
-                onClick={() => onMove(14)}
-                disabled={!isMyTurn}
-                className="px-2 py-0.2 rounded bg-[#293225]/85 hover:bg-[#3a4931] text-[#b4c19a] border border-[#687a53]/60 disabled:opacity-30 text-[10px] font-black transition active:scale-95"
-                title="Mover tanque derecha (D / ▶)"
-              >
-                ▶
-              </button>
+            <div className="flex items-center gap-1">
+              <button onClick={() => onMove(-14)} disabled={!isMyTurn}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-black bg-gradient-to-b from-sky-400 to-sky-600 text-red-600 shadow-[inset_0_2px_2px_rgba(255,255,255,0.35),0_2px_4px_rgba(0,0,0,0.5)] disabled:opacity-35 flex items-center justify-center text-xl font-black active:scale-95"
+                title="Mover tanque a la izquierda">◀</button>
+              <button onClick={() => onMove(14)} disabled={!isMyTurn}
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-black bg-gradient-to-b from-sky-400 to-sky-600 text-red-600 shadow-[inset_0_2px_2px_rgba(255,255,255,0.35),0_2px_4px_rgba(0,0,0,0.5)] disabled:opacity-35 flex items-center justify-center text-xl font-black active:scale-95"
+                title="Mover tanque a la derecha">▶</button>
             </div>
           )}
         </div>
 
         {/* 3. FUERZA ZONE: Flexible Bar */}
-        <div className="min-w-0 w-full flex flex-col justify-center px-1 col-span-4 row-start-2 pb-1">
+        <div className="col-span-3 row-start-3 min-w-0 w-full flex flex-col justify-center px-1 pb-0.5">
           <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-black uppercase text-[#c4ad73] mb-0.5 font-['Fredoka',sans-serif]">
             <span>{isHoldingFire ? 'CARGANDO...' : 'FUERZA'}</span>
             <span className={`font-mono font-bold ${isHoldingFire ? 'text-yellow-300 scale-110' : 'text-amber-200'}`}>
@@ -283,18 +268,18 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
           </div>   </div>
 
         {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
-        <div className="flex flex-col items-center justify-center shrink-0 min-w-0 col-start-3 row-start-1">
+        <div className="col-start-3 row-start-2 flex items-center justify-end gap-1 min-w-0">
           <button
             onPointerDown={handleFirePointerDown}
             onPointerUp={handleFirePointerUp}
             onPointerLeave={handleFirePointerLeave}
             disabled={!isMyTurn || isFiring}
-            className={`w-[52px] h-[52px] sm:w-[60px] sm:h-[60px] rounded-full border-[3px] shadow-[inset_0_2px_3px_rgba(255,255,255,0.3),inset_0_-5px_8px_rgba(0,0,0,0.4),0_0_14px_rgba(239,68,68,0.45)] flex flex-col items-center justify-center transition-all select-none touch-none ${
+            className={`w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full border-[4px] border-[#111] shadow-[inset_0_3px_4px_rgba(255,255,255,0.35),inset_0_-6px_8px_rgba(0,0,0,0.25),0_2px_5px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center transition-all select-none touch-none ${
               !isMyTurn || isFiring
-                ? 'bg-gradient-to-b from-slate-600 to-slate-900 border-slate-500 opacity-40 cursor-not-allowed'
+                ? 'bg-gradient-to-b from-slate-600 to-slate-900 border-[#111] opacity-40 cursor-not-allowed'
                 : isHoldingFire
                 ? 'bg-[#9f7b3f] border-white scale-105 shadow-[0_0_18px_rgba(194,154,82,0.25)] cursor-pointer'
-                : 'bg-gradient-to-b from-[#f0bd66] via-[#b86b36] to-[#713a2a] hover:brightness-110 active:scale-95 border-[#ffe2a0] cursor-pointer'
+                : 'bg-gradient-to-b from-[#ff9b32] via-[#ff8124] to-[#f36a18] hover:brightness-110 active:scale-95 cursor-pointer'
             }`}
             title={
               !isMyTurn 
