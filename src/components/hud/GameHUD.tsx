@@ -81,7 +81,7 @@ export const GameHUD: React.FC<GameHUDProps> = ({
           title="Salir de la partida (se computa derrota)"
         >
           <Flag className="w-3 h-3 text-red-400" />
-          Rendirse
+          SALIR
         </button>
       </div>
 
