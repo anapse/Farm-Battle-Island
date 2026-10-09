@@ -30,7 +30,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
+          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -38,7 +38,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
 
       {/* Studio Info Card */}
       <div className="relative z-10 my-auto max-w-[320px] w-full mx-auto space-y-3">
-        <div className="bg-[#141713]/72 backdrop-blur-md p-4 rounded-xl border border-amber-600/30 text-center space-y-3 shadow-xl">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-4 rounded-xl border border-[#9a8351]/30 text-center space-y-3 shadow-xl">
           <h3 className="text-base font-black text-amber-500 font-['Fredoka',sans-serif]">
             ANAPSE VIDEO GAMES
           </h3>
@@ -53,7 +53,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
               <span className="font-mono text-[11px]">anapsevideogames.com</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 text-xs">
-              <Gamepad2 className="w-4 h-4 text-emerald-500 shrink-0" />
+              <Gamepad2 className="w-4 h-4 text-[#8fa878] shrink-0" />
               <span className="text-[11px]">Soporte y Torneos Oficiales</span>
             </div>
           </div>
@@ -64,7 +64,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
       <div className="relative z-10 text-center pb-1">
         <button
           onClick={onClose}
-          className="w-full max-w-[320px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full max-w-[320px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
         >
           Cerrar
         </button>
