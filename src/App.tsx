@@ -647,10 +647,16 @@ export default function App() {
   }, [angle, power, onlineMatch?.gameState.currentTurnPlayerId, onlineMatch?.gameState.wind, playerRole]);
 
   // ACTION: JUGAR (Quick Play vs AI)
-  const handleQuickPlay = async () => {
+  const handleQuickPlay = async (requestedName?: string) => {
+    const activePlayerName = (requestedName ?? playerName).trim();
+    if (activePlayerName.length < 2) {
+      alert('Escribe un alias de al menos 2 caracteres.');
+      return;
+    }
+    handlePlayerNameChange(activePlayerName);
     try {
       // Detach the finished match before creating the new one so its
-      // Firestore subscription cannot interfere with the replay flow.
+      // active-match subscription cannot interfere with the replay flow.
       setOnlineMatch(null);
       setMatchResult(null);
       // A new match starts completely clean: no power-ups, no previous
@@ -666,7 +672,7 @@ export default function App() {
       lastExpiredMatchRef.current = '';
 
       const match = await createOnlineMatch({
-        creatorPlayerName: playerName,
+        creatorPlayerName: activePlayerName,
         timeLimitSeconds: 300,
         lives: 3,
         islandId: 'isla_1',
