@@ -49,7 +49,12 @@ export default function App() {
   });
 
   const [playerName, setPlayerName] = useState<string>(() => {
-    return localStorage.getItem('fbi_stored_player_name') || '';
+    const savedName = localStorage.getItem('fbi_stored_player_name') || '';
+    if (savedName.trim().toLowerCase() === 'comandante') {
+      localStorage.removeItem('fbi_stored_player_name');
+      return '';
+    }
+    return savedName;
   });
 
   const [myPlayerId] = useState<string>(() => {
