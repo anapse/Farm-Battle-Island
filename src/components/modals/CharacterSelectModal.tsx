@@ -61,7 +61,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-2 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -93,7 +93,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         <button
           type="button"
           onClick={() => moveCarousel(-1)}
-          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-[#242820]/82 border border-[#9a8351] text-[#d0b56f] flex items-center justify-center shadow-lg hover:bg-[#30352b]"
+          className="absolute left-0 z-20 w-10 h-10 rounded-full bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] text-white flex items-center justify-center shadow-lg hover:bg-[#30352b]"
           aria-label="Personaje anterior"
         >
           <ChevronLeft className="w-6 h-6" />
