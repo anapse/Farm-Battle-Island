@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trophy, Skull, Flag, RotateCcw, Home } from 'lucide-react';
 import { CharacterId } from '../../types/game';
+import { getAssetUrl } from '../../utils/assets';
 
 interface MatchResultModalProps {
   isVictory: boolean;
@@ -29,13 +30,13 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-100"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-slate-950/35 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 text-center pt-2">
@@ -64,7 +65,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       </div>
 
       {/* Outcome Stats Box */}
-      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/85 backdrop-blur-md border border-slate-700/80 rounded-xl p-3 text-left space-y-2 shadow-2xl">
+      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/72 backdrop-blur-sm border border-slate-600/80 rounded-xl p-3 text-left space-y-2 shadow-2xl">
         <div className="flex justify-between items-center text-xs">
           <span className="text-slate-400 font-bold">Vencedor:</span>
           <span className="text-emerald-400 font-black">{winnerName}</span>
@@ -84,7 +85,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
       <div className="relative z-10 flex flex-col gap-2 max-w-[280px] w-full mx-auto pb-1">
         <button
           onClick={onPlayAgain}
-          className="w-full py-2.5 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-xs uppercase tracking-wider shadow-md border border-emerald-300 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
+          className="w-full py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider shadow-md border border-emerald-500 flex items-center justify-center gap-2 active:scale-95 transition cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>JUGAR DE NUEVO</span>
