@@ -8,7 +8,7 @@ interface ContactModalProps {
 
 export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -30,7 +30,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
+          className="text-slate-300 hover:text-white p-2.5 rounded-xl bg-[#1d211c]/95 border-2 border-[#9cc9df] transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -46,11 +46,11 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
           <div className="space-y-2 text-left pt-1">
             <div className="flex items-center gap-2 text-slate-300 text-xs">
               <Mail className="w-4 h-4 text-amber-500 shrink-0" />
-              <span className="font-mono text-[11px]">contacto@anapsevideogames.com</span>
+              <span className="font-mono text-xs break-all">contacto@anapsevideogames.com</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 text-xs">
               <Globe className="w-4 h-4 text-[#9b8b62] shrink-0" />
-              <span className="font-mono text-[11px]">anapsevideogames.com</span>
+              <span className="font-mono text-xs break-all">anapsevideogames.com</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 text-xs">
               <Gamepad2 className="w-4 h-4 text-[#8fa878] shrink-0" />
@@ -61,10 +61,10 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
       </div>
 
       {/* Footer */}
-      <div className="relative z-10 text-center pb-1">
+      <div className="relative z-10 text-center pb-1 shrink-0">
         <button
           onClick={onClose}
-          className="w-full max-w-[320px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
+          className="w-full max-w-[320px] min-h-11 py-3 rounded-xl bg-[#1d211c]/95 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-[#555a4e] transition cursor-pointer"
         >
           Cerrar
         </button>
