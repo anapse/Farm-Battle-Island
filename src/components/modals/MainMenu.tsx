@@ -6,7 +6,10 @@ import {
   Trophy, 
   Mail, 
   UserCheck, 
-  X
+  X,
+  Volume2,
+  Volume1,
+  VolumeX
 } from 'lucide-react';
 
 interface MainMenuProps {
@@ -16,6 +19,8 @@ interface MainMenuProps {
   onContact: () => void;
   playerName: string;
   onPlayerNameChange: (name: string) => void;
+  soundLevel: 'high' | 'medium' | 'low' | 'off';
+  onCycleSound: () => void;
 }
 
 export const MainMenu: React.FC<MainMenuProps> = ({
@@ -24,7 +29,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   onRanking,
   onContact,
   playerName,
-  onPlayerNameChange
+  onPlayerNameChange,
+  soundLevel,
+  onCycleSound
 }) => {
   const [logoLoaded, setLogoLoaded] = useState(false);
   const [bgLoaded, setBgLoaded] = useState(false);
@@ -69,13 +76,22 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
       {/* Sin sombra sobre el fondo oficial del menú. */}
       {/* Top Bar with CONTACTO located independently at top-left */}
-      <div className="relative z-10 flex items-center justify-start w-full pt-1">
+      <div className="relative z-10 flex items-center justify-between w-full pt-1">
         <button
           onClick={onContact}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
         >
           <Mail className="w-4 h-4 text-[#d0b56f]" />
           <span>CONTACTO</span>
+        </button>
+        <button
+          onClick={onCycleSound}
+          title={`Sonido: ${soundLevel === 'high' ? 'Alto' : soundLevel === 'medium' ? 'Medio' : soundLevel === 'low' ? 'Bajo' : 'Apagado'}. Pulsa para cambiar`}
+          aria-label="Cambiar volumen"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white border border-amber-600/70 text-xs font-black uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
+        >
+          {soundLevel === 'off' ? <VolumeX className="w-4 h-4 text-[#d0b56f]" /> : soundLevel === 'low' ? <Volume1 className="w-4 h-4 text-[#d0b56f]" /> : <Volume2 className="w-4 h-4 text-[#d0b56f]" />}
+          <span>{soundLevel === 'high' ? 'ALTO' : soundLevel === 'medium' ? 'MEDIO' : soundLevel === 'low' ? 'BAJO' : 'OFF'}</span>
         </button>
       </div>
 
