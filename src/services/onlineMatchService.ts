@@ -492,7 +492,11 @@ export function subscribeToAvailableMatches(
   } else {
     callback(getLocalMatches().filter(m => m.status === 'waiting'));
   }
-  const channelListener = () => callback(getLocalMatches().filter(m => m.status === 'waiting'));
+  // Local cross-tab cache is only valid in offline mode. In Firebase mode it must
+  // never overwrite the authoritative server room list with stale cached rooms.
+  const channelListener = () => {
+    if (!rtdb || !isConfigured) callback(getLocalMatches().filter(m => m.status === 'waiting' && !m.player2));
+  };
   if (localChannel) localChannel.addEventListener('message', channelListener);
   return () => {
     if (unsubscribeRealtime) unsubscribeRealtime();
