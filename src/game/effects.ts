@@ -279,10 +279,11 @@ export class EffectManager {
       isWater
     });
 
-    const particleCount = isWater ? 30 : 25;
+    const scale = Math.max(0.75, Math.min(2.2, radius / 44));
+    const particleCount = Math.round((isWater ? 34 : 42) * scale);
     for (let i = 0; i < particleCount; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = Math.random() * (isWater ? 240 : 180) + 40;
+      const speed = (Math.random() * (isWater ? 280 : 230) + 55) * scale;
       const color = isWater
         ? (Math.random() > 0.5 ? '#E0F2FE' : '#38BDF8')
         : (Math.random() > 0.6 ? '#EF4444' : (Math.random() > 0.3 ? '#F59E0B' : '#78350F'));
@@ -292,11 +293,11 @@ export class EffectManager {
         y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed - (isWater ? 120 : 40),
-        radius: Math.random() * 4 + 2,
+        radius: (Math.random() * 5 + 2.5) * Math.min(1.8, scale),
         color,
         alpha: 1.0,
         life: 0,
-        maxLife: Math.random() * 0.5 + 0.4
+        maxLife: (Math.random() * 0.55 + 0.45) * Math.min(1.5, scale)
       });
     }
   }
