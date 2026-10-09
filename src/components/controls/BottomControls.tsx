@@ -118,7 +118,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
   };
 
   return (
-    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden relative bg-[linear-gradient(135deg,rgba(255,153,51,0.12)_0%,transparent_18%,transparent_78%,rgba(190,78,20,0.16)_100%),repeating-linear-gradient(0deg,rgba(255,255,255,0.025)_0px,rgba(255,255,255,0.025)_1px,transparent_1px,transparent_4px),linear-gradient(180deg,#343b38_0%,#1b211e_22%,#111714_70%,#080b09_100%)] border-t-[3px] border-[#b87936] shadow-[0_-7px_28px_rgba(0,0,0,0.9),inset_0_2px_0_rgba(255,210,130,0.25)] px-2.5 sm:px-4 py-2 text-slate-100">
+    <footer className="absolute bottom-0 left-0 right-0 z-30 h-[clamp(164px,22dvh,210px)] pb-[env(safe-area-inset-bottom)] select-none box-border overflow-hidden bg-[linear-gradient(135deg,rgba(255,153,51,0.12)_0%,transparent_18%,transparent_78%,rgba(190,78,20,0.16)_100%),repeating-linear-gradient(0deg,rgba(255,255,255,0.025)_0px,rgba(255,255,255,0.025)_1px,transparent_1px,transparent_4px),linear-gradient(180deg,#343b38_0%,#1b211e_22%,#111714_70%,#080b09_100%)] border-t-[3px] border-[#b87936] shadow-[0_-7px_28px_rgba(0,0,0,0.9),inset_0_2px_0_rgba(255,210,130,0.25)] px-2.5 sm:px-4 py-2 text-slate-100">
       
       {/* Tornillos decorativos y textura de metal envejecido; no interceptan los controles */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-1 top-1 flex justify-between opacity-90">
