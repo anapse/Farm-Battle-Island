@@ -359,7 +359,7 @@ export default function App() {
                 earnedPoints: isWinner
                   ? (winnerPlayer?.score || 150)
                   : (loserPlayer?.score || 50),
-                winnerName: winnerPlayer?.name || 'Comandante',
+                winnerName: winnerPlayer?.name || 'Jugador',
                 loserName: loserPlayer?.name || 'Rival',
                 isSurrender: false,
                 surrenderMessage: '',
