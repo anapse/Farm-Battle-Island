@@ -48,7 +48,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-[#555a4e] transition cursor-pointer"
+          className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#526a7d,#243b4b_65%,#111f2a)] border-2 border-[#9cc9df] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_0_#101b22] transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
