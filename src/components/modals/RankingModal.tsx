@@ -1,3 +1,4 @@
+import { getAssetUrl } from '../../utils/assets';
 import React, { useState, useEffect } from 'react';
 import { getRankings, fetchOnlineTop50 } from '../../services/rankingService';
 import { PlayerRanking } from '../../types/game';
@@ -31,13 +32,13 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between pt-1">
@@ -51,14 +52,14 @@ export const RankingModal: React.FC<RankingModalProps> = ({
         <div className="flex items-center gap-1.5">
           <button
             onClick={loadData}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
             title="Recargar"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={onClose}
-            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+            className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -66,7 +67,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       </div>
 
       {/* Table Column Headers */}
-      <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[10px] font-black uppercase text-amber-500/90 border-b border-slate-800 mt-2 bg-slate-950/80 rounded-t-lg backdrop-blur-sm">
+      <div className="relative z-10 grid grid-cols-12 gap-1 py-1.5 px-3 text-[10px] font-black uppercase text-amber-500/90 border-b border-slate-800 mt-2 bg-[#141713]/72 rounded-t-lg backdrop-blur-sm">
         <span className="col-span-2 text-center">POS</span>
         <span className="col-span-4">JUGADOR</span>
         <span className="col-span-2 text-right">PUNTOS</span>
@@ -87,7 +88,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
                 isCurrent
                   ? 'bg-amber-950/80 border-amber-600 text-amber-200 font-bold shadow-sm'
                   : isTop3
-                  ? 'bg-slate-900/90 border-slate-700 text-white font-semibold'
+                  ? 'bg-[#1d211c]/88 border-slate-700 text-white font-semibold'
                   : 'bg-slate-950/60 border-slate-800 text-slate-300'
               }`}
             >
@@ -133,7 +134,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({
       <div className="relative z-10 text-center pt-2">
         <button
           onClick={onClose}
-          className="w-full py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
         >
           Cerrar
         </button>
