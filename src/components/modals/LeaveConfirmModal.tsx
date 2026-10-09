@@ -1,3 +1,4 @@
+import { getAssetUrl } from '../../utils/assets';
 import React from 'react';
 import { AlertTriangle, Flag } from 'lucide-react';
 
@@ -15,13 +16,13 @@ export const LeaveConfirmModal: React.FC<LeaveConfirmModalProps> = ({
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 text-center pt-2">
@@ -31,7 +32,7 @@ export const LeaveConfirmModal: React.FC<LeaveConfirmModalProps> = ({
       </div>
 
       {/* Warning Box */}
-      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-slate-950/85 backdrop-blur-md border border-red-700/50 rounded-xl p-4 text-center shadow-2xl">
+      <div className="relative z-10 my-auto max-w-[280px] w-full mx-auto bg-[#141713]/78 backdrop-blur-md border border-red-700/50 rounded-xl p-4 text-center shadow-2xl">
         <div className="w-10 h-10 rounded-full bg-red-700/15 border border-red-700 flex items-center justify-center mx-auto mb-2">
           <AlertTriangle className="w-5 h-5 text-red-500" />
         </div>
