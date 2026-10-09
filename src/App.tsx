@@ -535,7 +535,9 @@ export default function App() {
             'granada',
             'corazon'
           ];
-          const chosen = availableList[Math.floor(Math.random() * availableList.length)];
+          // The rare double-heart supply appears periodically, not every time.
+          const chosen: OfficialPowerUpId =
+            Math.random() < 0.20 ? 'corazon_doble' : availableList[Math.floor(Math.random() * availableList.length)];
           setPowerUpSlots(prev => {
             const next = [...prev];
             const emptyIdx = next.findIndex(s => s === null);
@@ -752,8 +754,8 @@ export default function App() {
     if (!item) return;
 
     if (item === 'corazon') {
-      engineRef.current?.applyPowerUp(playerRole, 'heal_20');
-      showTacticalToast('+20% de vida restaurada ❤️', 'success');
+      engineRef.current?.applyPowerUp(playerRole, 'heal_10');
+      showTacticalToast('+10% de vida restaurada ❤️', 'success');
       setPowerUpSlots(prev => {
         const next = [...prev];
         next[index] = null;
@@ -774,7 +776,8 @@ export default function App() {
       setActiveSlotIndex(index);
       // Map to game power-up type for physics
       let pt: PowerUpType = 'mega_bomb';
-      if (item === 'bala_doble') pt = 'double_hit';
+      if (item === 'corazon_doble') pt = 'heal_20';
+       else if (item === 'bala_doble') pt = 'double_hit';
       else if (item === 'bala_triple') pt = 'triple_hit';
       else if (item === 'bala_explosiva') pt = 'mega_bomb';
       else if (item === 'granada') pt = 'grenade';
