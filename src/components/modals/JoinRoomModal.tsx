@@ -44,7 +44,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
   });
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between p-4 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-2 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -57,7 +57,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       <div className="absolute inset-0 bg-black/5 pointer-events-none" />
 
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between pt-1">
+      <div className="relative z-10 flex items-center justify-between pt-1 shrink-0">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
             LOBBY MULTIJUGADOR
@@ -93,7 +93,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       </div>
 
       {/* Room List Container */}
-      <div className="relative z-10 flex-1 overflow-y-auto space-y-2 my-3 max-w-[340px] w-full mx-auto pr-1">
+      <div className="relative z-10 flex-1 min-h-[160px] overflow-y-auto space-y-2 my-2 max-w-[360px] w-full mx-auto pr-1">
         {disambiguatedMatches.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 p-4">
             <div className="w-12 h-12 rounded-full bg-[#1d211c]/82 border border-[#555a4e] flex items-center justify-center mb-2">
@@ -116,10 +116,10 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
                   <span>{displayCreatorName}</span>
                 </div>
 
-                <div className="mt-1 text-[10px] text-emerald-300 font-black uppercase tracking-wide">
+                <div className="mt-1 text-xs text-emerald-200 font-black uppercase tracking-wide">
                   🏝️ {getIslandById(match.settings.islandId).title} · {getIslandById(match.settings.islandId).name}
                 </div>
-                <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-300">
+                <div className="flex items-center gap-2 mt-1 text-xs text-slate-100">
                   <span className="flex items-center gap-0.5 text-amber-500 font-bold">
                     <Clock className="w-3 h-3 text-[#9b8b62]" />
                     {match.settings.timeLimit ? '5 MIN' : '∞'}
@@ -145,7 +145,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       </div>
 
       {/* Footer: one clear action to create a room */}
-      <div className="relative z-10 text-center pb-1">
+      <div className="relative z-10 text-center pb-1 shrink-0">
         <button
           onClick={onCreateRoom}
           className="w-full max-w-[340px] py-4 rounded-xl bg-[linear-gradient(180deg,#ffcf75_0%,#ff8a1d_45%,#bd4709_82%,#6d2608_100%)] hover:brightness-110 text-white font-black text-base uppercase tracking-wider border-2 border-[#ffe0a4] shadow-[inset_0_2px_0_rgba(255,255,255,0.7),inset_0_-4px_0_rgba(70,20,0,0.3),0_5px_0_#612305,0_8px_12px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
