@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 
 interface MainMenuProps {
-  onQuickPlay: () => void;
+  onQuickPlay: (playerName: string) => void;
   onCreateRoom: () => void;
   onJoinRoom: () => void;
   onRanking: () => void;
@@ -50,7 +50,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     setPendingAction(null);
 
     if (actionToRun === 'quick_play') {
-      onQuickPlay();
+      onQuickPlay(finalName);
     } else if (actionToRun === 'create_room') {
       onCreateRoom();
     } else if (actionToRun === 'join_room') {
