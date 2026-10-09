@@ -59,7 +59,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between pt-1 shrink-0">
         <div>
-          <h2 className="text-xl sm:text-2xl font-black text-white font-['Fredoka',sans-serif] drop-shadow">
+          <h2 className="max-w-[150px] sm:max-w-none text-base sm:text-2xl font-black text-white leading-tight font-['Fredoka',sans-serif] bg-slate-950/65 rounded-lg px-2 py-1 drop-shadow-[0_2px_3px_rgba(0,0,0,1)]">
             LOBBY MULTIJUGADOR
           </h2>
         </div>
