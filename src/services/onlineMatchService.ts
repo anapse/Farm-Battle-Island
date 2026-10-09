@@ -465,9 +465,19 @@ export function subscribeToAvailableMatches(
       unsubscribeRealtime = onValue(ref(rtdb, 'activeMatches'), (snapshot) => {
         const matches: OnlineMatch[] = [];
         if (snapshot.exists()) {
+          const staleBefore = Date.now() - 30 * 60 * 1000;
           snapshot.forEach((child) => {
             const match = child.val() as OnlineMatch;
-            if (match.status === 'waiting' && !match.player2) matches.push(hydrateMatch(match));
+            const createdAt = Number(match.createdAt || 0);
+            if (match.status === 'waiting' && !match.player2) {
+              if (createdAt > 0 && createdAt < staleBefore) {
+                // Stale waiting rooms are deleted remotely; rules permit this only after 30 minutes.
+                void remove(ref(rtdb, `activeMatches/${match.matchId || child.key}`))
+                  .catch((e) => console.warn('Could not remove stale waiting room:', e));
+              } else {
+                matches.push(hydrateMatch(match));
+              }
+            }
           });
         }
         callback(matches);
