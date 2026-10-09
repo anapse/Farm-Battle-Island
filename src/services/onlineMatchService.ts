@@ -14,7 +14,7 @@ import { recordMatchRankingResult } from './rankingService';
 import { trackRoomCreated, trackRoomCompleted, trackRoomAbandoned, trackCharacterPick } from './adminService';
 
 const PLAYER_ID_KEY = 'fbi_persistent_player_id';
-const LOCAL_MATCHES_KEY = 'fbi_local_matches_cache';
+let localMatchesCache: OnlineMatch[] = [];
 
 // BroadcastChannel for instant local cross-tab sync as offline/local companion
 let localChannel: BroadcastChannel | null = null;
@@ -27,7 +27,7 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
 }
 
 /**
- * Get or create unique persistent player identity
+ * Get or create a local anonymous player identity (not an account/login)
  */
 export function getPlayerIdentity(defaultName: string = ''): { playerId: string; playerName: string } {
   let playerId = '';
@@ -53,29 +53,19 @@ export function getPlayerIdentity(defaultName: string = ''): { playerId: string;
  * Local cache helpers for resilient offline/dev mode
  */
 function getLocalMatches(): OnlineMatch[] {
-  try {
-    const raw = localStorage.getItem(LOCAL_MATCHES_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+  // Match state lives in memory only; it is never persisted to localStorage.
+  return localMatchesCache;
 }
 
 function saveLocalMatch(match: OnlineMatch): void {
-  try {
-    const matches = getLocalMatches();
-    const idx = matches.findIndex(m => m.matchId === match.matchId);
-    if (idx >= 0) {
-      matches[idx] = match;
-    } else {
-      matches.unshift(match);
-    }
-    localStorage.setItem(LOCAL_MATCHES_KEY, JSON.stringify(matches));
-    if (localChannel) {
-      localChannel.postMessage({ type: 'MATCH_UPDATED', matchId: match.matchId, match });
-    }
-  } catch (e) {
-    console.warn('Failed to save local match:', e);
+  const idx = localMatchesCache.findIndex(m => m.matchId === match.matchId);
+  if (idx >= 0) {
+    localMatchesCache[idx] = match;
+  } else {
+    localMatchesCache.unshift(match);
+  }
+  if (localChannel) {
+    localChannel.postMessage({ type: 'MATCH_UPDATED', matchId: match.matchId, match });
   }
 }
 
