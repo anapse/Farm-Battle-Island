@@ -153,10 +153,11 @@ export class InputHandler {
     // IMPORTANT: only the visible aim circle starts an aim drag.
     // Clicking elsewhere keeps the aim exactly where it was.
     this.isAiming = this.isPointerOnAimHandle(x, y);
-    // Dragging anywhere on the battlefield must NOT move the tank.
-    // Movement starts only when the pointer begins directly on the active tank.
+    // Drag the empty battlefield with the mouse to pan the camera.
+    // Aim handle and active tank keep their dedicated interactions.
     this.isMovingPlayer = !this.isAiming && this.isPointerOnPlayer(x, y);
-    this.isPanningCamera = false;
+    this.isPanningCamera = !this.isAiming && !this.isMovingPlayer;
+    if (this.isPanningCamera) this.camera.setMode('manual');
 
     if (this.isAiming) {
       try {
@@ -183,6 +184,8 @@ export class InputHandler {
     if (this.isAiming) {
       // The aim circle follows the pointer while pressed.
       this.updateAimFromScreenCoords(screenX, screenY);
+    } else if (this.isPanningCamera) {
+      this.camera.manualPan(screenX - this.lastPointerX, screenY - this.lastPointerY);
     } else if (this.isMovingPlayer) {
       const deltaX = screenX - this.lastPointerX;
       if (Math.abs(deltaX) > 1) {
