@@ -323,27 +323,29 @@ export async function selectCharacterOnline(
   playerId: string, 
   characterId: CharacterId
 ): Promise<OnlineMatch> {
-  if (db && isConfigured && await ensureFirebaseAuth()) {
+  if (rtdb && isConfigured && await ensureFirebaseAuth()) {
     try {
-      const matchDocRef = doc(db, 'matches', matchId);
-      const updatedMatch = await runTransaction(db, async (transaction) => {
-        const snap = await transaction.get(matchDocRef);
-        if (!snap.exists()) throw new Error('Partida no encontrada');
-
-        const remoteMatch = snap.data() as OnlineMatch;
+      const matchRef = ref(rtdb, `activeMatches/${matchId}`);
+      let selectionError = '';
+      const result = await runTransaction(matchRef, (current) => {
+        if (!current) {
+          selectionError = 'Partida no encontrada';
+          return;
+        }
+        const remoteMatch = current as OnlineMatch;
         const cachedMatch = getLocalMatches().find(m => m.matchId === matchId) || null;
         const match = hydrateMatch(remoteMatch, cachedMatch);
         const isP1 = match.player1.id === playerId;
         const isP2 = match.player2?.id === playerId;
-
-        if (!isP1 && !isP2) throw new Error('No perteneces a esta partida');
-
-        // Check if rival has already chosen this character
+        if (!isP1 && !isP2) {
+          selectionError = 'No perteneces a esta partida';
+          return;
+        }
         const rivalCharId = isP1 ? match.player2?.characterId : match.player1.characterId;
         if (rivalCharId && rivalCharId === characterId) {
-          throw new Error('¡Ese personaje ya fue elegido por tu rival! Selecciona otro.');
+          selectionError = '¡Ese personaje ya fue elegido por tu rival! Selecciona otro.';
+          return;
         }
-
         if (isP1) {
           match.player1.characterId = characterId;
           match.player1.characterSelected = true;
@@ -351,54 +353,29 @@ export async function selectCharacterOnline(
           match.player2.characterId = characterId;
           match.player2.characterSelected = true;
         }
-
-        // When both players have selected their character, START COMBAT!
         const p1Ready = match.player1.characterSelected;
         const p2Ready = match.player2 ? match.player2.characterSelected : false;
-
         if (p1Ready && p2Ready) {
           match.status = 'playing';
           match.gameState.matchStartedAt = Date.now();
           match.gameState.turnStartedAt = Date.now();
-          if (match.settings.timeLimit) {
-            match.gameState.matchEndAt = Date.now() + match.settings.timeLimit * 1000;
-          }
+          if (match.settings.timeLimit) match.gameState.matchEndAt = Date.now() + match.settings.timeLimit * 1000;
         }
-
         match.updatedAt = Date.now();
-
-        const updates: Record<string, unknown> = isP1
-          ? {
-              'player1.characterId': match.player1.characterId,
-              'player1.characterSelected': match.player1.characterSelected
-            }
-          : {
-              'player2.characterId': match.player2?.characterId || null,
-              'player2.characterSelected': match.player2?.characterSelected || false
-            };
-
-        if (p1Ready && p2Ready) {
-          updates.status = 'playing';
-          updates['gameState.matchStartedAt'] = match.gameState.matchStartedAt;
-          updates['gameState.turnStartedAt'] = match.gameState.turnStartedAt;
-          if (match.settings.timeLimit) {
-            updates['gameState.matchEndAt'] = match.gameState.matchEndAt;
-          }
-        }
-
-        updates.updatedAt = match.updatedAt;
-        transaction.update(matchDocRef, updates);
-        return match;
-      }, { maxAttempts: 10 });
-
-      // Keep local cache and analytics outside the transaction callback because
-      // Firestore may execute that callback more than once when players update
-      // the same match concurrently.
+        return {
+          ...match,
+          player1: toPersistentPlayer(match.player1),
+          player2: match.player2 ? toPersistentPlayer(match.player2) : null
+        };
+      }, { applyLocally: false });
+      if (!result.committed) throw new Error(selectionError || 'No se pudo seleccionar el personaje.');
+      const updatedMatch = hydrateMatch(result.snapshot.val() as OnlineMatch, getLocalMatches().find(m => m.matchId === matchId));
       saveLocalMatch(updatedMatch);
       trackCharacterPick(characterId);
       return updatedMatch;
     } catch (e) {
-      console.warn('Firestore selectCharacter error, fallback to local:', e);
+      console.warn('Realtime Database selectCharacter error, fallback to local:', e);
+      if (e instanceof Error && /Partida no encontrada|No perteneces|ya fue elegido/.test(e.message)) throw e;
     }
   }
 
