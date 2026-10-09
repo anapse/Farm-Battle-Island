@@ -1,18 +1,5 @@
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
-  updateDoc, 
-  onSnapshot, 
-  collection, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  runTransaction,
-  serverTimestamp 
-} from 'firebase/firestore';
-import { db, auth, isConfigured, ensureFirebaseAuth } from './firebase';
+import { ref, set, update, onValue, runTransaction, remove } from 'firebase/database';
+import { rtdb, auth, isConfigured, ensureFirebaseAuth } from './firebase';
 import { 
   OnlineMatch, 
   OnlinePlayer, 
@@ -144,7 +131,7 @@ function hydrateMatch(data: OnlineMatch, cached?: OnlineMatch | null): OnlineMat
 }
 
 /**
- * Create a new match in Firestore / Local Cache
+ * Create a temporary match in Realtime Database / Local Cache
  */
 export async function createOnlineMatch(params: {
   creatorPlayerName: string;
@@ -231,17 +218,16 @@ export async function createOnlineMatch(params: {
     isAiMatch: !!params.isAiMatch
   };
 
-  // 1. Save to Firestore if available
-  if (db && isConfigured && authUid) {
+  // Active-match state is temporary realtime data, never written to Firestore.
+  if (rtdb && isConfigured && authUid) {
     try {
-      const matchDocRef = doc(db, 'matches', matchId);
-      await setDoc(matchDocRef, {
+      await set(ref(rtdb, `activeMatches/${matchId}`), {
         ...newMatch,
         player1: toPersistentPlayer(player1),
         player2: player2 ? toPersistentPlayer(player2) : null
       });
     } catch (e) {
-      console.warn('Firestore createDoc warning, falling back to local sync:', e);
+      console.warn('Realtime Database create warning, falling back to local sync:', e);
     }
   }
 
