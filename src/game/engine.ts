@@ -234,9 +234,9 @@ export class GameEngine {
     };
 
     if (powerUpType === 'triple_hit') {
-      this.projectiles.fireMultiShot({ ...commonShot, spriteId: 'triple_missile' }, 3);
+      this.projectiles.fireMultiShot({ ...commonShot, spriteId: 'single_missile' }, 3);
     } else if (powerUpType === 'double_hit') {
-      this.projectiles.fireMultiShot({ ...commonShot, spriteId: 'double_missile' }, 2);
+      this.projectiles.fireMultiShot({ ...commonShot, spriteId: 'single_missile' }, 2);
     } else if (powerUpType === 'grenade') {
       this.projectiles.fireShot({ ...commonShot, spriteId: 'grenade', canBounce: true });
     } else if (powerUpType === 'mega_bomb') {
@@ -294,7 +294,9 @@ export class GameEngine {
     proj.isAlive = false;
     this.resolvedProjectileIds.add(proj.id);
     this.projectileResolutionPending = true;
-    const explosionRadius = proj.explosionRadius;
+    // Slightly wider blast so direct hits and nearby ground impacts connect
+    // more reliably without changing the projectile's visual size.
+    const explosionRadius = Math.round(proj.explosionRadius * 1.25);
 
     // 7. Visual explosion
     this.effects.createExplosion(hitX, hitY, explosionRadius, isWater);
