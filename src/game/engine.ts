@@ -274,8 +274,8 @@ export class GameEngine {
       islandIndex,
       x,
       y: 260,
-      width: 80,
-      height: 56,
+      width: 120,
+      height: 84,
       collected: false,
       hasLanded: false,
       vy: 155
