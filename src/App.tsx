@@ -711,7 +711,7 @@ export default function App() {
     try {
       setOnlineMatch(null);
       setMatchResult(null);
-      setPowerUpSlots([null, null, null, null]);
+      setPowerUpSlots([null, null, null, null, null, null]);
       setActivePowerUp(null);
       setActiveSlotIndex(null);
       setLastShotPower(null);
@@ -1105,7 +1105,7 @@ export default function App() {
           )}
 
           {/* Canvas Game World */}
-          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[clamp(205px,30dvh,250px)] z-10 w-full">
+          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[clamp(188px,27dvh,224px)] z-10 w-full">
             <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />
           </div>
 
@@ -1169,7 +1169,7 @@ export default function App() {
             const wasAiMatch = Boolean(onlineMatch?.isAiMatch);
             setMatchResult(null);
             setOnlineMatch(null);
-            setPowerUpSlots([null, null, null, null]);
+            setPowerUpSlots([null, null, null, null, null, null]);
             setActivePowerUp(null);
             setActiveSlotIndex(null);
             setLastShotPower(null);
