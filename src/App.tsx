@@ -123,12 +123,14 @@ export default function App() {
   // Shared volume control for the menu, lobby and background music.
   useEffect(() => {
     soundLevelRef.current = soundLevel;
+    engineRef.current?.setMuted(soundLevel === 'off');
     const audio = backgroundMusicRef.current;
     if (!audio) return;
     const volumes = { high: 0.65, medium: 0.35, low: 0.12, off: 0 };
     audio.volume = volumes[soundLevel];
     if (soundLevel === 'off') {
       audio.pause();
+      audio.currentTime = 0;
     } else {
       void audio.play().catch(() => {
         // The browser may require a user gesture before resuming audio.
@@ -1105,7 +1107,7 @@ export default function App() {
           )}
 
           {/* Canvas Game World */}
-          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[clamp(188px,27dvh,224px)] z-10 w-full">
+          <div ref={canvasContainerRef} className="absolute inset-x-0 top-0 bottom-[clamp(260px,38dvh,300px)] z-10 w-full">
             <canvas ref={canvasRef} className="w-full h-full block cursor-grab active:cursor-grabbing" />
           </div>
 
