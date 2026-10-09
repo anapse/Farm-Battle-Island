@@ -48,7 +48,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
         }`}>
           {/* Label: PLAYER 1 and HP % */}
           <div className="flex items-center justify-between text-[10px] sm:text-xs font-black tracking-wider text-slate-200 px-1 mb-0.5">
-            <span className="text-amber-400 uppercase font-black">PLAYER 1</span>
+            <span className="text-white uppercase font-black truncate">{player1.name}</span>
             <span className={`font-mono font-bold ${
               p1HpPercent <= 25 ? 'text-red-400' : p1HpPercent <= 60 ? 'text-amber-300' : 'text-emerald-300'
             }`}>
@@ -64,28 +64,16 @@ export const TopHUD: React.FC<TopHUDProps> = ({
             />
           </div>
 
-          {/* Debajo: Nombre del jugador */}
-          <div className="text-[11px] sm:text-xs font-black text-white truncate px-1 mt-0.5">
-            {player1.name}
-          </div>
-
-          {/* P1 Character Badge & Lives */}
-          <div className="flex items-center justify-between mt-0.5 px-1 bg-slate-950/70 backdrop-blur-sm rounded py-0.5 border border-slate-700/60">
-            <div className="flex items-center gap-1">
-              <span className="text-xs">{p1Char?.badgeSymbol || '🎮'}</span>
-              <span className="text-[9px] sm:text-[10px] font-black uppercase text-amber-300 tracking-wider">
-                {p1Char?.name || 'MONO'}
-              </span>
-            </div>
-            {/* Lives Indicators */}
+          {/* P1 Lives */}
+          <div className="flex items-center justify-start mt-0.5 px-1 bg-slate-950/70 backdrop-blur-sm rounded py-0.5 border border-slate-700/60">
             <div className="flex items-center gap-0.5">
               {player1.maxLives > 100 ? (
-                <span className="text-[11px] font-black text-cyan-300">∞</span>
+                <span className="text-[12px] font-black text-red-400">∞</span>
               ) : Array.from({ length: player1.maxLives }).map((_, i) => (
-                <div
+                <Heart
                   key={i}
-                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
-                    i < player1.lives ? 'bg-red-500 shadow-[0_0_4px_#ef4444]' : 'bg-slate-700'
+                  className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                    i < player1.lives ? 'text-red-500 fill-red-500' : 'text-slate-700 fill-slate-800'
                   }`}
                 />
               ))}
@@ -123,7 +111,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
             }`}>
               {Math.round(p2HpPercent)}%
             </span>
-            <span className="text-amber-400 uppercase font-black">PLAYER 2</span>
+            <span className="text-white uppercase font-black truncate">{player2 ? player2.name : 'ESPERANDO...'}</span>
           </div>
 
           {/* P2 HP Bar (Dynamic: Verde -> Amarillo -> Rojo en último 25%) */}
@@ -134,35 +122,23 @@ export const TopHUD: React.FC<TopHUDProps> = ({
             />
           </div>
 
-          {/* Debajo: Nombre del jugador */}
-          <div className="text-[11px] sm:text-xs font-black text-white truncate px-1 mt-0.5 text-right">
-            {player2 ? player2.name : 'ESPERANDO...'}
-          </div>
-
-          {/* P2 Character Badge & Lives */}
-          <div className="flex items-center justify-between mt-0.5 px-1 bg-slate-950/70 backdrop-blur-sm rounded py-0.5 border border-slate-700/60">
-            {/* Lives Indicators */}
+          {/* P2 Lives */}
+          <div className="flex items-center justify-end mt-0.5 px-1 bg-slate-950/70 backdrop-blur-sm rounded py-0.5 border border-slate-700/60">
             <div className="flex items-center gap-0.5">
               {player2 ? (
                 player2.maxLives > 100 ? (
-                  <span className="text-[11px] font-black text-cyan-300">∞</span>
+                  <span className="text-[12px] font-black text-red-400">∞</span>
                 ) : (
                   Array.from({ length: player2.maxLives }).map((_, i) => (
-                    <div
+                    <Heart
                       key={i}
-                      className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${
-                        i < player2.lives ? 'bg-red-500 shadow-[0_0_4px_#ef4444]' : 'bg-slate-700'
+                      className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${
+                        i < player2.lives ? 'text-red-500 fill-red-500' : 'text-slate-700 fill-slate-800'
                       }`}
                     />
                   ))
                 )
               ) : null}
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-[9px] sm:text-[10px] font-black uppercase text-amber-300 tracking-wider">
-                {p2Char?.name || 'TORTUGA'}
-              </span>
-              <span className="text-xs">{p2Char?.badgeSymbol || '🛡️'}</span>
             </div>
           </div>
         </div>
