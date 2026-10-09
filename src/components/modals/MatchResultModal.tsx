@@ -52,7 +52,7 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
           )}
         </div>
 
-        <h2 className="text-2xl sm:text-3xl font-black text-white font-['Fredoka',sans-serif] tracking-wide drop-shadow">
+        <h2 className="text-xl sm:text-3xl font-black text-white font-['Fredoka',sans-serif] tracking-wide leading-tight bg-slate-950/65 rounded-lg px-3 py-1 drop-shadow-[0_2px_3px_rgba(0,0,0,1)]">
           {isVictory ? '¡VICTORIA!' : '¡DERROTA!'}
         </h2>
 
