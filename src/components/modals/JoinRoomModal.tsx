@@ -44,7 +44,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
   });
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-2 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-2 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -68,7 +68,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
             onClick={onCycleSound}
             title={`Sonido: ${soundLevel === 'high' ? 'Alto' : soundLevel === 'medium' ? 'Medio' : soundLevel === 'low' ? 'Bajo' : 'Apagado'}. Pulsa para cambiar`}
             aria-label="Cambiar volumen"
-            className="text-white hover:brightness-110 px-3 py-2 rounded-xl bg-[linear-gradient(180deg,#ffe08a,#d68a18_52%,#76400b)] border-2 border-[#fff0b5] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#512b08] transition cursor-pointer flex items-center gap-2"
+            className="text-white hover:brightness-110 px-3 py-2 rounded-xl bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer flex items-center gap-2"
           >
             {soundLevel === 'off' ? <VolumeX className="w-4 h-4" /> : soundLevel === 'low' ? <Volume1 className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             <span className="text-[9px] font-black">{soundLevel === 'high' ? 'ALTO' : soundLevel === 'medium' ? 'MEDIO' : soundLevel === 'low' ? 'BAJO' : 'OFF'}</span>
@@ -78,7 +78,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
               setIsRefreshing(true);
               setTimeout(() => setIsRefreshing(false), 500);
             }}
-            className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#526a7d,#243b4b_65%,#111f2a)] border-2 border-[#9cc9df] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_0_#101b22] transition cursor-pointer"
+            className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer"
             title="Actualizar"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -93,7 +93,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       </div>
 
       {/* Room List Container */}
-      <div className="relative z-10 flex-1 min-h-[160px] overflow-y-auto space-y-2 my-2 max-w-[360px] w-full mx-auto pr-1">
+      <div className="relative z-10 flex-1 min-h-0 overflow-hidden space-y-1.5 my-1 max-w-[360px] w-full mx-auto pr-0">
         {disambiguatedMatches.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 p-4">
             <div className="w-12 h-12 rounded-full bg-[#1d211c]/82 border border-[#555a4e] flex items-center justify-center mb-2">
@@ -108,7 +108,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
           disambiguatedMatches.map(({ match, displayCreatorName }) => (
             <div
               key={match.matchId}
-              className="bg-[linear-gradient(135deg,rgba(56,67,62,0.96),rgba(15,22,20,0.96))] backdrop-blur-md border border-[#c19a59]/80 hover:border-[#f5d28a] rounded-xl p-4 flex items-center justify-between transition shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_4px_10px_rgba(0,0,0,0.45)]"
+              className="bg-[#102b35]/95 backdrop-blur-md border border-[#bda56b]/60 hover:border-[#ffe8b4] rounded-lg p-2.5 flex items-center justify-between transition shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_4px_10px_rgba(0,0,0,0.45)]"
             >
               <div className="flex flex-col">
                 <div className="font-black text-sm text-white flex items-center gap-1.5">
@@ -134,7 +134,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
 
               <button
                 onClick={() => onJoin(match.matchId)}
-                className="px-4 py-2.5 rounded-xl bg-[linear-gradient(180deg,#9ce8ff_0%,#1599ec_45%,#07519c_82%,#06294f_100%)] hover:brightness-110 text-white font-black text-sm uppercase tracking-wider border-2 border-[#b8f1ff] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_0_rgba(0,0,0,0.28),0_4px_0_#06254b,0_7px_10px_rgba(0,0,0,0.5)] flex items-center gap-2 active:translate-y-1 transition cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2 active:translate-y-1 transition cursor-pointer"
               >
                 <span>UNIR</span>
                 <ArrowRight className="w-3 h-3" />
@@ -148,7 +148,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       <div className="relative z-10 text-center pb-1 shrink-0">
         <button
           onClick={onCreateRoom}
-          className="w-full max-w-[340px] py-4 rounded-xl bg-[linear-gradient(180deg,#ffcf75_0%,#ff8a1d_45%,#bd4709_82%,#6d2608_100%)] hover:brightness-110 text-white font-black text-base uppercase tracking-wider border-2 border-[#ffe0a4] shadow-[inset_0_2px_0_rgba(255,255,255,0.7),inset_0_-4px_0_rgba(70,20,0,0.3),0_5px_0_#612305,0_8px_12px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
+          className="w-full max-w-[340px] min-h-11 py-2 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] hover:brightness-110 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
         >
           <PlusCircle className="w-4 h-4" />
           CREAR SALA
