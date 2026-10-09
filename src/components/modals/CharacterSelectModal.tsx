@@ -75,7 +75,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
 
       {/* Header */}
       <div className="relative z-10 text-center pt-1 shrink-0">
-        <h2 className="text-lg sm:text-2xl font-black text-white tracking-wide leading-tight font-['Fredoka',sans-serif] drop-shadow-md">
+        <h2 className="text-lg sm:text-2xl font-black text-white tracking-wide leading-tight font-['Fredoka',sans-serif] bg-slate-950/65 rounded-lg px-2 py-1 drop-shadow-[0_2px_3px_rgba(0,0,0,1)]">
           ELIGE TU PERSONAJE
         </h2>
       </div>
@@ -193,7 +193,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
           className={`flex-1 min-h-11 py-2.5 px-3 rounded-xl font-black text-sm uppercase tracking-wide shadow-lg flex items-center justify-center gap-2 transition cursor-pointer ${
             isLockedByRival
               ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
-              : 'bg-[#687b58] hover:bg-[#789064] text-white border border-[#82966c] active:scale-95 shadow-[0_3px_10px_rgba(104,123,88,0.22)]'
+              : 'bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_3px_0_#35230e] active:translate-y-0.5'
           }`}
         >
           {isLockedByRival ? (
