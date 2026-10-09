@@ -181,7 +181,7 @@ export class GameEngine {
 
     // Track shots count and trigger Stork supply every 4 shots!
     this.totalShotsCount++;
-    if (this.totalShotsCount % 4 === 0) {
+    if (this.totalShotsCount % 2 === 0) {
       this.triggerStorkSupplyDrop();
     }
 
