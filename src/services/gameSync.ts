@@ -10,7 +10,12 @@ import { trackRoomCreated, trackRoomCompleted, trackRoomAbandoned, trackCharacte
 import { recordMatchResult } from './rankingService';
 import { CHARACTERS } from '../config/characters';
 
-const ROOMS_STORAGE_KEY = 'fbi_active_rooms';
+let localRoomsCache: GameRoom[] = [];
+
+// Remove legacy persisted rooms so match progress is not retained between visits.
+if (typeof window !== 'undefined') {
+  try { localStorage.removeItem('fbi_active_rooms'); } catch { /* Storage may be unavailable. */ }
+}
 const BROADCAST_CHANNEL_NAME = 'fbi_sync_channel';
 
 // Cross-tab broadcast channel
@@ -24,22 +29,12 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
 }
 
 export function getAllRooms(): GameRoom[] {
-  try {
-    const raw = localStorage.getItem(ROOMS_STORAGE_KEY);
-    if (!raw) return [];
-    return JSON.parse(raw);
-  } catch {
-    return [];
-  }
+  return localRoomsCache;
 }
 
 export function saveAllRooms(rooms: GameRoom[]) {
-  try {
-    localStorage.setItem(ROOMS_STORAGE_KEY, JSON.stringify(rooms));
-    broadcastChannel?.postMessage({ type: 'ROOMS_UPDATED', timestamp: Date.now() });
-  } catch (e) {
-    console.error('Error saving rooms:', e);
-  }
+  localRoomsCache = rooms;
+  broadcastChannel?.postMessage({ type: 'ROOMS_UPDATED', timestamp: Date.now() });
 }
 
 /**
