@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "activeMatches": {
+      ".read": "auth != null",
+      "$matchId": {
+        ".write": "auth != null && (auth.uid === data.child('player1/authUid').val() || auth.uid === data.child('player2/authUid').val() || auth.uid === newData.child('player1/authUid').val() || auth.uid === newData.child('player2/authUid').val())",
+        ".validate": "newData.hasChildren(['matchId', 'player1', 'gameState', 'status'])"
+      }
+    }
+  }
+}
