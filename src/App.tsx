@@ -39,6 +39,7 @@ import {
   sendPresenceHeartbeat
 } from './services/onlineMatchService';
 import { getCharacterById } from './config/characters';
+import { recordMatchRankingResult } from './services/rankingService';
 
 export default function App() {
   const [screen, setScreen] = useState<GameScreen>(() => {
@@ -460,8 +461,19 @@ export default function App() {
     return () => clearInterval(interval);
   }, [screen, onlineMatch, myPlayerId, playerRole, matchResult]);
 
+  // Persist each finished match to the player's ranking exactly once, including AI matches.
+  useEffect(() => {
+    if (!matchResult || !playerName.trim() || !onlineMatch) return;
+    const key = `${onlineMatch.matchId}:${onlineMatch.gameState.winnerPlayerId || 'finished'}`;
+    if (savedRankingMatchRef.current === key) return;
+    savedRankingMatchRef.current = key;
+    void recordMatchRankingResult(playerName, matchResult.earnedPoints, matchResult.isVictory)
+      .catch((error) => console.error('No se pudo guardar el ranking:', error));
+  }, [matchResult, playerName, onlineMatch?.matchId, onlineMatch?.gameState.winnerPlayerId]);
+
   // 5. AI Bot Automation during AI match
   const aiTurnKeyRef = useRef<string>('');
+  const savedRankingMatchRef = useRef<string>('');
   useEffect(() => {
     if (
       screen === 'battle' && 
@@ -489,20 +501,20 @@ export default function App() {
         // La IA busca una combinación ángulo/fuerza que acerque la parábola
         // al objetivo, teniendo en cuenta gravedad y viento.
         let best = { angle: 45, power: 80, error: Number.POSITIVE_INFINITY };
-        for (let angle = 20; angle <= 80; angle += 2) {
-          for (let power = 45; power <= 100; power += 5) {
+        for (let angle = 18; angle <= 82; angle += 1) {
+          for (let power = 40; power <= 100; power += 2) {
             const rad = angle * Math.PI / 180;
             const speed = 1250 * (0.4 + 0.85 * (power / 100));
             let vx = Math.cos(rad) * speed * shooter.facing;
             let vy = -Math.sin(rad) * speed;
             let x = shooter.x;
             let y = shooter.y - 18;
-            for (let step = 0; step < 140; step++) {
-              vx += (match.gameState.wind.speed * 6 * match.gameState.wind.direction) * 0.04;
-              vy += 720 * 0.04;
+            for (let step = 0; step < 240; step++) {
+              vx += (match.gameState.wind.speed * 6 * match.gameState.wind.direction) * 0.025;
+              vy += 720 * 0.025;
               if (Math.sign(vx) !== shooter.facing) vx = 0;
-              x += vx * 0.04;
-              y += vy * 0.04;
+              x += vx * 0.025;
+              y += vy * 0.025;
               const distance = Math.hypot(x - target.x, y - target.y);
               if (distance < best.error) best = { angle, power, error: distance };
               if (y > target.y + 80 || x < -100 || x > 2300) break;
@@ -510,11 +522,11 @@ export default function App() {
           }
         }
 
-        // Dificultad configurable: fácil falla ~20%, medio ~10%, difícil casi nunca.
+        // IA más precisa: búsqueda de trayectoria más fina y 50% menos fallos intencionales.
         const difficulty = aiDifficulty;
-        const missChance = difficulty === 'easy' ? 0.20
-          : difficulty === 'medium' ? 0.10
-          : difficulty === 'hard' ? 0.02 : 0;
+        const missChance = difficulty === 'easy' ? 0.10
+          : difficulty === 'medium' ? 0.05
+          : difficulty === 'hard' ? 0.01 : 0;
         const shouldMiss = Math.random() < missChance;
         const angleError = shouldMiss
           ? (Math.random() > 0.5 ? 1 : -1) * (10 + Math.random() * 16)
@@ -535,7 +547,7 @@ export default function App() {
 
         // Muy difícil aprovecha power-ups ofensivos de forma ocasional.
         const veryHardPowerUps: PowerUpType[] = ['mega_bomb', 'precision', 'power_boost', 'fire_shot', 'double_hit', 'triple_hit', 'grenade'];
-        const aiPowerUp = difficulty === 'very_hard' && Math.random() < 0.65
+        const aiPowerUp = (difficulty === 'very_hard' && Math.random() < 0.85) || (difficulty === 'hard' && Math.random() < 0.3)
           ? veryHardPowerUps[Math.floor(Math.random() * veryHardPowerUps.length)]
           : undefined;
         engineRef.current.fireShot('player2', aiPowerUp);
