@@ -9,66 +9,26 @@ service cloud.firestore {
       return name is string && name.size() >= 2 && name.size() <= 32;
     }
 
-    match /matches/{matchId} {
-      allow read: if true;
-
-      allow create: if request.auth != null
-        && validId(matchId)
-        && request.resource.data.matchId == matchId
-        && validPlayerName(request.resource.data.creatorPlayerName)
-        && validId(request.resource.data.creatorPlayerId)
-        && request.resource.data.player1.id == request.resource.data.creatorPlayerId
-        && request.resource.data.player1.authUid == request.auth.uid
-        && request.resource.data.status in ['waiting', 'starting']
-        && request.resource.data.gameState.currentTurnPlayerId == request.resource.data.creatorPlayerId;
-
-      allow update: if request.auth != null
-        && validId(matchId)
-        && resource.data.status != 'finished'
-        && (
-          request.auth.uid == resource.data.player1.authUid
-          || (resource.data.player2 != null && request.auth.uid == resource.data.player2.authUid)
-          || (
-            resource.data.player2 == null
-            && request.resource.data.player2 != null
-            && request.resource.data.player2.authUid == request.auth.uid
-            && resource.data.status == 'waiting'
-          )
-        )
-        && request.resource.data.status in ['waiting', 'starting', 'playing', 'finished', 'cancelled']
-        && request.resource.data.player1 != null
-        && request.resource.data.gameState != null;
-
-      allow delete: if false;
-    }
-
-    match /presence/{playerId} {
-      allow read: if true;
-      allow create, update: if request.auth != null
-        && validId(playerId)
-        && request.resource.data.authUid == request.auth.uid
-        && request.resource.data.playerId is string
-        && request.resource.data.lastSeenAt is number;
-      allow delete: if false;
-    }
-
+    // Firestore is exclusively for durable leaderboard/statistics records.
+    // Match state, character selections, shots, impacts, turns and presence
+    // must never be written here.
     match /ranking/{playerId} {
       allow read: if true;
       allow create, update: if request.auth != null
         && validId(playerId)
+        && request.resource.data.keys().hasOnly([
+          'playerName', 'score', 'matchesPlayed', 'victories', 'defeats'
+        ])
         && validPlayerName(request.resource.data.playerName)
         && request.resource.data.score is number
+        && request.resource.data.matchesPlayed is number
         && request.resource.data.victories is number
         && request.resource.data.defeats is number;
       allow delete: if false;
     }
 
-    match /stats/{statId} {
-      allow read: true;
-      allow create, update: if request.auth != null
-        && validId(statId)
-        && request.resource.data.totalMatches is number;
-      allow delete: if false;
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
