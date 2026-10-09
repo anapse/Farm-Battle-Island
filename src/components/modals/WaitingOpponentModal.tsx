@@ -31,7 +31,7 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
 
       {/* Header */}
       <div className="relative z-10 text-center pt-2">
-        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-amber-300 font-['Fredoka',sans-serif] drop-shadow">
+        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-amber-500 font-['Fredoka',sans-serif] drop-shadow">
           ESPERANDO RIVAL...
         </h2>
       </div>
@@ -39,16 +39,16 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
       {/* Radar Center Stage */}
       <div className="relative z-10 flex-1 flex flex-col items-center justify-center my-2 max-w-[280px] w-full mx-auto">
         <div className="relative w-20 h-20 mb-4 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-amber-500/20 animate-ping" />
-          <div className="absolute inset-1 rounded-full border-2 border-dashed border-amber-400 animate-spin" />
-          <div className="w-12 h-12 rounded-full bg-amber-500/30 border border-amber-300 flex items-center justify-center shadow-lg">
-            <Users className="w-6 h-6 text-amber-300 animate-pulse" />
+          <div className="absolute inset-0 rounded-full bg-amber-700/10 animate-ping" />
+          <div className="absolute inset-1 rounded-full border-2 border-dashed border-amber-600 animate-spin" />
+          <div className="w-12 h-12 rounded-full bg-amber-700/20 border border-amber-600 flex items-center justify-center shadow-lg">
+            <Users className="w-6 h-6 text-amber-500 animate-pulse" />
           </div>
         </div>
 
         {/* Room Code Badge */}
-        <div className="w-full bg-slate-950/85 backdrop-blur-md rounded-xl p-3 border border-amber-500/50 mb-3 flex flex-col items-center shadow-xl">
-          <span className="text-[10px] font-bold uppercase text-amber-400 tracking-wider mb-1">
+        <div className="w-full bg-slate-950/85 backdrop-blur-md rounded-xl p-3 border border-amber-600/30 mb-3 flex flex-col items-center shadow-xl">
+          <span className="text-[10px] font-bold uppercase text-amber-500 tracking-wider mb-1">
             CÓDIGO DE SALA
           </span>
           <div className="flex items-center gap-2">
@@ -57,14 +57,14 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
             </span>
             <button
               onClick={handleCopyCode}
-              className="p-1.5 rounded-lg bg-amber-700/80 hover:bg-amber-600 text-amber-100 transition active:scale-95 cursor-pointer"
+              className="p-1.5 rounded-lg bg-amber-800 hover:bg-amber-700 text-amber-200 transition active:scale-95 cursor-pointer"
               title="Copiar código"
             >
               {copied ? <Check className="w-4 h-4 text-emerald-300" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
           {copied && (
-            <span className="text-[10px] text-emerald-400 font-bold mt-1">
+            <span className="text-[10px] text-emerald-500 font-bold mt-1">
               ¡Copiado!
             </span>
           )}
@@ -72,7 +72,7 @@ export const WaitingOpponentModal: React.FC<WaitingOpponentModalProps> = ({ matc
 
         {/* Match Rules summary */}
         <div className="flex items-center gap-3 text-xs text-slate-300 bg-slate-950/70 px-3 py-1.5 rounded-lg border border-slate-800">
-          <span className="flex items-center gap-1 font-bold text-amber-300">
+          <span className="flex items-center gap-1 font-bold text-amber-500">
             <Clock className="w-3.5 h-3.5 text-cyan-400" />
             {match.settings.timeLimit ? '5 Min' : '∞'}
           </span>
