@@ -33,7 +33,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const [pendingAction, setPendingAction] = useState<'quick_play' | 'join_room' | null>(null);
   const [tempPlayerName, setTempPlayerName] = useState(playerName || '');
 
-  const handleActionClick = (action: 'quick_play' | 'create_room' | 'join_room') => {
+  const handleActionClick = (action: 'quick_play' | 'join_room') => {
     setTempPlayerName(playerName || '');
     setPendingAction(action);
   };
