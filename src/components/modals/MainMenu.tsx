@@ -124,22 +124,13 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             <span>JUGAR</span>
           </button>
 
-          {/* CREAR (Create Room Modal) */}
-          <button
-            onClick={() => handleActionClick('create_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>CREAR</span>
-          </button>
-
-          {/* UNIRSE (Join Available Room Modal) */}
+          {/* MULTIJUGADOR: lobby con salas y creación en una sola pantalla */}
           <button
             onClick={() => handleActionClick('join_room')}
             className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Users className="w-4 h-4" />
-            <span>UNIRSE</span>
+            <span>MULTIJUGADOR</span>
           </button>
 
           {/* TOP 50 (Leaderboard) */}
@@ -159,7 +150,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
         <span>© ANAPSE VIDEO GAMES</span>
       </div>
 
-      {/* Modal: Pedir Nombre de Jugador al presionar JUGAR, CREAR o UNIRSE */}
+      {/* Modal: Pedir Nombre de Jugador al presionar JUGAR o MULTIJUGADOR */}
       {pendingAction !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="w-full max-w-[280px] bg-[#141713]/88 border border-amber-600/50 rounded-2xl shadow-2xl p-4 text-center relative overflow-hidden backdrop-blur-md">
