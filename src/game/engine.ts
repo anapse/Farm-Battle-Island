@@ -732,15 +732,15 @@ export class GameEngine {
 
       if (!crate.hasLanded && parachuteChest) {
         // Draw official falling parachute chest
-        const w = 108;
-        const h = 132;
+        const w = 194;
+        const h = 238;
         ctx.drawImage(parachuteChest, crate.x - w / 2, crate.y - 92, w, h);
         ctx.restore();
         continue;
       } else if (crate.hasLanded && openChest) {
         // Draw official landed glowing treasure chest
-        const w = 96;
-        const h = 82;
+        const w = 173;
+        const h = 148;
         ctx.drawImage(openChest, crate.x - w / 2, crate.y - 58, w, h);
         ctx.restore();
         continue;
