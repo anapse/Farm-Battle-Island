@@ -68,7 +68,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
             onClick={onCycleSound}
             title={`Sonido: ${soundLevel === 'high' ? 'Alto' : soundLevel === 'medium' ? 'Medio' : soundLevel === 'low' ? 'Bajo' : 'Apagado'}. Pulsa para cambiar`}
             aria-label="Cambiar volumen"
-            className="text-white hover:brightness-110 px-3 py-2 rounded-xl bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer flex items-center gap-2"
+            className="text-white hover:brightness-110 px-3 py-2 rounded-xl bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer flex items-center gap-2"
           >
             {soundLevel === 'off' ? <VolumeX className="w-4 h-4" /> : soundLevel === 'low' ? <Volume1 className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             <span className="text-[9px] font-black">{soundLevel === 'high' ? 'ALTO' : soundLevel === 'medium' ? 'MEDIO' : soundLevel === 'low' ? 'BAJO' : 'OFF'}</span>
@@ -85,7 +85,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
           </button>
           <button
             onClick={onClose}
-            className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#526a7d,#243b4b_65%,#111f2a)] border-2 border-[#9cc9df] shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_3px_0_#101b22] transition cursor-pointer"
+            className="text-white hover:brightness-125 p-2 rounded-xl bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
