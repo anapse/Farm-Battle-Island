@@ -1,3 +1,4 @@
+import { getAssetUrl } from '../../utils/assets';
 import React, { useState } from 'react';
 import { GameTimeOption, GameLivesOption } from '../../types/game';
 import { ISLANDS } from '../../config/islands';
@@ -27,13 +28,13 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between pt-1">
@@ -44,7 +45,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -54,7 +55,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       <form onSubmit={handleSubmit} className="relative z-10 flex-1 flex flex-col justify-center gap-3 my-2 max-w-[320px] w-full mx-auto">
         
         {/* TIEMPO Selection */}
-        <div className="bg-slate-950/80 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
             <Clock className="w-3.5 h-3.5 text-amber-500" />
             <span>TIEMPO:</span>
@@ -66,7 +67,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                 timeLimit === '5_MIN'
                   ? 'bg-amber-700 border-amber-600 text-white shadow-md'
-                  : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
               }`}
             >
               5 MINUTOS
@@ -80,7 +81,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                 timeLimit === 'INFINITE'
                   ? 'bg-amber-700 border-amber-600 text-white shadow-md'
-                  : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:bg-slate-800'
+                  : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
               }`}
             >
               ∞ INFINITO
@@ -89,7 +90,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
 
         {/* VIDAS Selection */}
-        <div className="bg-slate-950/80 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
             <span>VIDAS:</span>
@@ -108,7 +109,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                   lives === num
                     ? 'bg-red-700 border-red-600 text-white shadow-md'
-                    : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:bg-slate-800'
+                    : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 {num === 'INFINITE' ? '∞ VIDAS' : `${num} ${num === 1 ? 'VIDA' : 'VIDAS'}`}
@@ -118,7 +119,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
         </div>
 
         {/* MAPA / ESCENARIO Selection */}
-        <div className="bg-slate-950/80 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-2.5 rounded-xl border border-amber-600/30">
           <label className="flex items-center gap-1.5 text-xs font-black uppercase text-amber-500 mb-1.5">
             <MapPin className="w-3.5 h-3.5 text-amber-500" />
             <span>ESCENARIO:</span>
@@ -132,7 +133,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 className={`p-2 rounded-lg text-left border transition text-xs cursor-pointer ${
                   islandId === island.id
                     ? 'bg-emerald-950/90 border-emerald-400 text-white shadow-sm'
-                    : 'bg-slate-900/80 border-slate-700 text-slate-300 hover:bg-slate-800'
+                    : 'bg-[#1d211c]/82 border-slate-700 text-slate-300 hover:bg-slate-800'
                 }`}
               >
                 <div className="font-black text-[11px] text-amber-500">{island.title}</div>
