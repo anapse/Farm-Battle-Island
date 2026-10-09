@@ -47,7 +47,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
           currentTurn === 'player1' ? 'scale-[1.02] filter drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]' : 'opacity-85'
         }`}>
           {/* Label: PLAYER 1 and HP % */}
-          <div className="flex items-center justify-between text-[10px] sm:text-xs font-black tracking-wider text-slate-200 px-1 mb-0.5">
+          <div className="flex items-center justify-between text-[9px] sm:text-xs font-black tracking-tight text-white px-1 mb-0.5">
             <span className="text-white uppercase font-black truncate">{player1.name}</span>
             <span className={`font-mono font-bold ${
               p1HpPercent <= 25 ? 'text-red-400' : p1HpPercent <= 60 ? 'text-amber-300' : 'text-emerald-300'
@@ -148,7 +148,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
       <div className="flex justify-end mt-1 pointer-events-auto">
         <button
           onClick={onSurrenderClick}
-          className="bg-red-950/80 hover:bg-red-900 text-red-300 hover:text-white border border-red-700/60 text-[10px] font-bold px-2 py-0.5 rounded transition flex items-center gap-1 shadow"
+          className="bg-red-950/95 hover:bg-red-900 text-white border-2 border-red-500 text-[10px] sm:text-xs font-black px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow-lg"
           title="Salir de la partida (se computa derrota)"
         >
           <Flag className="w-3 h-3 text-red-400" />
