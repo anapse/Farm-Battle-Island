@@ -76,7 +76,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       <div className="relative z-10 flex items-center justify-start w-full pt-1">
         <button
           onClick={onContact}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
         >
           <Mail className="w-4 h-4 text-amber-500" />
           <span>CONTACTO</span>
@@ -117,7 +117,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* JUGAR (Quick game vs AI) */}
           <button
             onClick={() => handleActionClick('quick_play')}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-emerald-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-emerald-400/90 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>JUGAR</span>
@@ -126,7 +126,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* CREAR (Create Room Modal) */}
           <button
             onClick={() => handleActionClick('create_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-amber-600/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-amber-600/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>CREAR</span>
@@ -135,7 +135,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* UNIRSE (Join Available Room Modal) */}
           <button
             onClick={() => handleActionClick('join_room')}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-sky-700/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-[#8f7a4e]/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Users className="w-4 h-4" />
             <span>UNIRSE</span>
@@ -144,7 +144,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full py-2.5 px-4 rounded-lg bg-slate-950/90 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-purple-700/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-2.5 px-4 rounded-lg bg-[#141713]/88 hover:bg-slate-900 text-white font-black text-sm sm:text-base tracking-wider uppercase border-2 border-[#8f7a4e]/70 shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
           >
             <Trophy className="w-4 h-4 text-yellow-600 fill-yellow-600" />
             <span>TOP 50</span>
@@ -161,7 +161,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       {/* Modal: Pedir Nombre de Jugador al presionar JUGAR, CREAR o UNIRSE */}
       {pendingAction !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-[280px] bg-slate-950/90 border border-amber-600/50 rounded-2xl shadow-2xl p-4 text-center relative overflow-hidden backdrop-blur-md">
+          <div className="w-full max-w-[280px] bg-[#141713]/88 border border-amber-600/50 rounded-2xl shadow-2xl p-4 text-center relative overflow-hidden backdrop-blur-md">
             
             <button
               onClick={() => setPendingAction(null)}
