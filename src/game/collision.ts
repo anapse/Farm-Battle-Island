@@ -33,22 +33,33 @@ export class CollisionSystem {
       };
     }
 
-    // 2. Opposing player collision
+    // 2. Opposing player collision.
+    // Sweep the projectile's whole movement segment against a forgiving
+    // circular hitbox. Checking only the current point lets fast bullets
+    // tunnel through a character between frames.
     for (const player of players) {
       if (player.role === shooterRole) continue;
-      if (player.lifeState !== 'active') continue; // Don't hit dead or invulnerable respawning player
+      if (player.lifeState !== 'active') continue;
 
-      // Bounding box / circle distance to vehicle center
       const pCenterX = player.x;
-      const pCenterY = player.y - 14;
-      const dist = Math.hypot(x - pCenterX, y - pCenterY);
+      const pCenterY = player.y - 42;
+      const hitRadius = radius + 34;
+      const dx = x - previousX;
+      const dy = y - previousY;
+      const segmentLengthSq = dx * dx + dy * dy;
+      const t = segmentLengthSq > 0
+        ? Math.max(0, Math.min(1, ((pCenterX - previousX) * dx + (pCenterY - previousY) * dy) / segmentLengthSq))
+        : 0;
+      const closestX = previousX + t * dx;
+      const closestY = previousY + t * dy;
+      const dist = Math.hypot(closestX - pCenterX, closestY - pCenterY);
 
-      if (dist <= radius + 22) {
+      if (dist <= hitRadius) {
         return {
           hit: true,
           type: 'player',
-          hitX: x,
-          hitY: y,
+          hitX: closestX,
+          hitY: closestY,
           hitPlayer: player
         };
       }
