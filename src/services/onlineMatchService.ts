@@ -524,8 +524,9 @@ export async function sendShotOnline(params: {
       if (!player || player.id !== params.playerId || player.authUid !== auth.currentUser.uid) {
         throw new Error('No estás autorizado para disparar en esta partida.');
       }
+      const authenticatedShotEvent = { ...shotEvent, shooterRole: params.shooterRole, shooterPlayerId: player.id };
       await update(ref(rtdb, `activeMatches/${params.matchId}`), {
-        'gameState/lastShot': shotEvent,
+        'gameState/lastShot': authenticatedShotEvent,
         updatedAt: Date.now()
       });
     } catch (e) {
