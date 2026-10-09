@@ -196,35 +196,17 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
         </div>
 
         {/* 2. VIENTO & ÁNGULO ZONE (Pure visual readout - angle controlled by mouse) */}
-        <div className="col-start-2 row-start-2 min-w-[92px] flex flex-col items-center justify-center px-2 py-1 bg-gradient-to-b from-[#20a85b] to-[#16783c] border-[3px] border-[#0a160d] shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]">
-          <div className="flex flex-col items-center justify-center gap-0.5 min-w-0">
-            {/* Wind Readout */}
-            <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-bold text-[#c4b88f] min-w-0">
-              <span className="hidden">🧭</span>
-              <span className="text-[8px] sm:text-[10px]">{wind.speed} km/h {wind.direction > 0 ? '➡' : '⬅'}</span>
-              
+        {/* 2. WIND COMPASS + AIM ANGLE */}
+        <div className="col-start-2 row-start-2 flex flex-col items-center justify-center gap-1 min-w-0">
+          <div className="flex flex-col items-center gap-0.5">
+            <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-black bg-gradient-to-b from-sky-400 to-sky-600 shadow-[inset_0_2px_2px_rgba(255,255,255,0.35),0_2px_4px_rgba(0,0,0,0.5)] flex items-center justify-center" title={`Brújula del viento: ${wind.speed} km/h`}>
+              <span className="text-xl sm:text-2xl font-black text-red-600 drop-shadow" style={{ transform: wind.direction > 0 ? 'rotate(0deg)' : 'rotate(180deg)' }}>➜</span>
             </div>
-            
-            <div className="hidden" />
-
-            {/* Aim Angle Readout (Follows mouse position relative to vehicle) */}
-            <div className="flex items-center gap-0.5 text-[8px] sm:text-xs font-mono font-black text-[#9aaa7a] min-w-0">
-              <span className="hidden">ÁNG.</span>
-              <span className="text-lg sm:text-xl font-black text-[#06130a]">{angle}°</span>
-            </div>
+            <span className="text-[8px] sm:text-[9px] font-black text-[#c4d7e8] whitespace-nowrap">{wind.speed} km/h</span>
           </div>
-
-          {/* Circular movement controls matching the reference design */}
-          {onMove && (
-            <div className="flex items-center gap-1">
-              <button onClick={() => onMove(-14)} disabled={!isMyTurn}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-black bg-gradient-to-b from-sky-400 to-sky-600 text-red-600 shadow-[inset_0_2px_2px_rgba(255,255,255,0.35),0_2px_4px_rgba(0,0,0,0.5)] disabled:opacity-35 flex items-center justify-center text-xl font-black active:scale-95"
-                title="Mover tanque a la izquierda">◀</button>
-              <button onClick={() => onMove(14)} disabled={!isMyTurn}
-                className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-[3px] border-black bg-gradient-to-b from-sky-400 to-sky-600 text-red-600 shadow-[inset_0_2px_2px_rgba(255,255,255,0.35),0_2px_4px_rgba(0,0,0,0.5)] disabled:opacity-35 flex items-center justify-center text-xl font-black active:scale-95"
-                title="Mover tanque a la derecha">▶</button>
-            </div>
-          )}
+          <div className="min-w-[78px] sm:min-w-[94px] px-2 py-1 bg-gradient-to-b from-[#20b45b] to-[#168342] border-[3px] border-black shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] text-center">
+            <span className="text-lg sm:text-xl font-black text-black">{angle}°</span>
+          </div>
         </div>
 
         {/* 3. FUERZA ZONE: Flexible Bar */}
@@ -268,33 +250,7 @@ export const BottomControls: React.FC<BottomControlsProps> = ({
           </div>   </div>
 
         {/* 4. FIRE BUTTON ZONE: Compact, prominent, with oscillating hold mechanic */}
-        <div className="col-start-3 row-start-2 flex items-center justify-end gap-1 min-w-0">
-          <button
-            onPointerDown={handleFirePointerDown}
-            onPointerUp={handleFirePointerUp}
-            onPointerLeave={handleFirePointerLeave}
-            disabled={!isMyTurn || isFiring}
-            className={`w-[68px] h-[68px] sm:w-[76px] sm:h-[76px] rounded-full border-[4px] border-[#111] shadow-[inset_0_3px_4px_rgba(255,255,255,0.35),inset_0_-6px_8px_rgba(0,0,0,0.25),0_2px_5px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center transition-all select-none touch-none ${
-              !isMyTurn || isFiring
-                ? 'bg-gradient-to-b from-slate-600 to-slate-900 border-[#111] opacity-40 cursor-not-allowed'
-                : isHoldingFire
-                ? 'bg-[#9f7b3f] border-white scale-105 shadow-[0_0_18px_rgba(194,154,82,0.25)] cursor-pointer'
-                : 'bg-gradient-to-b from-[#ff9b32] via-[#ff8124] to-[#f36a18] hover:brightness-110 active:scale-95 cursor-pointer'
-            }`}
-            title={
-              !isMyTurn 
-                ? 'Esperando turno' 
-                : isFiring 
-                ? 'Disparo en curso...' 
-                : 'Mantén presionado para cargar fuerza, suelta para disparar'
-            }
-          >
-            <Flame className={`w-4 h-4 sm:w-5 sm:h-5 text-amber-100 fill-amber-200 ${isHoldingFire ? 'scale-115 animate-bounce' : ''}`} />
-            <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-tight text-white drop-shadow font-['Fredoka',sans-serif] leading-tight">
-              {isHoldingFire ? '¡SUELTA!' : isFiring ? 'EN VUELO' : 'FIRE'}
-            </span>
-          </button>
-        </div>
+        <div className="col-start-3 row-start-2 flex items-center justify-end min-w-0">
 
       </div>
 
