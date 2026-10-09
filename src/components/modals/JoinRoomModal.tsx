@@ -108,7 +108,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
           disambiguatedMatches.map(({ match, displayCreatorName }) => (
             <div
               key={match.matchId}
-              className="bg-[#141713]/72 backdrop-blur-md border border-[#555a4e]/80 hover:border-[#8f7a4e] rounded-xl p-3 flex items-center justify-between transition shadow-md"
+              className="bg-[linear-gradient(135deg,rgba(56,67,62,0.96),rgba(15,22,20,0.96))] backdrop-blur-md border border-[#c19a59]/80 hover:border-[#f5d28a] rounded-xl p-4 flex items-center justify-between transition shadow-[inset_0_1px_0_rgba(255,255,255,0.16),0_4px_10px_rgba(0,0,0,0.45)]"
             >
               <div className="flex flex-col">
                 <div className="font-black text-sm text-white flex items-center gap-1.5">
@@ -134,7 +134,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
 
               <button
                 onClick={() => onJoin(match.matchId)}
-                className="px-3 py-1.5 rounded-lg bg-[#806c42] hover:bg-[#927b4d] text-white font-black text-xs uppercase tracking-wider shadow border border-[#8f7a4e] flex items-center gap-1 active:scale-95 transition cursor-pointer"
+                className="px-4 py-2.5 rounded-xl bg-[linear-gradient(180deg,#9ce8ff_0%,#1599ec_45%,#07519c_82%,#06294f_100%)] hover:brightness-110 text-white font-black text-sm uppercase tracking-wider border-2 border-[#b8f1ff] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-4px_0_rgba(0,0,0,0.28),0_4px_0_#06254b,0_7px_10px_rgba(0,0,0,0.5)] flex items-center gap-2 active:translate-y-1 transition cursor-pointer"
               >
                 <span>UNIR</span>
                 <ArrowRight className="w-3 h-3" />
@@ -148,7 +148,7 @@ export const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       <div className="relative z-10 text-center pb-1">
         <button
           onClick={onCreateRoom}
-          className="w-full max-w-[340px] py-3 rounded-xl bg-[#806c42] hover:bg-[#927b4d] text-white font-black text-sm uppercase tracking-wider border border-[#d0b56f] shadow-lg flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+          className="w-full max-w-[340px] py-4 rounded-xl bg-[linear-gradient(180deg,#ffcf75_0%,#ff8a1d_45%,#bd4709_82%,#6d2608_100%)] hover:brightness-110 text-white font-black text-base uppercase tracking-wider border-2 border-[#ffe0a4] shadow-[inset_0_2px_0_rgba(255,255,255,0.7),inset_0_-4px_0_rgba(70,20,0,0.3),0_5px_0_#612305,0_8px_12px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
         >
           <PlusCircle className="w-4 h-4" />
           CREAR SALA
