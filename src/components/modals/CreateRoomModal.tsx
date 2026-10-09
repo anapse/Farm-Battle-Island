@@ -65,8 +65,8 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
             </label>
             <div className="grid grid-cols-2 gap-2">
               {([
-                ['easy', 'FÁCIL', 'Falla aprox. 20%'],
-                ['medium', 'MEDIO', 'Falla aprox. 10%'],
+                ['easy', 'FÁCIL', 'Falla aprox. 10%'],
+                ['medium', 'MEDIO', 'Falla aprox. 5%'],
                 ['hard', 'DIFÍCIL', 'Casi siempre acierta'],
                 ['very_hard', 'MUY DIFÍCIL', 'Usa power-ups']
               ] as const).map(([value, label, description]) => (
