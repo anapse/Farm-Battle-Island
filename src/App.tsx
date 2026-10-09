@@ -72,6 +72,44 @@ export default function App() {
   const [showContact, setShowContact] = useState(false);
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
+  // Background music: try autoplay on startup and resume on first user interaction if blocked.
+  const backgroundMusicRef = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => {
+    const audio = new Audio('/assets/sonido/fondo%20sonido.mp3');
+    audio.loop = true;
+    audio.volume = 0.28;
+    backgroundMusicRef.current = audio;
+
+    const tryPlay = () => {
+      void audio.play().catch(() => {
+        // Browsers may block autoplay until the player interacts with the page.
+      });
+    };
+
+    tryPlay();
+    const resumeOnInteraction = () => {
+      tryPlay();
+      if (!audio.paused) {
+        window.removeEventListener('pointerdown', resumeOnInteraction);
+        window.removeEventListener('keydown', resumeOnInteraction);
+        window.removeEventListener('touchstart', resumeOnInteraction);
+      }
+    };
+
+    window.addEventListener('pointerdown', resumeOnInteraction);
+    window.addEventListener('keydown', resumeOnInteraction);
+    window.addEventListener('touchstart', resumeOnInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', resumeOnInteraction);
+      window.removeEventListener('keydown', resumeOnInteraction);
+      window.removeEventListener('touchstart', resumeOnInteraction);
+      audio.pause();
+      audio.src = '';
+      backgroundMusicRef.current = null;
+    };
+  }, []);
+
   // Initialize official sprites on app startup
   useEffect(() => {
     spriteManager.loadAll().catch((err) => {
