@@ -79,7 +79,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
       <div className="relative z-10 flex items-center justify-between w-full pt-1">
         <button
           onClick={onContact}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white border border-amber-600/70 text-sm font-black tracking-wider uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[linear-gradient(180deg,#ffe08a,#d68a18_52%,#76400b)] hover:brightness-110 text-white border-2 border-[#fff0b5] text-sm font-black tracking-wider uppercase transition shadow-[inset_0_2px_0_rgba(255,255,255,0.55),0_4px_0_#512b08,0_7px_10px_rgba(0,0,0,0.45)] active:translate-y-1 cursor-pointer backdrop-blur-sm"
         >
           <Mail className="w-4 h-4 text-[#d0b56f]" />
           <span>CONTACTO</span>
@@ -88,7 +88,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           onClick={onCycleSound}
           title={`Sonido: ${soundLevel === 'high' ? 'Alto' : soundLevel === 'medium' ? 'Medio' : soundLevel === 'low' ? 'Bajo' : 'Apagado'}. Pulsa para cambiar`}
           aria-label="Cambiar volumen"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white border border-amber-600/70 text-xs font-black uppercase transition shadow-[0_3px_10px_rgba(0,0,0,0.55)] active:scale-95 cursor-pointer backdrop-blur-sm"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[linear-gradient(180deg,#9ce8ff,#1599ec_52%,#062f66)] hover:brightness-110 text-white border-2 border-[#b8f1ff] text-sm font-black uppercase transition shadow-[inset_0_2px_0_rgba(255,255,255,0.55),0_4px_0_#06254b,0_7px_10px_rgba(0,0,0,0.45)] active:translate-y-1 cursor-pointer backdrop-blur-sm"
         >
           {soundLevel === 'off' ? <VolumeX className="w-4 h-4 text-[#d0b56f]" /> : soundLevel === 'low' ? <Volume1 className="w-4 h-4 text-[#d0b56f]" /> : <Volume2 className="w-4 h-4 text-[#d0b56f]" />}
           <span>{soundLevel === 'high' ? 'ALTO' : soundLevel === 'medium' ? 'MEDIO' : soundLevel === 'low' ? 'BAJO' : 'OFF'}</span>
@@ -147,7 +147,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           {/* TOP 50 (Leaderboard) */}
           <button
             onClick={onRanking}
-            className="w-full py-2.5 px-4 rounded-lg bg-[#171a16]/86 hover:bg-[#262b23] text-white font-black text-sm sm:text-base tracking-wider uppercase border border-[#9a8351] shadow-[0_4px_12px_rgba(0,0,0,0.6)] flex items-center justify-center gap-2 transition active:scale-95 cursor-pointer"
+            className="w-full py-3.5 px-4 rounded-xl bg-[linear-gradient(180deg,#9ce8ff_0%,#1599ec_42%,#07519c_78%,#06294f_100%)] hover:brightness-110 text-white font-black text-base sm:text-lg tracking-wider uppercase border-2 border-[#b8f1ff] shadow-[inset_0_2px_0_rgba(255,255,255,0.65),inset_0_-5px_0_rgba(0,0,0,0.28),0_5px_0_#06254b,0_9px_14px_rgba(0,0,0,0.55)] flex items-center justify-center gap-3 transition active:translate-y-1 cursor-pointer"
           >
             <Trophy className="w-4 h-4 text-yellow-600 fill-yellow-600" />
             <span>TOP 50</span>
