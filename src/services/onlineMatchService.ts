@@ -42,7 +42,7 @@ if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
 /**
  * Get or create unique persistent player identity
  */
-export function getPlayerIdentity(defaultName: string = 'Comandante'): { playerId: string; playerName: string } {
+export function getPlayerIdentity(defaultName: string = ''): { playerId: string; playerName: string } {
   let playerId = '';
   let storedName = '';
 
