@@ -15,18 +15,18 @@ const RANKING_STORAGE_KEY = 'fbi_top50_rankings';
 
 // Seed initial leaderboard so Top 50 is lively and realistic
 const DEFAULT_RANKINGS: PlayerRanking[] = [
-  { playerName: 'Capitán Coco', score: 3840, victories: 48, defeats: 6 },
-  { playerName: 'Isla Feroz', score: 3250, victories: 41, defeats: 9 },
-  { playerName: 'Mortero Pro', score: 2980, victories: 37, defeats: 12 },
-  { playerName: 'Bananazooka', score: 2710, victories: 34, defeats: 14 },
-  { playerName: 'Tortuga Blindada', score: 2540, victories: 31, defeats: 11 },
-  { playerName: 'Gallo Loco', score: 2390, victories: 29, defeats: 15 },
-  { playerName: 'Bambú Strike', score: 2210, victories: 27, defeats: 13 },
-  { playerName: 'Conejo Veloz', score: 2050, victories: 25, defeats: 18 },
-  { playerName: 'Mapache Táctico', score: 1920, victories: 23, defeats: 16 },
-  { playerName: 'Tirador Tropical', score: 1840, victories: 22, defeats: 19 },
-  { playerName: 'Cañón Playero', score: 1720, victories: 20, defeats: 14 },
-  { playerName: 'Arrecife Master', score: 1580, victories: 18, defeats: 12 }
+  { playerName: 'Capitán Coco', score: 3840, victories: 48, defeats: 6, matchesPlayed: 54 },
+  { playerName: 'Isla Feroz', score: 3250, victories: 41, defeats: 9, matchesPlayed: 50 },
+  { playerName: 'Mortero Pro', score: 2980, victories: 37, defeats: 12, matchesPlayed: 49 },
+  { playerName: 'Bananazooka', score: 2710, victories: 34, defeats: 14, matchesPlayed: 48 },
+  { playerName: 'Tortuga Blindada', score: 2540, victories: 31, defeats: 11, matchesPlayed: 42 },
+  { playerName: 'Gallo Loco', score: 2390, victories: 29, defeats: 15, matchesPlayed: 44 },
+  { playerName: 'Bambú Strike', score: 2210, victories: 27, defeats: 13, matchesPlayed: 40 },
+  { playerName: 'Conejo Veloz', score: 2050, victories: 25, defeats: 18, matchesPlayed: 43 },
+  { playerName: 'Mapache Táctico', score: 1920, victories: 23, defeats: 16, matchesPlayed: 39 },
+  { playerName: 'Tirador Tropical', score: 1840, victories: 22, defeats: 19, matchesPlayed: 41 },
+  { playerName: 'Cañón Playero', score: 1720, victories: 20, defeats: 14, matchesPlayed: 34 },
+  { playerName: 'Arrecife Master', score: 1580, victories: 18, defeats: 12, matchesPlayed: 30 }
 ];
 
 /**
@@ -54,7 +54,10 @@ export function getRankings(): PlayerRanking[] {
       return sortRankings(DEFAULT_RANKINGS);
     }
     const parsed: PlayerRanking[] = JSON.parse(raw);
-    return sortRankings(parsed);
+    return sortRankings(parsed.map((player) => ({
+      ...player,
+      matchesPlayed: player.matchesPlayed ?? ((player.victories || 0) + (player.defeats || 0))
+    })));
   } catch {
     return sortRankings(DEFAULT_RANKINGS);
   }
@@ -102,7 +105,7 @@ export async function recordMatchRankingResult(
 ): Promise<PlayerRanking> {
   const cleanName = playerName.trim();
   if (cleanName.length < 2) throw new Error('El alias debe tener al menos 2 caracteres.');
-  const docId = cleanName.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9_-]/g, '_').slice(0, 64);
+  const docId = encodeURIComponent(cleanName.toLowerCase());
 
   let currentRecord: PlayerRanking = {
     playerName: cleanName,
@@ -128,25 +131,9 @@ export async function recordMatchRankingResult(
         };
       }
 
-      // Persist only players who belong to the global Top 50.
-      // The ranking collection is not a match-history collection.
-      const topQuery = query(
-        collection(db, 'ranking'),
-        orderBy('score', 'desc'),
-        limit(50)
-      );
-      const topSnapshot = await getDocs(topQuery);
-      const topRecords = topSnapshot.docs.map(item => item.data() as PlayerRanking);
-      const alreadyRanked = topRecords.some(
-        item => item.playerName.toLowerCase() === cleanName.toLowerCase()
-      );
-      const cutoff = topRecords.length < 50
-        ? 0
-        : Math.min(...topRecords.map(item => item.score || 0));
-
-      if (alreadyRanked || currentRecord.score >= cutoff || topRecords.length < 50) {
-        await setDoc(docRef, currentRecord, { merge: true });
-      }
+      // Keep one compact aggregate per chosen alias, even when it is not in the Top 50.
+      // No match document or gameplay data is stored in Firestore.
+      await setDoc(docRef, currentRecord);
     } catch (e) {
       console.warn('Firestore ranking record error, saving locally:', e);
     }
