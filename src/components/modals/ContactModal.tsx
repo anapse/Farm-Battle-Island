@@ -1,3 +1,4 @@
+import { getAssetUrl } from '../../utils/assets';
 import React from 'react';
 import { X, Mail, Globe, Gamepad2 } from 'lucide-react';
 
@@ -11,13 +12,13 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
-        src="/assets/sprites/fondomenu.png"
+        src={getAssetUrl('assets/sprites/fondomenu.png')}
         alt="Fondo Menú"
         className="absolute inset-0 w-full h-full object-cover pointer-events-none opacity-85"
       />
 
       {/* Dark Vignette Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between pt-1">
@@ -29,7 +30,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-slate-900/80 border border-slate-700 transition cursor-pointer"
+          className="text-slate-300 hover:text-white p-1.5 rounded-lg bg-[#1d211c]/82 border border-slate-700 transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -37,7 +38,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
 
       {/* Studio Info Card */}
       <div className="relative z-10 my-auto max-w-[320px] w-full mx-auto space-y-3">
-        <div className="bg-slate-950/80 backdrop-blur-md p-4 rounded-xl border border-amber-600/30 text-center space-y-3 shadow-xl">
+        <div className="bg-[#141713]/72 backdrop-blur-md p-4 rounded-xl border border-amber-600/30 text-center space-y-3 shadow-xl">
           <h3 className="text-base font-black text-amber-500 font-['Fredoka',sans-serif]">
             ANAPSE VIDEO GAMES
           </h3>
@@ -48,7 +49,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
               <span className="font-mono text-[11px]">contacto@anapsevideogames.com</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 text-xs">
-              <Globe className="w-4 h-4 text-sky-500 shrink-0" />
+              <Globe className="w-4 h-4 text-[#9b8b62] shrink-0" />
               <span className="font-mono text-[11px]">anapsevideogames.com</span>
             </div>
             <div className="flex items-center gap-2 text-slate-300 text-xs">
@@ -63,7 +64,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
       <div className="relative z-10 text-center pb-1">
         <button
           onClick={onClose}
-          className="w-full max-w-[320px] py-2 rounded-lg bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
+          className="w-full max-w-[320px] py-2 rounded-lg bg-[#1d211c]/88 hover:bg-slate-800 text-slate-300 font-bold text-xs uppercase border border-slate-700 transition cursor-pointer"
         >
           Cerrar
         </button>
