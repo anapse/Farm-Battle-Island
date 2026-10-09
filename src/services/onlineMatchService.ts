@@ -352,7 +352,7 @@ export async function selectCharacterOnline(
   playerId: string, 
   characterId: CharacterId
 ): Promise<OnlineMatch> {
-  if (db && isConfigured) {
+  if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
       return await runTransaction(db, async (transaction) => {
