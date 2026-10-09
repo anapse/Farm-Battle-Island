@@ -102,7 +102,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
 
         {/* Player 2 HUD Box (~33% width) */}
         <div className={`w-[33%] max-w-[130px] sm:max-w-[180px] flex flex-col pointer-events-auto transition-all duration-300 ${
-          currentTurn === 'player2' ? 'scale-[1.02] filter drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'opacity-85'
+          currentTurn === 'player2' ? 'scale-[1.02] filter drop-shadow-[0_0_8px_rgba(154,131,81,0.35)]' : 'opacity-85'
         }`}>
           {/* Label: PLAYER 2 and HP % */}
           <div className="flex items-center justify-between text-[10px] sm:text-xs font-black tracking-wider text-slate-200 px-1 mb-0.5">
