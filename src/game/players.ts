@@ -156,6 +156,25 @@ export class PlayerManager {
   /**
    * Update physics, falling, safety floor countdown, and respawn cycle
    */
+  private findNearbyFirmGround(player: PlayerEntity, terrain: TerrainManager): { x: number; y: number } | null {
+    const step = WorldConfig.BLOCK_WIDTH * 0.75;
+    const offsets = [-4, 4, -3, 3, -2, 2, -1, 1];
+
+    for (const offset of offsets) {
+      const x = player.x + offset * step;
+      const groundY = terrain.getGroundYAt(x);
+      if (
+        groundY < WorldConfig.SAFETY_FLOOR_Y - 12 &&
+        groundY < WorldConfig.DEATH_FLOOR_Y - 20 &&
+        Math.abs(groundY - player.y) <= 120
+      ) {
+        return { x, y: groundY };
+      }
+    }
+
+    return null;
+  }
+
   public update(dt: number, terrain: TerrainManager, onPlayerDied?: (player: PlayerEntity) => void) {
     for (const player of this.players) {
       // 1. Idle vibration timer & recoil decay
@@ -200,21 +219,37 @@ export class PlayerManager {
       // 3. Falling & Ground Support Physics
       const groundY = terrain.getGroundYAt(player.x);
 
-      if (player.y < groundY - 1) {
+      // If an explosion removed the block directly under the tank, don't let
+      // it fall through a huge artificial shaft. Move it slightly sideways to
+      // the nearest firm column so it gets a short, visible fall instead.
+      if (
+        player.isGrounded &&
+        groundY - player.y > 32 &&
+        groundY < WorldConfig.DEATH_FLOOR_Y
+      ) {
+        const safe = this.findNearbyFirmGround(player, terrain);
+        if (safe) {
+          player.x = safe.x;
+        }
+      }
+
+      const correctedGroundY = terrain.getGroundYAt(player.x);
+
+      if (player.y < correctedGroundY - 1) {
         // Falling down under gravity
         player.vy += WorldConfig.GRAVITY * dt;
         player.y += player.vy * dt;
         player.isGrounded = false;
 
         // Land on ground
-        if (player.y >= groundY) {
-          player.y = groundY;
+        if (player.y >= correctedGroundY) {
+          player.y = correctedGroundY;
           player.vy = 0;
           player.isGrounded = true;
         }
       } else {
         // Grounded: match ground contour
-        player.y = groundY;
+        player.y = correctedGroundY;
         player.vy = 0;
         player.isGrounded = true;
       }
