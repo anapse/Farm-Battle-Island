@@ -355,7 +355,7 @@ export async function selectCharacterOnline(
   if (db && isConfigured && await ensureFirebaseAuth()) {
     try {
       const matchDocRef = doc(db, 'matches', matchId);
-      return await runTransaction(db, async (transaction) => {
+      const updatedMatch = await runTransaction(db, async (transaction) => {
         const snap = await transaction.get(matchDocRef);
         if (!snap.exists()) throw new Error('Partida no encontrada');
 
