@@ -8,7 +8,7 @@ interface ContactModalProps {
 
 export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-2 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -30,7 +30,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ onClose }) => {
         </div>
         <button
           onClick={onClose}
-          className="text-slate-300 hover:text-white p-2.5 rounded-xl bg-[#1d211c]/95 border-2 border-[#9cc9df] transition cursor-pointer"
+          className="text-slate-300 hover:text-white p-2.5 rounded-xl bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
