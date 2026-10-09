@@ -61,7 +61,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between p-3 sm:p-4 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-start gap-3 p-3 sm:p-4 select-none overflow-y-auto overscroll-contain bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -74,22 +74,22 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       <div className="absolute inset-0 bg-black/5 pointer-events-none" />
 
       {/* Header */}
-      <div className="relative z-10 text-center pt-1">
-        <h2 className="text-xl sm:text-2xl font-black text-white tracking-wide font-['Fredoka',sans-serif] drop-shadow-md">
+      <div className="relative z-10 text-center pt-1 shrink-0">
+        <h2 className="text-lg sm:text-2xl font-black text-white tracking-wide leading-tight font-['Fredoka',sans-serif] drop-shadow-md">
           ELIGE TU PERSONAJE
         </h2>
       </div>
 
       {/* Locked Alert if Rival selected this character */}
       {lockedCharacterId && (
-        <div className="relative z-10 mx-auto max-w-[280px] w-full bg-[#4b2924]/85 border border-[#9a5a4f] rounded-lg px-2 py-0.5 flex items-center justify-center gap-1.5 text-[11px] text-[#e6c6bf] shadow-md">
+        <div className="relative z-10 mx-auto max-w-[320px] w-full shrink-0 bg-[#4b2924]/95 border border-[#9a5a4f] rounded-lg px-2 py-0.5 flex items-center justify-center gap-1.5 text-[11px] text-[#e6c6bf] shadow-md">
           <Lock className="w-3.5 h-3.5 text-[#b87869] shrink-0" />
           <span>Rival eligió a <strong className="text-white uppercase font-black">{lockedCharacterId}</strong></span>
         </div>
       )}
 
       {/* Character carousel: one large official sprite at a time */}
-      <div className="relative z-10 flex-1 min-h-0 flex items-center justify-center max-w-[340px] mx-auto w-full my-1">
+      <div className="relative z-10 flex-none h-[min(34dvh,230px)] min-h-[190px] flex items-center justify-center max-w-[340px] mx-auto w-full my-0">
         <button
           type="button"
           onClick={() => moveCarousel(-1)}
@@ -99,11 +99,11 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
           <ChevronLeft className="w-6 h-6" />
         </button>
 
-        <div className={`w-[210px] h-[230px] rounded-2xl border-2 flex flex-col items-center justify-center p-3 backdrop-blur-sm shadow-xl ${
+        <div className={`w-[min(58vw,210px)] h-full max-h-[220px] rounded-2xl border-2 flex flex-col items-center justify-center p-3 backdrop-blur-sm shadow-xl ${
           isLockedByRival ? 'border-red-700 bg-red-950/70 opacity-60' : 'border-[#9a8351] bg-[#141713]/72'
         }`}>
           <div
-            className="w-[150px] h-[150px] transition-transform hover:scale-105"
+            className="w-[min(34vw,135px)] h-[min(19dvh,135px)] transition-transform hover:scale-105"
             style={{
               backgroundImage: `url('${getAssetUrl('assets/sprites/personajes.png')}')`,
               backgroundSize: '300% 200%',
@@ -129,10 +129,10 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       </div>
 
       {/* Balanced Attributes Panel */}
-      <div className="relative z-10 bg-[#141713]/78 backdrop-blur-md p-2 rounded-xl border border-[#9a8351]/40 space-y-1 max-w-[300px] w-full mx-auto">
+      <div className="relative z-10 shrink-0 bg-[#141713]/90 backdrop-blur-md p-3 rounded-xl border border-[#9a8351]/40 space-y-1 max-w-[300px] w-full mx-auto">
         {/* Fuerza */}
         <div>
-          <div className="flex justify-between text-[10px] font-black uppercase text-slate-300 mb-0.5">
+          <div className="flex justify-between text-xs font-black uppercase text-slate-100 mb-0.5">
             <span className="flex items-center gap-1 text-[#b87869]">
               <Zap className="w-3 h-3" />
               FUERZA
@@ -165,7 +165,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         </div>
 
         {/* Rango de Ángulo */}
-        <div className="flex items-center justify-between pt-0.5 border-t border-slate-800 text-[10px]">
+        <div className="flex items-center justify-between pt-0.5 border-t border-slate-700 text-xs">
           <span className="flex items-center gap-1 text-[#9b8b62] font-bold uppercase">
             <Crosshair className="w-3 h-3" />
             ÁNGULO
@@ -177,11 +177,11 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
       </div>
 
       {/* Select Action Buttons */}
-      <div className="relative z-10 flex gap-2 max-w-[300px] w-full mx-auto pb-1 mt-1">
+      <div className="relative z-10 flex gap-2 max-w-[340px] w-full mx-auto pb-1 mt-0 shrink-0">
         {onCancel && (
           <button
             onClick={onCancel}
-            className="py-2 px-3.5 rounded-lg bg-[#292d27]/92 hover:bg-[#353a31] text-[#ddd8c9] font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
+            className="min-h-11 py-2.5 px-4 rounded-xl bg-[#292d27]/95 hover:bg-[#353a31] text-[#ddd8c9] font-bold text-xs uppercase border border-slate-700 transition cursor-pointer backdrop-blur-sm"
           >
             Atrás
           </button>
@@ -190,7 +190,7 @@ export const CharacterSelectModal: React.FC<CharacterSelectModalProps> = ({
         <button
           onClick={handleConfirm}
           disabled={isLockedByRival}
-          className={`flex-1 py-2 px-4 rounded-lg font-black text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition cursor-pointer ${
+          className={`flex-1 min-h-11 py-2.5 px-3 rounded-xl font-black text-sm uppercase tracking-wide shadow-lg flex items-center justify-center gap-2 transition cursor-pointer ${
             isLockedByRival
               ? 'bg-slate-800 text-slate-500 border border-slate-700 cursor-not-allowed'
               : 'bg-[#687b58] hover:bg-[#789064] text-white border border-[#82966c] active:scale-95 shadow-[0_3px_10px_rgba(104,123,88,0.22)]'
