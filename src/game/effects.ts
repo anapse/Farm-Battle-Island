@@ -24,7 +24,7 @@ export class EffectManager {
   private audioPrimed = false;
 
   private readonly soundFiles: Record<SoundId, string> = {
-    bg_music: 'bg_music.wav',
+    bg_music: 'fondosonido.mp3',
     click: 'click.wav',
     start: 'start.wav',
     shot_double: 'shot_double.wav',
