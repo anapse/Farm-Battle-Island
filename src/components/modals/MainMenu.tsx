@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { getAssetUrl } from '../../utils/assets';
 import { 
   Play, 
-  PlusCircle, 
   Users, 
   Trophy, 
   Mail, 
@@ -12,7 +11,6 @@ import {
 
 interface MainMenuProps {
   onQuickPlay: (playerName: string) => void;
-  onCreateRoom: () => void;
   onJoinRoom: () => void;
   onRanking: () => void;
   onContact: () => void;
@@ -22,7 +20,6 @@ interface MainMenuProps {
 
 export const MainMenu: React.FC<MainMenuProps> = ({
   onQuickPlay,
-  onCreateRoom,
   onJoinRoom,
   onRanking,
   onContact,
@@ -33,7 +30,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
   const [bgLoaded, setBgLoaded] = useState(false);
 
   // Modal to prompt for player name before proceeding to action
-  const [pendingAction, setPendingAction] = useState<'quick_play' | 'create_room' | 'join_room' | null>(null);
+  const [pendingAction, setPendingAction] = useState<'quick_play' | 'join_room' | null>(null);
   const [tempPlayerName, setTempPlayerName] = useState(playerName || '');
 
   const handleActionClick = (action: 'quick_play' | 'create_room' | 'join_room') => {
@@ -51,8 +48,6 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 
     if (actionToRun === 'quick_play') {
       onQuickPlay(finalName);
-    } else if (actionToRun === 'create_room') {
-      onCreateRoom();
     } else if (actionToRun === 'join_room') {
       onJoinRoom();
     }
