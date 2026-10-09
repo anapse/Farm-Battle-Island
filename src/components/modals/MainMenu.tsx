@@ -168,7 +168,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
             
             <button
               onClick={() => setPendingAction(null)}
-              className="absolute top-2.5 right-2.5 text-slate-400 hover:text-white p-1 rounded-lg transition cursor-pointer"
+              className="absolute top-2 right-2 text-white p-2 rounded-lg bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] transition cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -198,13 +198,13 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                 <button
                   type="button"
                   onClick={() => setPendingAction(null)}
-                  className="flex-1 py-1.5 px-3 rounded-lg bg-[#2b3028] hover:bg-[#3a4034] text-slate-300 font-bold text-xs uppercase transition cursor-pointer"
+                  className="flex-1 min-h-10 py-2 px-3 rounded-lg bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] text-white font-black text-sm uppercase transition cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-1.5 px-3 rounded-lg bg-[#687b58] hover:bg-[#789064] text-white font-bold text-xs uppercase border border-[#82966c] shadow-md transition active:scale-95 cursor-pointer"
+                  className="flex-1 min-h-10 py-2 px-3 rounded-lg bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] text-white font-black text-sm uppercase transition active:translate-y-0.5 cursor-pointer"
                 >
                   Continuar
                 </button>
