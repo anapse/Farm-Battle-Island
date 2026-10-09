@@ -191,7 +191,7 @@ export class GameEngine {
     // 2. Cannon recoil & muzzle flash particles
     shooter.recoilOffset = 14;
     this.effects.createExplosion(shooter.x + shooter.facing * 32, shooter.y - 18, 16, false);
-    this.effects.playShot(shooter.power);
+    this.effects.playShot(shooter.power, powerUpType);
 
     // Determine shot attributes based on power-up
     let mass = 1.0;
@@ -300,10 +300,7 @@ export class GameEngine {
 
     // 7. Visual explosion
     this.effects.createExplosion(hitX, hitY, explosionRadius, isWater);
-    this.effects.playImpact();
-    if (proj.spriteId === 'grenade') {
-      this.effects.playGrenadeExplosion();
-    }
+    this.effects.playImpact(isWater, explosionRadius, proj.spriteId === 'grenade' ? 'grenade' : (proj.spriteId === 'explosive_missile' ? 'mega_bomb' : null));
     this.camera.addShake(isWater ? 8 : 15);
 
     // Double impact secondary wave
