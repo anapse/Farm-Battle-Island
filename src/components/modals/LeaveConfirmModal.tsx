@@ -49,13 +49,13 @@ export const LeaveConfirmModal: React.FC<LeaveConfirmModalProps> = ({
       <div className="relative z-10 flex gap-2 max-w-[280px] w-full mx-auto pb-1">
         <button
           onClick={onCancel}
-          className="flex-1 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase transition cursor-pointer"
+          className="flex-1 py-2 rounded-lg bg-[#2b3028] hover:bg-[#3a4034] text-white font-bold text-xs uppercase transition cursor-pointer"
         >
           Continuar
         </button>
         <button
           onClick={onConfirmLeave}
-          className="flex-1 py-2 rounded-lg bg-red-700 hover:bg-red-600 text-white font-bold text-xs uppercase shadow-md border border-red-700 flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
+          className="flex-1 py-2 rounded-lg bg-[#8f4d43] hover:bg-[#a45b50] text-white font-bold text-xs uppercase shadow-md border border-red-700 flex items-center justify-center gap-1.5 transition active:scale-95 cursor-pointer"
         >
           <Flag className="w-3.5 h-3.5" />
           <span>Rendirse</span>
