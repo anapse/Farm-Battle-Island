@@ -27,7 +27,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-2 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-1 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -110,7 +110,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
               }}
               className={`py-3 px-3 rounded-xl font-black text-sm uppercase tracking-wider border-2 transition cursor-pointer shadow-[inset_0_2px_0_rgba(255,255,255,0.25),0_3px_0_rgba(0,0,0,0.35)] ${
                 timeLimit === 'INFINITE'
-                  ? 'bg-amber-700 border-[#9a8351] text-white shadow-md'
+                  ? 'bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_2px_0_#35230e] text-white'
                   : 'bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_3px_0_#0b1519,0_5px_8px_rgba(0,0,0,0.4)] text-white hover:brightness-110'
               }`}
             >
@@ -139,7 +139,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
                 className={`py-2 px-3 rounded-lg font-bold text-xs uppercase tracking-wider border transition cursor-pointer ${
                   lives === num
                     ? 'bg-[linear-gradient(180deg,#ffe3a0,#c99a4a_48%,#81551e_85%,#35230e)] border-2 border-[#ffe8b4] shadow-[inset_0_2px_0_rgba(255,255,255,0.5),0_3px_0_#35230e,0_5px_8px_rgba(0,0,0,0.4)] text-white'
-                    : 'bg-[#1d211c]/82 border-[#555a4e] text-slate-300 hover:bg-slate-800'
+                    : 'bg-[linear-gradient(180deg,#36515a,#1b3038_65%,#101b20)] border-2 border-[#8aa0a5] shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_2px_0_#0b1519] text-white hover:brightness-110'
                 }`}
               >
                 {num === 'INFINITE' ? '∞ VIDAS' : `${num} ${num === 1 ? 'VIDA' : 'VIDAS'}`}
