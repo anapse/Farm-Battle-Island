@@ -36,7 +36,7 @@ export const HealthBar: React.FC<HealthBarProps> = ({
     }`}>
       
       {/* Top Header: HP % & Shield Status */}
-      <div className={`flex items-center justify-between text-[10px] sm:text-xs font-mono font-black px-1 mb-0.5 ${
+      <div className={`flex items-center justify-between text-[9px] sm:text-xs font-mono font-black px-0.5 mb-0 ${
         align === 'right' ? 'flex-row-reverse' : ''
       }`}>
         <span className={`font-black tracking-tight ${
@@ -53,7 +53,7 @@ export const HealthBar: React.FC<HealthBarProps> = ({
       </div>
 
       {/* Main Health Bar (100% full, smooth gradient) */}
-      <div className="h-4 sm:h-5 bg-slate-950/95 rounded-md p-0.5 border-2 border-amber-600 shadow-inner relative overflow-hidden">
+      <div className="h-3 sm:h-4 bg-slate-950/95 rounded-md p-0.5 border border-amber-500 shadow-inner relative overflow-hidden">
         <div
           className={`h-full rounded transition-all duration-300 bg-gradient-to-r ${getHpColor(hpPercent)} ${
             align === 'right' ? 'float-right' : ''
@@ -63,11 +63,11 @@ export const HealthBar: React.FC<HealthBarProps> = ({
       </div>
 
       {/* Underneath: Real Player Name & Lives */}
-      <div className={`flex items-center justify-between mt-1 px-1 bg-slate-950/80 backdrop-blur-sm rounded py-0.5 border border-slate-700/60 ${
+      <div className={`flex items-center justify-between mt-0.5 px-1 bg-slate-950/90 rounded py-0 border border-slate-700/60 ${
         align === 'right' ? 'flex-row-reverse' : ''
       }`}>
         {/* Real player name (NO "Juan 2", strictly real name) */}
-        <span className="text-[10px] sm:text-[11px] font-black uppercase text-amber-200 tracking-wider truncate max-w-[70px] sm:max-w-[100px]">
+        <span className="text-[10px] sm:text-[11px] font-black uppercase text-amber-200 tracking-wider truncate max-w-[58px] sm:max-w-[100px]">
           {playerName}
         </span>
 
