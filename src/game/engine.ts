@@ -335,7 +335,11 @@ export class GameEngine {
       // protects against a miss or an edge collision near the launch point.
       if (player.role === proj.shooterRole) continue;
       const dist = Math.hypot(player.x - hitX, (player.y - 14) - hitY);
-      if (dist <= explosionRadius) {
+      // A direct projectile collision already confirmed the hit against the
+      // character's full hitbox. Do not reject its damage just because the
+      // explosion starts near the character's head while HP is anchored at ground level.
+      const directHit = hitTarget === player.role;
+      if (directHit || dist <= explosionRadius) {
         // Reduce less damage on close/edge hits so HP visibly drops with each impact.
         // Fixed hit strength: distance within the blast radius does not reduce damage.
         // All valid hits apply the same projectile damage, increased by 70%.
