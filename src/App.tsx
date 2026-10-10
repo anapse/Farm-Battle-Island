@@ -266,8 +266,10 @@ export default function App() {
         const shot = updated.gameState.lastShot;
         lastProcessedShotTimeRef.current = shot.timestamp;
 
-        // If the shot was fired by the opponent, reproduce on local canvas!
-        if (shot.shooterRole !== playerRole && engineRef.current) {
+        // Reproduce every shot from another participant, even when both humans
+        // share playerRole='player1' in co-op vs AI. Comparing roles hides those shots
+        // on the teammate's device; the unique shooterPlayerId is the correct test.
+        if (shot.shooterPlayerId !== myPlayerId && engineRef.current) {
           engineRef.current.updateConfig({
             player1Angle: shot.shooterRole === 'player1' ? shot.angle : undefined,
             player1Power: shot.shooterRole === 'player1' ? shot.power : undefined,
