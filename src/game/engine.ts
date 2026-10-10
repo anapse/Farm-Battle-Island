@@ -479,11 +479,13 @@ export class GameEngine {
       }
     }
 
-    // Safety net: every firing sequence must end, even if a projectile becomes
-    // stuck or a collision callback is missed. This also releases the turn lock.
+    // RULE: one firing action consumes exactly one turn, whether it hits
+    // a tank, a brick, the ground, water, or misses the map entirely.
+    // Wait for the active shot(s) to resolve, but never let a stuck projectile
+    // block the opponent's turn indefinitely.
     if (this.isFiringSequence) {
       this.firingSequenceElapsed += dt;
-      if (this.firingSequenceElapsed >= 12) {
+      if (this.firingSequenceElapsed >= 7) {
         for (const p of this.projectiles.activeProjectiles) {
           p.isAlive = false;
           this.resolvedProjectileIds.add(p.id);
