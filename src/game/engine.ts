@@ -347,10 +347,13 @@ export class GameEngine {
 
         const actualDamage = this.players.applyDamage(player, rawDamage);
 
-        this.effects.addDamageNumber(player.x, player.y - 10, actualDamage);
-
-        if (this.onPlayerHit) {
-          this.onPlayerHit(player.role, actualDamage);
+        // Only show and synchronize damage that was actually applied. This
+        // avoids a misleading "-0 HP" popup during respawn/invulnerability.
+        if (actualDamage > 0) {
+          this.effects.addDamageNumber(player.x, player.y - 10, actualDamage);
+          if (this.onPlayerHit) {
+            this.onPlayerHit(player.role, actualDamage);
+          }
         }
 
         if (player.hp <= 0 && player.lives <= 0) {
