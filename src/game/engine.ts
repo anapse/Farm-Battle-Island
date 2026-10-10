@@ -196,9 +196,10 @@ export class GameEngine {
     this.effects.createExplosion(shooter.x + shooter.facing * 32, shooter.y - 18, 16, false);
     this.effects.playShot(shooter.power, powerUpType);
 
-    // Character strength affects outgoing damage; stronger characters trade off defense.
+    // Character strength affects outgoing damage, including power-up shots.
+    const strengthMultiplier = 0.75 + getCharacterById(shooter.characterId).fuerza / 250;
     let mass = 1.0;
-    let damageMultiplier = 0.75 + getCharacterById(shooter.characterId).fuerza / 250;
+    let damageMultiplier = 1.0;
     let explosionRadiusMultiplier = 1.0;
     let canBounce = false;
     let isDoubleImpact = false;
@@ -229,7 +230,7 @@ export class GameEngine {
       powerPercent: shooter.power,
       facing: shooter.facing,
       mass,
-      damageMultiplier,
+      damageMultiplier: damageMultiplier * strengthMultiplier,
       explosionRadiusMultiplier,
       canBounce,
       isDoubleImpact,
