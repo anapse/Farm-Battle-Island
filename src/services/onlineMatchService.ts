@@ -693,7 +693,8 @@ export async function changeTurnOnline(
   nextPlayerId: string,
   newWindSpeed: number,
   newWindDirection: -1 | 1,
-  expectedCurrentPlayerId?: string
+  expectedCurrentPlayerId?: string,
+  completionReason: 'shot_completed' | 'timeout' = 'shot_completed'
 ): Promise<OnlineMatch | null> {
   const matchRef = ref(rtdb, `activeMatches/${matchId}`);
   const local = getLocalMatches().find(m => m.matchId === matchId) || null;
@@ -709,6 +710,10 @@ export async function changeTurnOnline(
         const match = current as OnlineMatch;
         const state = match.gameState;
         if (!state || match.status !== 'playing') return;
+
+        // A timeout cannot steal a turn after a shot has already been accepted.
+        // The shot-completion callback owns that turn until all projectiles resolve.
+        if (completionReason === 'timeout' && state.shotInProgress === true) return;
 
         // This comparison makes turn changes single-winner: if the shot callback
         // and the timer race, only the first transaction for the old turn commits.
@@ -732,6 +737,7 @@ export async function changeTurnOnline(
             ...state,
             currentTurnPlayerId: nextPlayerId,
             turnStartedAt: Date.now(),
+            shotInProgress: false,
             wind: {
               ...state.wind,
               speed: newWindSpeed,
@@ -764,8 +770,10 @@ export async function changeTurnOnline(
   if (local.gameState.currentTurnPlayerId === nextPlayerId) return local;
 
   const turnStartedAt = Date.now();
+  if (completionReason === 'timeout' && local.gameState.shotInProgress === true) return local;
   local.gameState.currentTurnPlayerId = nextPlayerId;
   local.gameState.turnStartedAt = turnStartedAt;
+  local.gameState.shotInProgress = false;
   local.gameState.wind.speed = newWindSpeed;
   local.gameState.wind.direction = newWindDirection;
   local.updatedAt = turnStartedAt;
