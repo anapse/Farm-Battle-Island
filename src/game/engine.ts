@@ -333,7 +333,7 @@ export class GameEngine {
       if (dist <= explosionRadius) {
         // Reduce less damage on close/edge hits so HP visibly drops with each impact.
         const damageFactor = Math.max(0.35, 1 - dist / explosionRadius);
-        const rawDamage = Math.round(proj.damage * damageFactor);
+        const rawDamage = Math.round(proj.damage * damageFactor * 1.7); // +70% damage per hit
 
         const actualDamage = this.players.applyDamage(player, rawDamage);
 
