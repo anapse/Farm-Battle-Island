@@ -332,8 +332,9 @@ export class GameEngine {
       const dist = Math.hypot(player.x - hitX, (player.y - 14) - hitY);
       if (dist <= explosionRadius) {
         // Reduce less damage on close/edge hits so HP visibly drops with each impact.
-        const damageFactor = Math.max(0.35, 1 - dist / explosionRadius);
-        const rawDamage = Math.max(10, Math.round(proj.damage * damageFactor * 1.7)); // +70% damage; any blast-radius hit deals at least 10
+        // Fixed hit strength: distance within the blast radius does not reduce damage.
+        // All valid hits apply the same projectile damage, increased by 70%.
+        const rawDamage = Math.max(1, Math.round(proj.damage * 1.7));
 
         const actualDamage = this.players.applyDamage(player, rawDamage);
 
