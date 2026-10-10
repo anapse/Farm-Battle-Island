@@ -905,6 +905,37 @@ export async function concludeMatchOnline(params: {
 }
 
 /**
+ * Leave a lobby before combat starts without recording a victory or defeat.
+ * The room is removed from Realtime Database and the local cache.
+ */
+export async function leaveOnlineRoom(matchId: string, leavingPlayerId: string): Promise<void> {
+  const local = getLocalMatches().find(m => m.matchId === matchId) || null;
+
+  if (rtdb && isConfigured) {
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) {
+      throw new Error('Firebase no está autenticado.');
+    }
+    const matchRef = ref(rtdb, `activeMatches/${matchId}`);
+    const snapshot = await get(matchRef);
+    if (snapshot.exists()) {
+      const match = snapshot.val() as OnlineMatch;
+      const isParticipant = [match.player1, match.player2]
+        .some(player => player?.id === leavingPlayerId && player?.authUid === auth?.currentUser?.uid);
+      if (!isParticipant) throw new Error('No perteneces a esta sala.');
+      if (match.status === 'playing' || match.status === 'finished') {
+        // A started game uses the normal surrender rules; this function is only
+        // for exiting the lobby/character selection without a match result.
+        return;
+      }
+      await remove(matchRef);
+    }
+  }
+
+  localMatchesCache = localMatchesCache.filter(match => match.matchId !== matchId);
+  if (localChannel) localChannel.postMessage({ type: 'MATCH_REMOVED', matchId });
+}
+
+/**
  * Voluntary Surrender / Abandonment
  * RULE: El que abandona recibe DERROTA automática. El oponente VICTORIA con bono.
  */
