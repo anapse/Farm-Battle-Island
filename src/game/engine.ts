@@ -69,6 +69,7 @@ export class GameEngine {
   private onStorkEvent?: () => void;
   private projectileResolutionPending: boolean = false;
   private turnCompletionDispatched: boolean = false;
+  private firingSequenceElapsed: number = 0;
   private resolvedProjectileIds = new Set<string>();
 
   constructor(options: GameEngineOptions) {
@@ -180,6 +181,7 @@ export class GameEngine {
     this.isFiringSequence = true;
     this.projectileResolutionPending = false;
     this.turnCompletionDispatched = false;
+    this.firingSequenceElapsed = 0;
     const shooter = this.players.getPlayer(this.currentTurn);
 
     // Track shots count and trigger Stork supply every 4 shots!
@@ -374,6 +376,7 @@ export class GameEngine {
     this.turnCompletionDispatched = true;
     this.isFiringSequence = false;
     this.projectileResolutionPending = false;
+    this.firingSequenceElapsed = 0;
     this.projectiles.activeProjectile = null;
     this.projectiles.activeProjectiles = [];
     this.resolvedProjectileIds.clear();
@@ -456,23 +459,36 @@ export class GameEngine {
       }
     }
 
-    // Projectiles that leave through the top or sides are misses.
-    // They never explode, damage, or destroy terrain.
+    // A shot that leaves the playable world is a miss and must still consume
+    // the shooter's turn. Check the world edge itself (not a generous margin),
+    // so shots fired in the wrong direction cannot remain unresolved.
     for (const p of [...this.projectiles.activeProjectiles]) {
-      if (p.isAlive || this.resolvedProjectileIds.has(p.id)) continue;
+      const exitsSide = p.x < -p.radius || p.x > WorldConfig.WORLD_WIDTH + p.radius;
+      const exitsTop = p.y < -p.radius;
+      const fellBelowWorld = p.y > WorldConfig.WORLD_HEIGHT + p.radius;
+      const alreadyResolved = this.resolvedProjectileIds.has(p.id);
 
-      const exitsSide = p.x < -120 || p.x > WorldConfig.WORLD_WIDTH + 120;
-      const exitsTop = p.y < -240;
-      const fellBelowWorld = p.y > WorldConfig.WORLD_HEIGHT + 80;
-
-      if (exitsSide || exitsTop || fellBelowWorld) {
+      if (!alreadyResolved && (exitsSide || exitsTop || fellBelowWorld)) {
+        p.isAlive = false;
         this.resolvedProjectileIds.add(p.id);
         this.projectiles.activeProjectiles = this.projectiles.activeProjectiles.filter(item => item.id !== p.id);
       }
     }
 
-    if (this.isFiringSequence && this.projectiles.activeProjectiles.length === 0) {
-      this.completeFiringSequence();
+    // Safety net: every firing sequence must end, even if a projectile becomes
+    // stuck or a collision callback is missed. This also releases the turn lock.
+    if (this.isFiringSequence) {
+      this.firingSequenceElapsed += dt;
+      if (this.firingSequenceElapsed >= 12) {
+        for (const p of this.projectiles.activeProjectiles) {
+          p.isAlive = false;
+          this.resolvedProjectileIds.add(p.id);
+        }
+        this.projectiles.activeProjectiles = [];
+        this.completeFiringSequence();
+      } else if (this.projectiles.activeProjectiles.length === 0) {
+        this.completeFiringSequence();
+      }
     }
 
     // 3. Update the stork flight and release chests directly underneath it.
