@@ -318,6 +318,9 @@ export class GameEngine {
     const defeatedRoles: ('player1' | 'player2')[] = [];
 
     for (const player of this.players.players) {
+      // A projectile must never damage the player who fired it. This also
+      // protects against a miss or an edge collision near the launch point.
+      if (player.role === proj.shooterRole) continue;
       const dist = Math.hypot(player.x - hitX, (player.y - 14) - hitY);
       if (dist <= explosionRadius) {
         const damageFactor = Math.max(0.35, 1 - dist / explosionRadius);
