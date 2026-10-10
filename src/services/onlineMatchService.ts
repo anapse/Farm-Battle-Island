@@ -553,7 +553,8 @@ export async function sendShotOnline(params: {
           !shooter ||
           shooter.id !== params.playerId ||
           shooter.authUid !== auth?.currentUser?.uid ||
-          match.gameState?.currentTurnPlayerId !== params.playerId
+          match.gameState?.currentTurnPlayerId !== params.playerId ||
+          match.gameState?.shotInProgress === true
         ) {
           return;
         }
@@ -562,15 +563,22 @@ export async function sendShotOnline(params: {
           ...match,
           gameState: {
             ...match.gameState,
-            lastShot: { ...shotEvent, shooterRole: params.shooterRole, shooterPlayerId: shooter.id }
+            lastShot: { ...shotEvent, shooterRole: params.shooterRole, shooterPlayerId: shooter.id },
+            shotInProgress: true
           },
           updatedAt: Date.now()
         };
       }, { applyLocally: false });
 
       if (!transaction.committed) {
-        throw new Error('El turno cambió o la partida terminó. Espera tu turno antes de disparar.');
+        throw new Error('El turno cambió o hay un disparo en curso. Espera a que termine antes de disparar.');
       }
+
+      const committedMatch = transaction.snapshot.val() as OnlineMatch | null;
+      if (committedMatch) {
+        saveLocalMatch(hydrateMatch(committedMatch, getLocalMatches().find(m => m.matchId === params.matchId)));
+      }
+      return;
     } catch (e) {
       console.error('Realtime Database sendShot failed:', e);
       throw e instanceof Error ? e : new Error('No se pudo sincronizar el disparo online.');
@@ -578,15 +586,19 @@ export async function sendShotOnline(params: {
   }
 
   const local = getLocalMatches().find(m => m.matchId === params.matchId);
-  if (local) {
-    // Do not overwrite a newer turn that arrived while the shot was syncing.
-    if (local.gameState.currentTurnPlayerId !== params.playerId) {
-      throw new Error('El turno cambió. Espera tu turno antes de disparar.');
-    }
-    local.gameState.lastShot = shotEvent;
-    local.updatedAt = Date.now();
-    saveLocalMatch(local);
+  if (!local) throw new Error('No se encontró la partida activa.');
+  if (
+    local.status !== 'playing' ||
+    local.gameState.currentTurnPlayerId !== params.playerId ||
+    local.gameState.shotInProgress === true
+  ) {
+    throw new Error('El turno cambió o hay un disparo en curso. Espera a que termine antes de disparar.');
   }
+
+  local.gameState.lastShot = shotEvent;
+  local.gameState.shotInProgress = true;
+  local.updatedAt = Date.now();
+  saveLocalMatch(local);
 }
 
 /**
