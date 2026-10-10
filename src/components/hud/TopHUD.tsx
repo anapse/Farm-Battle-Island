@@ -57,7 +57,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
           </div>
 
           {/* P1 HP Bar (Dynamic: Verde -> Amarillo -> Rojo en último 25%) */}
-          <div className="h-5 sm:h-6 bg-slate-950/95 rounded-md p-0.5 border-2 border-amber-600 shadow-inner relative overflow-hidden">
+          <div className="h-3.5 sm:h-4 bg-slate-950/95 rounded-md p-0.5 border-2 border-amber-600 shadow-inner relative overflow-hidden">
             <div
               className={`h-full rounded transition-all duration-300 ${getHpBarGradient(p1HpPercent)}`}
               style={{ width: `${p1HpPercent}%` }}
@@ -115,7 +115,7 @@ export const TopHUD: React.FC<TopHUDProps> = ({
           </div>
 
           {/* P2 HP Bar (Dynamic: Verde -> Amarillo -> Rojo en último 25%) */}
-          <div className="h-5 sm:h-6 bg-slate-950/95 rounded-md p-0.5 border-2 border-amber-600 shadow-inner relative overflow-hidden">
+          <div className="h-3.5 sm:h-4 bg-slate-950/95 rounded-md p-0.5 border-2 border-amber-600 shadow-inner relative overflow-hidden">
             <div
               className={`h-full rounded transition-all duration-300 ${getHpBarGradient(p2HpPercent)} float-right`}
               style={{ width: `${p2HpPercent}%` }}
