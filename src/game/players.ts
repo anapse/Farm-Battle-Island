@@ -297,9 +297,11 @@ export class PlayerManager {
   public applyDamage(player: PlayerEntity, damage: number, onPlayerDied?: (player: PlayerEntity) => void): number {
     if (player.lifeState !== 'active') return 0;
 
-    let finalDamage = damage;
+    // Resistance reduces incoming damage. High-power characters have less resistance.
+    const resistanceMultiplier = 1.3 - getCharacterById(player.characterId).resistencia / 200;
+    let finalDamage = Math.max(1, Math.round(damage * resistanceMultiplier));
     if (player.hasShield) {
-      finalDamage = Math.round(damage * 0.5); // 50% damage reduction from shield
+      finalDamage = Math.round(finalDamage * 0.5); // Shield halves damage after resistance
       player.hasShield = false; // Consumed after blocking
     }
 
