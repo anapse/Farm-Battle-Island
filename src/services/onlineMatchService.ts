@@ -650,52 +650,88 @@ export async function registerImpactOnline(params: {
  * Change turn atomically with 25s turn timestamp
  */
 export async function changeTurnOnline(
-  matchId: string, 
-  nextPlayerId: string, 
-  newWindSpeed: number, 
-  newWindDirection: -1 | 1
+  matchId: string,
+  nextPlayerId: string,
+  newWindSpeed: number,
+  newWindDirection: -1 | 1,
+  expectedCurrentPlayerId?: string
 ): Promise<OnlineMatch | null> {
-  const updatePayload = {
-    'gameState.currentTurnPlayerId': nextPlayerId,
-    'gameState.turnStartedAt': Date.now(),
-    'gameState.wind.speed': newWindSpeed,
-    'gameState.wind.direction': newWindDirection,
-    updatedAt: Date.now()
-  };
-
-  const local = getLocalMatches().find(m => m.matchId === matchId);
-  if (local) {
-    const turnStartedAt = Date.now();
-    local.gameState.currentTurnPlayerId = nextPlayerId;
-    local.gameState.turnStartedAt = turnStartedAt;
-    local.gameState.wind.speed = newWindSpeed;
-    local.gameState.wind.direction = newWindDirection;
-    local.updatedAt = turnStartedAt;
-    saveLocalMatch(local);
-  }
+  const matchRef = ref(rtdb, `activeMatches/${matchId}`);
+  const local = getLocalMatches().find(m => m.matchId === matchId) || null;
 
   if (rtdb && isConfigured) {
-    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado.');
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) {
+      throw new Error('Firebase no está autenticado.');
+    }
+
     try {
-      const matchSnapshot = await get(ref(rtdb, `activeMatches/${matchId}`));
-      const remoteMatch = matchSnapshot.val() as OnlineMatch | null;
-      if (!remoteMatch || ![remoteMatch.player1, remoteMatch.player2].some(player => player?.authUid === auth.currentUser?.uid)) {
-        throw new Error('No estás autorizado para cambiar el turno de esta partida.');
-      }
-      await update(ref(rtdb, `activeMatches/${matchId}`), {
-        'gameState/currentTurnPlayerId': updatePayload['gameState.currentTurnPlayerId'],
-        'gameState/turnStartedAt': local?.gameState.turnStartedAt || updatePayload['gameState.turnStartedAt'],
-        'gameState/wind/speed': newWindSpeed,
-        'gameState/wind/direction': newWindDirection,
-        updatedAt: updatePayload.updatedAt
-      });
+      const transaction = await runTransaction(matchRef, (current) => {
+        if (!current) return;
+        const match = current as OnlineMatch;
+        const state = match.gameState;
+        if (!state || match.status !== 'playing') return;
+
+        // This comparison makes turn changes single-winner: if the shot callback
+        // and the timer race, only the first transaction for the old turn commits.
+        if (
+          expectedCurrentPlayerId &&
+          state.currentTurnPlayerId !== expectedCurrentPlayerId
+        ) {
+          return;
+        }
+
+        const authorizedPlayer = [match.player1, match.player2]
+          .some(player => player?.authUid === auth?.currentUser?.uid);
+        if (!authorizedPlayer) return;
+
+        // Idempotency: never "change" a turn to the same player.
+        if (state.currentTurnPlayerId === nextPlayerId) return;
+
+        return {
+          ...match,
+          gameState: {
+            ...state,
+            currentTurnPlayerId: nextPlayerId,
+            turnStartedAt: Date.now(),
+            wind: {
+              ...state.wind,
+              speed: newWindSpeed,
+              direction: newWindDirection
+            }
+          },
+          updatedAt: Date.now()
+        };
+      }, { applyLocally: false });
+
+      const remote = transaction.snapshot.val() as OnlineMatch | null;
+      if (!remote) return local;
+      const hydrated = hydrateMatch(remote, local);
+      saveLocalMatch(hydrated);
+      return hydrated;
     } catch (e) {
       console.error('Realtime Database changeTurn failed:', e);
       throw e instanceof Error ? e : new Error('No se pudo sincronizar el cambio de turno.');
     }
   }
 
-  return local || null;
+  if (!local) return null;
+  if (local.status !== 'playing') return local;
+  if (
+    expectedCurrentPlayerId &&
+    local.gameState.currentTurnPlayerId !== expectedCurrentPlayerId
+  ) {
+    return local;
+  }
+  if (local.gameState.currentTurnPlayerId === nextPlayerId) return local;
+
+  const turnStartedAt = Date.now();
+  local.gameState.currentTurnPlayerId = nextPlayerId;
+  local.gameState.turnStartedAt = turnStartedAt;
+  local.gameState.wind.speed = newWindSpeed;
+  local.gameState.wind.direction = newWindDirection;
+  local.updatedAt = turnStartedAt;
+  saveLocalMatch(local);
+  return local;
 }
 
 /**
