@@ -728,9 +728,11 @@ export async function changeTurnOnline(
         const state = match.gameState;
         if (!state || match.status !== 'playing') return;
 
-        // A timeout cannot steal a turn after a shot has already been accepted.
-        // The shot-completion callback owns that turn until all projectiles resolve.
+        // A timeout may only advance an idle turn; a completed shot may only
+        // advance a turn that actually has an accepted shot in progress.
+        // This prevents duplicate/stale callbacks from changing turns again.
         if (completionReason === 'timeout' && state.shotInProgress === true) return;
+        if (completionReason === 'shot_completed' && state.shotInProgress !== true) return;
 
         // This comparison makes turn changes single-winner: if the shot callback
         // and the timer race, only the first transaction for the old turn commits.
@@ -785,9 +787,10 @@ export async function changeTurnOnline(
     return local;
   }
   if (local.gameState.currentTurnPlayerId === nextPlayerId) return local;
+  if (completionReason === 'timeout' && local.gameState.shotInProgress === true) return local;
+  if (completionReason === 'shot_completed' && local.gameState.shotInProgress !== true) return local;
 
   const turnStartedAt = Date.now();
-  if (completionReason === 'timeout' && local.gameState.shotInProgress === true) return local;
   local.gameState.currentTurnPlayerId = nextPlayerId;
   local.gameState.turnStartedAt = turnStartedAt;
   local.gameState.shotInProgress = false;
