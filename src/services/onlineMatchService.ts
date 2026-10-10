@@ -667,7 +667,9 @@ export async function registerImpactOnline(params: {
     }
   }
 
-  return local;
+  // Return the latest cached copy: a turn transition may have completed while
+  // the realtime impact update was awaiting the network.
+  return getLocalMatches().find(m => m.matchId === params.matchId) || local;
 }
 
 /**
