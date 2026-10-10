@@ -36,6 +36,7 @@ import {
   changeTurnOnline,
   concludeMatchOnline,
   surrenderMatchOnline,
+  leaveOnlineRoom,
   sendPresenceHeartbeat
 } from './services/onlineMatchService';
 import { getCharacterById } from './config/characters';
@@ -309,11 +310,19 @@ export default function App() {
     return () => clearInterval(interval);
   }, [screen, onlineMatch?.matchId, onlineMatch?.status, myPlayerId]);
 
-  // 3. Window unload / pagehide disconnect guard (Auto-defeat on tab close)
+  // Leaving a lobby/character selection deletes the room without a result.
+  // Leaving an already-started battle keeps the normal surrender rule.
   useEffect(() => {
     const handleLeave = () => {
-      if (screen === 'battle' && onlineMatch && onlineMatch.status === 'playing' && !matchResult) {
-        surrenderMatchOnline(onlineMatch.matchId, myPlayerId);
+      if (!onlineMatch || matchResult) return;
+      if (screen === 'waiting_opponent' || screen === 'char_select') {
+        void leaveOnlineRoom(onlineMatch.matchId, myPlayerId).catch((e) =>
+          console.warn('No se pudo limpiar la sala al salir:', e)
+        );
+      } else if (screen === 'battle' && onlineMatch.status === 'playing') {
+        void surrenderMatchOnline(onlineMatch.matchId, myPlayerId).catch((e) =>
+          console.warn('No se pudo registrar el abandono de la partida:', e)
+        );
       }
     };
 
@@ -1117,7 +1126,9 @@ export default function App() {
         <WaitingOpponentModal
           match={onlineMatch}
           onCancel={() => {
-            surrenderMatchOnline(onlineMatch.matchId, myPlayerId);
+            void leaveOnlineRoom(onlineMatch.matchId, myPlayerId).catch((e) =>
+              console.warn('No se pudo borrar la sala:', e)
+            );
             setOnlineMatch(null);
             setScreen('menu');
           }}
@@ -1132,7 +1143,14 @@ export default function App() {
           lockedCharacterId={lockedCharacterId}
           onSelectCharacter={handleCharacterSelected}
           onCancel={() => {
-            if (onlineMatch?.isAiMatch || pendingCreation) {
+            if (onlineMatch && !onlineMatch.isAiMatch && onlineMatch.status !== 'playing') {
+              void leaveOnlineRoom(onlineMatch.matchId, myPlayerId).catch((e) =>
+                console.warn('No se pudo borrar la sala:', e)
+              );
+              setOnlineMatch(null);
+              setPendingCreation(null);
+              setScreen('menu');
+            } else if (onlineMatch?.isAiMatch || pendingCreation) {
               setPendingCreation(null);
               setOnlineMatch(null);
               setScreen('menu');
