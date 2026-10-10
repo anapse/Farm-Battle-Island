@@ -421,8 +421,13 @@ export default function App() {
       }
 
       // Only process the 25s turn timer while the overall match is still alive.
+      // While a shot is flying or its impact animation is resolving, the engine owns
+      // turn completion. Do not let the wall-clock timer switch players mid-shot.
+      const engineIsFiring = engineRef.current?.isFiring() ?? false;
       const elapsedTurnMs = Date.now() - onlineMatch.gameState.turnStartedAt;
-      const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
+      const turnRem = engineIsFiring
+        ? Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000))
+        : Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
       const turnKey =
@@ -439,7 +444,7 @@ export default function App() {
         ? (onlineMatch.player2?.id || 'bot')
         : onlineMatch.player1.id;
 
-      if (turnRem === 0 && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
+      if (turnRem === 0 && !engineIsFiring && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
         lastExpiredTurnRef.current = turnKey;
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
