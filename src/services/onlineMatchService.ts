@@ -529,6 +529,9 @@ export async function sendShotOnline(params: {
   powerUpType: PowerUpType | null;
   windSpeed: number;
   windDirection: -1 | 1;
+  shooterX?: number;
+  shooterY?: number;
+  shooterFacing?: 1 | -1;
 }): Promise<void> {
   const shotEvent = {
     shotId: `shot_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
@@ -539,6 +542,9 @@ export async function sendShotOnline(params: {
     powerUpType: params.powerUpType,
     windSpeed: params.windSpeed,
     windDirection: params.windDirection,
+    shooterX: params.shooterX,
+    shooterY: params.shooterY,
+    shooterFacing: params.shooterFacing,
     timestamp: Date.now()
   };
 
