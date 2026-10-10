@@ -101,8 +101,8 @@ function hydratePlayer(
 ): OnlinePlayer {
   // Keep HP and its maximum on the same scale. If cached HP exceeds maxHp,
   // normalize the maximum so the HUD does not remain pinned at 100%.
-  const hp = cached?.hp ?? 100;
-  const maxHp = Math.max(cached?.maxHp ?? 100, hp);
+  const hp = cached?.hp ?? 300;
+  const maxHp = Math.max(cached?.maxHp ?? 300, hp);
 
   return {
     ...player,
@@ -155,8 +155,8 @@ export async function createOnlineMatch(params: {
     name: params.creatorPlayerName,
     characterId: null,
     characterSelected: false,
-    hp: 100,
-    maxHp: 100,
+    hp: 300,
+    maxHp: 300,
     lives: params.lives === 'INFINITE' ? 999999 : params.lives,
     maxLives: params.lives === 'INFINITE' ? 999999 : params.lives,
     score: 0,
@@ -174,8 +174,8 @@ export async function createOnlineMatch(params: {
       name: 'Rival Táctico (IA)',
       characterId: aiChar,
       characterSelected: true,
-      hp: 100,
-      maxHp: 100,
+      hp: 300,
+      maxHp: 300,
       lives: params.lives === 'INFINITE' ? 999999 : params.lives,
       maxLives: params.lives === 'INFINITE' ? 999999 : params.lives,
       score: 0,
@@ -276,7 +276,7 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
         const player2: OnlinePlayer = {
           id: playerId, authUid, name: joinerPlayerName,
           characterId: null, characterSelected: false,
-          hp: 100, maxHp: 100,
+          hp: 300, maxHp: 300,
           lives: data.settings.lives === 'INFINITE' ? 999999 : data.settings.lives,
           maxLives: data.settings.lives === 'INFINITE' ? 999999 : data.settings.lives,
           score: 0, position: { x: 1720, y: 440 }, isReady: false
@@ -308,8 +308,8 @@ export async function joinOnlineMatch(matchId: string, joinerPlayerName: string)
     name: joinerPlayerName,
     characterId: null,
     characterSelected: false,
-    hp: 100,
-    maxHp: 100,
+    hp: 300,
+    maxHp: 300,
     lives: match.settings.lives === 'INFINITE' ? 999999 : match.settings.lives,
     maxLives: match.settings.lives === 'INFINITE' ? 999999 : match.settings.lives,
     score: 0,
