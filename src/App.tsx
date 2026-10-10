@@ -422,10 +422,9 @@ export default function App() {
         setMatchTimerRemaining(-1);
       }
 
-      // Only process the 25s turn timer while the overall match is still alive.
-      // While a shot is flying or its impact animation is resolving, the engine owns
-      // turn completion. Do not let the wall-clock timer switch players mid-shot.
-      const engineIsFiring = engineRef.current?.isFiring() ?? false;
+      // The turn timer is independent of projectile flight. If time expires,
+      // the player loses the turn immediately; the projectile keeps travelling
+      // and resolving visually, but its later completion must not switch turns again.
       const elapsedTurnMs = Date.now() - onlineMatch.gameState.turnStartedAt;
       const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
@@ -444,8 +443,7 @@ export default function App() {
         ? (onlineMatch.player2?.id || 'bot')
         : onlineMatch.player1.id;
 
-      const shotPending = onlineMatch.gameState.shotInProgress === true;
-      if (turnRem === 0 && !engineIsFiring && !shotPending && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
+      if (turnRem === 0 && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
         lastExpiredTurnRef.current = turnKey;
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
