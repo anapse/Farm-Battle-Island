@@ -442,7 +442,8 @@ export default function App() {
         ? (onlineMatch.player2?.id || 'bot')
         : onlineMatch.player1.id;
 
-      if (turnRem === 0 && !engineIsFiring && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
+      const shotPending = onlineMatch.gameState.shotInProgress === true;
+      if (turnRem === 0 && !engineIsFiring && !shotPending && nextPlayerId && lastExpiredTurnRef.current !== turnKey) {
         lastExpiredTurnRef.current = turnKey;
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
@@ -453,7 +454,8 @@ export default function App() {
           nextPlayerId,
           newSpeed,
           newDir,
-          expectedCurrentPlayerId
+          expectedCurrentPlayerId,
+          'timeout'
         ).then((updated) => {
           if (updated && updated.status === 'playing') {
             setOnlineMatch(updated);
@@ -838,30 +840,43 @@ export default function App() {
   };
 
   // ACTION: DISPARAR CAÑÓN
-  const handleFire = (overridePower?: number) => {
-    if (!engineRef.current || !onlineMatch) return;
-    const isMyTurn = onlineMatch.gameState.currentTurnPlayerId === myPlayerId;
-    if (!isMyTurn) return;
+  const handleFire = async (overridePower?: number) => {
+    const activeEngine = engineRef.current;
+    const match = onlineMatchRef.current;
+    if (!activeEngine || !match) return;
+
+    const isMyTurn = match.gameState.currentTurnPlayerId === myPlayerId;
+    if (!isMyTurn || match.gameState.shotInProgress) return;
 
     const shotPower = overridePower !== undefined ? overridePower : power;
     setLastShotPower(shotPower);
 
-    // Send shot event online to Firestore
-    sendShotOnline({
-      matchId: onlineMatch.matchId,
-      playerId: myPlayerId,
-      shooterRole: playerRole,
-      angle,
-      power: shotPower,
-      powerUpType: activePowerUp,
-      windSpeed: onlineMatch.gameState.wind.speed,
-      windDirection: onlineMatch.gameState.wind.direction
-    });
+    // Atomically register/lock the shot online before animating it locally.
+    // This prevents a stale client or an expiring timer from stealing the turn.
+    try {
+      await sendShotOnline({
+        matchId: match.matchId,
+        playerId: myPlayerId,
+        shooterRole: playerRole,
+        angle,
+        power: shotPower,
+        powerUpType: activePowerUp,
+        windSpeed: match.gameState.wind.speed,
+        windDirection: match.gameState.wind.direction
+      });
+    } catch (error) {
+      showTacticalToast(
+        error instanceof Error ? error.message : 'No se pudo sincronizar el disparo.',
+        'warn'
+      );
+      return;
+    }
 
-    // Fire immediately in local canvas
-    engineRef.current.fireShot(playerRole, activePowerUp);
+    // Re-check after the async network operation; do not fire from a stale engine.
+    if (engineRef.current !== activeEngine) return;
+    activeEngine.fireShot(playerRole, activePowerUp);
 
-    // Consume official powerup slot after firing
+    // Consume official powerup slot only after the shot was accepted.
     if (activeSlotIndex !== null) {
       setPowerUpSlots(prev => {
         const next = [...prev];
