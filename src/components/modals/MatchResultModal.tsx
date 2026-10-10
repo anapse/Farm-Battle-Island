@@ -22,11 +22,22 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
   loserName,
   isSurrender,
   surrenderMessage,
+  winnerCharacterId,
   onPlayAgain,
   onBackToMenu
 }) => {
+  const characterPositions: Record<CharacterId, string> = {
+    mono: '0% 0%',
+    tortuga: '50% 0%',
+    gallina: '100% 0%',
+    panda: '0% 100%',
+    conejo: '50% 100%',
+    mapache: '100% 100%'
+  };
+  const winnerSpritePosition = winnerCharacterId ? characterPositions[winnerCharacterId] : '0% 0%';
+
   return (
-    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-2 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 z-50 flex flex-col justify-between gap-1.5 p-2 sm:p-3 select-none overflow-hidden bg-slate-950">
       
       {/* Official Menu Background (fondomenu.png) */}
       <img
@@ -64,8 +75,38 @@ export const MatchResultModal: React.FC<MatchResultModalProps> = ({
         )}
       </div>
 
+      {/* Character spotlight: the winner's official sprite is the focus of the result screen. */}
+      <div className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-center text-center">
+        <div className={`text-xs sm:text-sm font-black uppercase tracking-[0.2em] mb-1 ${isVictory ? 'text-amber-300' : 'text-red-300'}`}>
+          {isVictory ? '¡GANASTE LA BATALLA!' : 'DERROTADO POR'}
+        </div>
+        <div className="w-full max-w-[300px] flex-1 min-h-[170px] max-h-[36dvh] flex items-center justify-center">
+          {winnerCharacterId ? (
+            <div
+              role="img"
+              aria-label={`Personaje ganador: ${winnerName}`}
+              className="w-full h-full max-w-[270px] drop-shadow-[0_10px_18px_rgba(0,0,0,0.8)]"
+              style={{
+                backgroundImage: `url('${getAssetUrl('assets/sprites/personajes.png')}')`,
+                backgroundSize: '300% 200%',
+                backgroundPosition: winnerSpritePosition,
+                backgroundRepeat: 'no-repeat'
+              }}
+            />
+          ) : (
+            <div className="text-7xl sm:text-8xl">🏆</div>
+          )}
+        </div>
+        <div className="text-2xl sm:text-4xl font-black uppercase tracking-wide text-white drop-shadow-[0_3px_4px_rgba(0,0,0,0.95)]">
+          {winnerName}
+        </div>
+        <div className={`text-xs sm:text-sm font-bold mt-0.5 ${isVictory ? 'text-amber-200' : 'text-red-200'}`}>
+          {isVictory ? 'CAMPEÓN DE LA ISLA' : '¡TE HA VENCIDO!'}
+        </div>
+      </div>
+
       {/* Outcome Stats Box */}
-      <div className="relative z-10 my-auto max-w-[320px] w-full mx-auto bg-slate-950/90 backdrop-blur-sm border border-slate-600/80 rounded-xl p-3 text-left space-y-2 shadow-2xl">
+      <div className="relative z-10 max-w-[320px] w-full mx-auto bg-slate-950/90 backdrop-blur-sm border border-slate-600/80 rounded-xl p-2 sm:p-3 text-left space-y-1.5 shadow-2xl shrink-0">
         <div className="flex justify-between items-center gap-3 text-sm">
           <span className="text-slate-200 font-bold">Vencedor:</span>
           <span className="text-[#9aaa7a] font-black">{winnerName}</span>
