@@ -8,6 +8,7 @@ import { CollisionSystem } from './collision';
 import { InputHandler } from './input';
 import { VehicleRenderer } from './vehicles';
 import { CharacterId, PowerUpType } from '../types/game';
+import { getCharacterById } from '../config/characters';
 import { SupplyCrate } from './types';
 import { spriteManager } from './spriteManager';
 
@@ -195,9 +196,9 @@ export class GameEngine {
     this.effects.createExplosion(shooter.x + shooter.facing * 32, shooter.y - 18, 16, false);
     this.effects.playShot(shooter.power, powerUpType);
 
-    // Determine shot attributes based on power-up
+    // Character strength affects outgoing damage; stronger characters trade off defense.
     let mass = 1.0;
-    let damageMultiplier = 1.0;
+    let damageMultiplier = 0.75 + getCharacterById(shooter.characterId).fuerza / 250;
     let explosionRadiusMultiplier = 1.0;
     let canBounce = false;
     let isDoubleImpact = false;
