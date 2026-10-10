@@ -512,9 +512,21 @@ export class GameEngine {
         this.releaseStorkCrate(2, p2X);
         stork.dropP2 = true;
       }
+      // Follow the stork with the camera so its entire trip across both
+      // islands stays visible instead of flying off-screen while the camera
+      // remains locked to the last shooter.
+      if (!this.isFiringSequence) {
+        this.camera.setMode('center');
+        this.camera.setTarget(stork.x, stork.y);
+      }
+
       if (stork.x > WorldConfig.WORLD_WIDTH + 220) {
         stork.active = false;
         this.storkFlight = null;
+        // Return the camera to the active player after the full crossing.
+        if (!this.isFiringSequence) {
+          this.focusPlayer(this.currentTurn);
+        }
       }
     }
 
