@@ -603,6 +603,9 @@ export default function App() {
         setAngle(newAngle);
       },
       onTurnComplete: async () => {
+        // The turn is handed off as soon as the shot is accepted. When the
+        // projectile finishes, do not advance it a second time.
+        return;
         const match = onlineMatchRef.current;
         if (!match || match.status !== 'playing') return;
 
@@ -893,7 +896,30 @@ export default function App() {
       return;
     }
 
-    // Re-check after the async network operation; do not fire from a stale engine.
+    // A successfully accepted shot consumes the shooter's turn immediately.
+    // Projectile travel/collision is visual gameplay and must not decide turn ownership.
+    const nextPlayerId = playerRole === 'player1'
+      ? (match.player2?.id || 'bot')
+      : match.player1.id;
+    const nextWindSpeed = Math.floor(Math.random() * 10) + 3;
+    const nextWindDirection: -1 | 1 = Math.random() > 0.5 ? 1 : -1;
+    try {
+      const handedOff = await changeTurnOnline(
+        match.matchId,
+        nextPlayerId,
+        nextWindSpeed,
+        nextWindDirection,
+        myPlayerId,
+        'shot_completed'
+      );
+      if (handedOff) setOnlineMatch(handedOff);
+    } catch (error) {
+      console.error('No se pudo ceder el turno después del disparo:', error);
+      showTacticalToast('Disparo realizado, pero no se pudo sincronizar el turno.', 'warn');
+    }
+
+    // Keep the local camera following this projectile even though turn ownership
+    // has already moved to the opponent.
     if (engineRef.current !== activeEngine) return;
     activeEngine.fireShot(playerRole, activePowerUp);
 
