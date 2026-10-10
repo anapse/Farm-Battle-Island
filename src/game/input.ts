@@ -214,6 +214,14 @@ export class InputHandler {
   };
 
   private handleKeyDown = (e: KeyboardEvent) => {
+    // Prevent browser key-repeat from firing a new shot every few milliseconds
+    // while Enter/Space is held down. A shot is accepted once per key press.
+    const isFireKey = e.key === ' ' || e.key === 'Enter';
+    if (isFireKey) {
+      e.preventDefault();
+      if (e.repeat) return;
+    }
+
     if (this.canInteract && !this.canInteract()) return;
     const currentTurn = this.getCurrentTurn();
 
