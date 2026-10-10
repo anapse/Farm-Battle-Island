@@ -459,10 +459,17 @@ export default function App() {
         ).then((updated) => {
           if (updated && updated.status === 'playing') {
             setOnlineMatch(updated);
+            if (updated.gameState.currentTurnPlayerId !== expectedCurrentPlayerId) {
+              showTacticalToast('Tiempo agotado. Turno cedido al rival.', 'warn');
+            } else {
+              // Another event (for example an active projectile) still owns the turn.
+              lastExpiredTurnRef.current = '';
+            }
           }
+        }).catch((error) => {
+          console.error('No se pudo ceder el turno agotado:', error);
+          lastExpiredTurnRef.current = '';
         });
-
-        showTacticalToast('Tiempo agotado. Turno cedido al rival.', 'warn');
       }
     }, 250);
     return () => clearInterval(interval);
