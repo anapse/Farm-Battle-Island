@@ -102,7 +102,7 @@ export class EffectManager {
       return;
     }
     if (this.audioContext && this.audioContext.state === 'suspended') void this.audioContext.resume();
-    if (this.audioPrimed) this.startMusic();
+    // Background music is managed once by App.tsx. Do not start a second loop here.
   }
 
   private playSound(id: SoundId, volume = 1, loop = false) {
@@ -169,7 +169,7 @@ export class EffectManager {
     const ctx = this.getAudioContext();
     if (!ctx) return;
     void ctx.resume();
-    this.startMusic();
+    // App.tsx owns the single looping background track; this manager only plays effects.
     this.playSound('start', 1.8);
   }
 
