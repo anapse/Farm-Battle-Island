@@ -136,6 +136,8 @@ export interface OnlineGameState {
   matchEndAt: number | null; // null for infinite, timestamp for 300s
   wind: WindState;
   lastShot: OnlineShotEvent | null;
+  /** True while the latest shot is flying or awaiting impact resolution. */
+  shotInProgress?: boolean;
   lastImpact: OnlineImpactEvent | null;
   winnerPlayerId: string | null;
   loserPlayerId: string | null;
