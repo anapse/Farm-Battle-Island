@@ -47,6 +47,7 @@ export class GameEngine {
   public wind: WindEngineState;
   public isFiringSequence: boolean = false;
   public totalShotsCount: number = 0;
+  private shotsSinceStork = { player1: 0, player2: 0 };
   public supplyCrates: SupplyCrate[] = [];
   public islandId: string;
 
@@ -184,9 +185,12 @@ export class GameEngine {
     this.firingSequenceElapsed = 0;
     const shooter = this.players.getPlayer(this.currentTurn);
 
-    // Track shots count and trigger Stork supply every 4 shots!
+    // La cigüeña aparece cuando AMBOS jugadores han disparado dos veces.
+    // No depende de que el rival dispare justo después ni del fin de la animación.
     this.totalShotsCount++;
-    if (this.totalShotsCount % 2 === 0) {
+    this.shotsSinceStork[this.currentTurn]++;
+    if (this.shotsSinceStork.player1 >= 2 && this.shotsSinceStork.player2 >= 2) {
+      this.shotsSinceStork = { player1: 0, player2: 0 };
       this.triggerStorkSupplyDrop();
     }
 
