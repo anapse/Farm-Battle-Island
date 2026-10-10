@@ -4,8 +4,8 @@ export const CHARACTERS: CharacterStats[] = [
   {
     id: 'mono',
     name: 'MONO',
-    fuerza: 82,
-    resistencia: 68,
+    fuerza: 88,
+    resistencia: 62,
     minAngle: 12,
     maxAngle: 80,
     badgeSymbol: '🍌',
@@ -13,13 +13,13 @@ export const CHARACTERS: CharacterStats[] = [
     accentColor: '#F87171',
     tankColor: '#B91C1C',
     barrelColor: '#7F1D1D',
-    specialTrait: 'Artillería balística de alta parábola y cadencia rápida'
+    specialTrait: 'Artillería ofensiva: gran potencia de fuego, blindaje ligero'
   },
   {
     id: 'tortuga',
     name: 'TORTUGA',
-    fuerza: 70,
-    resistencia: 95,
+    fuerza: 68,
+    resistencia: 96,
     minAngle: 10,
     maxAngle: 78,
     badgeSymbol: '🛡️',
@@ -46,8 +46,8 @@ export const CHARACTERS: CharacterStats[] = [
   {
     id: 'panda',
     name: 'PANDA',
-    fuerza: 90,
-    resistencia: 88,
+    fuerza: 94,
+    resistencia: 68,
     minAngle: 11,
     maxAngle: 76,
     badgeSymbol: '🎋',
@@ -55,13 +55,13 @@ export const CHARACTERS: CharacterStats[] = [
     accentColor: '#10B981',
     tankColor: '#065F46',
     barrelColor: '#022C22',
-    specialTrait: 'Potencia destructiva masiva de cañón pesado reforzado'
+    specialTrait: 'Cañón devastador: máximo daño, pero poca resistencia'
   },
   {
     id: 'conejo',
     name: 'CONEJO',
-    fuerza: 68,
-    resistencia: 62,
+    fuerza: 66,
+    resistencia: 64,
     minAngle: 14,
     maxAngle: 81,
     badgeSymbol: '🥕',
@@ -74,8 +74,8 @@ export const CHARACTERS: CharacterStats[] = [
   {
     id: 'mapache',
     name: 'MAPACHE',
-    fuerza: 80,
-    resistencia: 75,
+    fuerza: 78,
+    resistencia: 80,
     minAngle: 13,
     maxAngle: 79,
     badgeSymbol: '🐾',
