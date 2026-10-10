@@ -212,9 +212,14 @@ export class GameEngine {
     let isFireShot = false;
 
     if (powerUpType === 'mega_bomb') {
+      // Triple damage versus a normal missile. Mass still affects trajectory,
+      // so compensate for the mass factor used by ProjectileManager.
       mass = 1.8;
       explosionRadiusMultiplier = 1.6;
-      damageMultiplier = 1.4;
+      damageMultiplier = 3 / mass;
+    } else if (powerUpType === 'grenade') {
+      // A grenade deals exactly twice the base projectile damage.
+      damageMultiplier = 2;
     } else if (powerUpType === 'power_boost') {
       damageMultiplier = 1.35;
     } else if (powerUpType === 'fire_shot') {
