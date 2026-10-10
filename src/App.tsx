@@ -603,27 +603,41 @@ export default function App() {
         setAngle(newAngle);
       },
       onTurnComplete: async () => {
-        // Change turn online
         const match = onlineMatchRef.current;
-        if (!match) return;
-        if (match.status === 'playing') {
-          const isMyTurn = match.gameState.currentTurnPlayerId === myPlayerId;
-          const isAiTurn = match.isAiMatch && !isMyTurn;
-          if (isMyTurn || isAiTurn) {
-            const expectedCurrentPlayerId = match.gameState.currentTurnPlayerId;
-            const nextPlayerId = isAiTurn
-              ? myPlayerId
-              : (playerRole === 'player1' ? (match.player2?.id || 'bot') : match.player1.id);
-            const newSpeed = Math.floor(Math.random() * 10) + 3;
-            const newDir = Math.random() > 0.5 ? 1 : -1;
+        if (!match || match.status !== 'playing') return;
+
+        const isMyTurn = match.gameState.currentTurnPlayerId === myPlayerId;
+        const isAiTurn = match.isAiMatch && !isMyTurn;
+        if (!isMyTurn && !isAiTurn) return;
+
+        const expectedCurrentPlayerId = match.gameState.currentTurnPlayerId;
+        const nextPlayerId = isAiTurn
+          ? myPlayerId
+          : (playerRole === 'player1' ? (match.player2?.id || 'bot') : match.player1.id);
+        const newSpeed = Math.floor(Math.random() * 10) + 3;
+        const newDir = Math.random() > 0.5 ? 1 : -1;
+
+        // Retry transient network failures. If another client already switched the
+        // turn, the transaction returns that latest state without switching twice.
+        for (let attempt = 0; attempt < 3; attempt++) {
+          try {
             const updated = await changeTurnOnline(
               match.matchId,
               nextPlayerId,
               newSpeed,
               newDir,
-              expectedCurrentPlayerId
+              expectedCurrentPlayerId,
+              'shot_completed'
             );
             if (updated) setOnlineMatch(updated);
+            return;
+          } catch (error) {
+            console.error('No se pudo sincronizar el cambio de turno:', error);
+            if (attempt === 2) {
+              showTacticalToast('No se pudo sincronizar el turno. Comprueba la conexión.', 'warn');
+              return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 350 * (attempt + 1)));
           }
         }
       },
