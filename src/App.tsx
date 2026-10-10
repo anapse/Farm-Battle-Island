@@ -259,6 +259,14 @@ export default function App() {
         // share playerRole='player1' in co-op vs AI. Comparing roles hides those shots
         // on the teammate's device; the unique shooterPlayerId is the correct test.
         if (shot.shooterPlayerId !== myPlayerId && engineRef.current) {
+          // Synchronize the shooter's exact firing position and direction before
+          // replaying the shot. Otherwise each client may launch from a different
+          // tank position/facing and see different collisions.
+          const remoteShooter = engineRef.current.getEngine().players.getPlayer(shot.shooterRole);
+          if (Number.isFinite(shot.shooterX)) remoteShooter.x = shot.shooterX;
+          if (Number.isFinite(shot.shooterY)) remoteShooter.y = shot.shooterY;
+          if (shot.shooterFacing === 1 || shot.shooterFacing === -1) remoteShooter.facing = shot.shooterFacing;
+
           engineRef.current.updateConfig({
             player1Angle: shot.shooterRole === 'player1' ? shot.angle : undefined,
             player1Power: shot.shooterRole === 'player1' ? shot.power : undefined,
@@ -888,7 +896,10 @@ export default function App() {
         power: shotPower,
         powerUpType: activePowerUp,
         windSpeed: match.gameState.wind.speed,
-        windDirection: match.gameState.wind.direction
+        windDirection: match.gameState.wind.direction,
+        shooterX: activeEngine.getEngine().players.getPlayer(playerRole).x,
+        shooterY: activeEngine.getEngine().players.getPlayer(playerRole).y,
+        shooterFacing: activeEngine.getEngine().players.getPlayer(playerRole).facing
       });
     } catch (error) {
       showTacticalToast(
