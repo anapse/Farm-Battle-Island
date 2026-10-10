@@ -388,6 +388,9 @@ export class GameEngine {
     if (this.onTurnComplete) {
       this.onTurnComplete();
     }
+    // If the timer already handed the turn to the opponent during flight,
+    // restore the camera to that player now that projectile tracking is over.
+    this.focusPlayer(this.currentTurn);
   }
 
   private startLoop() {
