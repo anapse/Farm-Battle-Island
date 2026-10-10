@@ -425,9 +425,7 @@ export default function App() {
       // turn completion. Do not let the wall-clock timer switch players mid-shot.
       const engineIsFiring = engineRef.current?.isFiring() ?? false;
       const elapsedTurnMs = Date.now() - onlineMatch.gameState.turnStartedAt;
-      const turnRem = engineIsFiring
-        ? Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000))
-        : Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
+      const turnRem = Math.max(0, Math.ceil((25000 - elapsedTurnMs) / 1000));
       setTurnTimerRemaining(turnRem);
 
       const turnKey =
@@ -448,12 +446,14 @@ export default function App() {
         lastExpiredTurnRef.current = turnKey;
         const newSpeed = Math.floor(Math.random() * 10) + 3;
         const newDir = Math.random() > 0.5 ? 1 : -1;
+        const expectedCurrentPlayerId = onlineMatch.gameState.currentTurnPlayerId;
 
         void changeTurnOnline(
           onlineMatch.matchId,
           nextPlayerId,
           newSpeed,
-          newDir
+          newDir,
+          expectedCurrentPlayerId
         ).then((updated) => {
           if (updated && updated.status === 'playing') {
             setOnlineMatch(updated);
@@ -601,12 +601,19 @@ export default function App() {
           const isMyTurn = match.gameState.currentTurnPlayerId === myPlayerId;
           const isAiTurn = match.isAiMatch && !isMyTurn;
           if (isMyTurn || isAiTurn) {
+            const expectedCurrentPlayerId = match.gameState.currentTurnPlayerId;
             const nextPlayerId = isAiTurn
               ? myPlayerId
               : (playerRole === 'player1' ? (match.player2?.id || 'bot') : match.player1.id);
             const newSpeed = Math.floor(Math.random() * 10) + 3;
             const newDir = Math.random() > 0.5 ? 1 : -1;
-            const updated = await changeTurnOnline(match.matchId, nextPlayerId, newSpeed, newDir);
+            const updated = await changeTurnOnline(
+              match.matchId,
+              nextPlayerId,
+              newSpeed,
+              newDir,
+              expectedCurrentPlayerId
+            );
             if (updated) setOnlineMatch(updated);
           }
         }
