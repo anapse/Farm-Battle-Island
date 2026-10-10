@@ -67,6 +67,7 @@ export class GameEngine {
   private onSupplyCrateCollected?: (collector: 'player1' | 'player2') => void;
   private onStorkEvent?: () => void;
   private projectileResolutionPending: boolean = false;
+  private turnCompletionDispatched: boolean = false;
   private resolvedProjectileIds = new Set<string>();
 
   constructor(options: GameEngineOptions) {
@@ -177,6 +178,7 @@ export class GameEngine {
 
     this.isFiringSequence = true;
     this.projectileResolutionPending = false;
+    this.turnCompletionDispatched = false;
     const shooter = this.players.getPlayer(this.currentTurn);
 
     // Track shots count and trigger Stork supply every 4 shots!
@@ -353,18 +355,25 @@ export class GameEngine {
       this.projectiles.activeProjectiles = this.projectiles.activeProjectiles.filter(p => p.id !== proj.id);
 
       if (this.projectiles.activeProjectiles.length === 0) {
-        this.projectiles.activeProjectile = null;
-        this.isFiringSequence = false;
-        this.projectileResolutionPending = false;
-        this.resolvedProjectileIds.clear();
-
-        if (this.onTurnComplete) {
-          this.onTurnComplete();
-        }
+        this.completeFiringSequence();
       } else {
         this.projectiles.activeProjectile = this.projectiles.activeProjectiles.find(p => p.isAlive) || this.projectiles.activeProjectiles[0] || null;
       }
     }, 1100);
+  }
+
+  /** Dispatch the end-of-shot callback at most once for each firing sequence. */
+  private completeFiringSequence() {
+    if (!this.isFiringSequence || this.turnCompletionDispatched) return;
+    this.turnCompletionDispatched = true;
+    this.isFiringSequence = false;
+    this.projectileResolutionPending = false;
+    this.projectiles.activeProjectile = null;
+    this.projectiles.activeProjectiles = [];
+    this.resolvedProjectileIds.clear();
+    if (this.onTurnComplete) {
+      this.onTurnComplete();
+    }
   }
 
   private startLoop() {
@@ -456,17 +465,8 @@ export class GameEngine {
       }
     }
 
-    if (
-      this.isFiringSequence &&
-      this.projectiles.activeProjectiles.length === 0
-    ) {
-      this.projectiles.activeProjectile = null;
-      this.isFiringSequence = false;
-      this.projectileResolutionPending = false;
-      this.resolvedProjectileIds.clear();
-      if (this.onTurnComplete) {
-        this.onTurnComplete();
-      }
+    if (this.isFiringSequence && this.projectiles.activeProjectiles.length === 0) {
+      this.completeFiringSequence();
     }
 
     // 3. Update the stork flight and release chests directly underneath it.
