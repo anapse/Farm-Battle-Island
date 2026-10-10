@@ -320,9 +320,10 @@ export class EffectManager {
     this.damageNumbers.push({
       x,
       y: y - 20,
-      value: damage,
+      value: Math.max(0, Math.round(damage)),
       alpha: 1.0,
-      color: damage > 25 ? '#EF4444' : '#F59E0B',
+      // Stronger hits use red; lighter hits stay bright gold for quick reading.
+      color: damage >= 60 ? '#FF3030' : damage >= 25 ? '#FF8A00' : '#FFE45E',
       life: 0
     });
   }
@@ -387,13 +388,17 @@ export class EffectManager {
     for (const dn of this.damageNumbers) {
       ctx.save();
       ctx.globalAlpha = Math.max(0, dn.alpha);
-      ctx.font = 'black 16px "Plus Jakarta Sans", sans-serif';
+      ctx.font = '900 22px "Plus Jakarta Sans", sans-serif';
       ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = dn.color;
+      ctx.shadowBlur = 12;
       ctx.fillStyle = dn.color;
-      ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 3;
-      ctx.strokeText(`-${dn.value}`, dn.x, dn.y);
-      ctx.fillText(`-${dn.value}`, dn.x, dn.y);
+      ctx.strokeStyle = '#111827';
+      ctx.lineWidth = 4;
+      const label = `-${dn.value} HP`;
+      ctx.strokeText(label, dn.x, dn.y);
+      ctx.fillText(label, dn.x, dn.y);
       ctx.restore();
     }
   }
