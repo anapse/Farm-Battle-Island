@@ -525,7 +525,7 @@ export async function sendShotOnline(params: {
   windDirection: -1 | 1;
 }): Promise<void> {
   const shotEvent = {
-    shotId: `shot_${Date.now()}`,
+    shotId: `shot_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
     shooterPlayerId: params.playerId,
     shooterRole: params.shooterRole,
     angle: params.angle,
@@ -537,19 +537,39 @@ export async function sendShotOnline(params: {
   };
 
   if (rtdb && isConfigured) {
-    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) throw new Error('Firebase no está autenticado.');
+    if (!(await ensureFirebaseAuth()) || !auth?.currentUser) {
+      throw new Error('Firebase no está autenticado.');
+    }
+
     try {
-      const matchSnapshot = await get(ref(rtdb, `activeMatches/${params.matchId}`));
-      const remoteMatch = matchSnapshot.val() as OnlineMatch | null;
-      const player = params.shooterRole === 'player1' ? remoteMatch?.player1 : remoteMatch?.player2;
-      if (!player || player.id !== params.playerId || player.authUid !== auth.currentUser.uid) {
-        throw new Error('No estás autorizado para disparar en esta partida.');
+      const matchRef = ref(rtdb, `activeMatches/${params.matchId}`);
+      const transaction = await runTransaction(matchRef, (current) => {
+        if (!current) return;
+        const match = current as OnlineMatch;
+        const shooter = params.shooterRole === 'player1' ? match.player1 : match.player2;
+        if (
+          match.status !== 'playing' ||
+          !shooter ||
+          shooter.id !== params.playerId ||
+          shooter.authUid !== auth?.currentUser?.uid ||
+          match.gameState?.currentTurnPlayerId !== params.playerId
+        ) {
+          return;
+        }
+
+        return {
+          ...match,
+          gameState: {
+            ...match.gameState,
+            lastShot: { ...shotEvent, shooterRole: params.shooterRole, shooterPlayerId: shooter.id }
+          },
+          updatedAt: Date.now()
+        };
+      }, { applyLocally: false });
+
+      if (!transaction.committed) {
+        throw new Error('El turno cambió o la partida terminó. Espera tu turno antes de disparar.');
       }
-      const authenticatedShotEvent = { ...shotEvent, shooterRole: params.shooterRole, shooterPlayerId: player.id };
-      await update(ref(rtdb, `activeMatches/${params.matchId}`), {
-        'gameState/lastShot': authenticatedShotEvent,
-        updatedAt: Date.now()
-      });
     } catch (e) {
       console.error('Realtime Database sendShot failed:', e);
       throw e instanceof Error ? e : new Error('No se pudo sincronizar el disparo online.');
@@ -558,6 +578,10 @@ export async function sendShotOnline(params: {
 
   const local = getLocalMatches().find(m => m.matchId === params.matchId);
   if (local) {
+    // Do not overwrite a newer turn that arrived while the shot was syncing.
+    if (local.gameState.currentTurnPlayerId !== params.playerId) {
+      throw new Error('El turno cambió. Espera tu turno antes de disparar.');
+    }
     local.gameState.lastShot = shotEvent;
     local.updatedAt = Date.now();
     saveLocalMatch(local);
