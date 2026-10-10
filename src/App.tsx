@@ -234,21 +234,9 @@ export default function App() {
         if (!prev || prev.matchId !== updated.matchId || updated.status === 'waiting') {
           return updated;
         }
-        return {
-          ...updated,
-          player1: {
-            ...updated.player1,
-            hp: prev.player1.hp,
-            lives: prev.player1.lives,
-            score: prev.player1.score
-          },
-          player2: updated.player2 && prev.player2 ? {
-            ...updated.player2,
-            hp: prev.player2.hp,
-            lives: prev.player2.lives,
-            score: prev.player2.score
-          } : updated.player2
-        };
+        // Keep the latest hydrated HP/lives/score from the local match cache.
+        // Explicitly restoring prev values here hid fresh impact updates in the HUD.
+        return updated;
       });
 
       // Handle match start transition from waiting or char_select
@@ -645,22 +633,27 @@ export default function App() {
         }
       },
       onHit: async (targetRole, damage) => {
-        // Update the online state immediately so HP, lives and score change in the HUD
-        // even if Firestore synchronization is temporarily unavailable.
+        // The engine has already applied this damage locally. Update the HUD from
+        // the local match cache even if the realtime notification fails.
         const match = onlineMatchRef.current;
         if (!match) return;
 
-        const updated = await registerImpactOnline({
-          matchId: match.matchId,
-          targetRole,
-          damage,
-          hitX: 0,
-          hitY: 0,
-          isWater: false
-        });
-
-        if (updated) {
-          setOnlineMatch(updated);
+        try {
+          const updated = await registerImpactOnline({
+            matchId: match.matchId,
+            targetRole,
+            damage,
+            hitX: 0,
+            hitY: 0,
+            isWater: false
+          });
+          if (updated) setOnlineMatch(updated);
+        } catch (error) {
+          console.error('No se pudo sincronizar el impacto:', error);
+          // registerImpactOnline updates the local cache before network sync.
+          // Fetching the cached match through the subscription will retain that
+          // local HP update instead of leaving the HUD frozen at its old value.
+          showTacticalToast('Daño aplicado localmente; falló la sincronización.', 'warn');
         }
       },
       onSupplyCrateCollected: (collector) => {
