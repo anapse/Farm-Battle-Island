@@ -99,14 +99,19 @@ function hydratePlayer(
   defaultLives: OnlineMatch['settings']['lives'],
   cached?: OnlinePlayer | null
 ): OnlinePlayer {
+  // Keep HP and its maximum on the same scale. If cached HP exceeds maxHp,
+  // normalize the maximum so the HUD does not remain pinned at 100%.
+  const hp = cached?.hp ?? 100;
+  const maxHp = Math.max(cached?.maxHp ?? 100, hp);
+
   return {
     ...player,
     id: player.id || cached?.id || '',
     name: player.name || cached?.name || 'Jugador',
     characterId: player.characterId ?? cached?.characterId ?? null,
     characterSelected: player.characterSelected ?? cached?.characterSelected ?? false,
-    hp: cached?.hp ?? 100,
-    maxHp: cached?.maxHp ?? 100,
+    hp,
+    maxHp,
     lives: cached?.lives ?? (defaultLives === 'INFINITE' ? 999999 : defaultLives),
     maxLives: cached?.maxLives ?? (defaultLives === 'INFINITE' ? 999999 : defaultLives),
     score: cached?.score ?? 0,
