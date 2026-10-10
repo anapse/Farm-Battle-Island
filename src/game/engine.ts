@@ -519,8 +519,11 @@ export class GameEngine {
       stork.x += stork.speed * dt;
       stork.frameTime += dt;
 
-      const p1X = this.terrain.getSpawnPosition(1).x + 36;
-      const p2X = this.terrain.getSpawnPosition(2).x - 36;
+      // Aim each supply drop at the tank's current position, not its
+      // original spawn point. Players can move or destroy the ground before
+      // the stork arrives, so a fixed drop point can leave the chest stranded.
+      const p1X = this.players.getPlayer('player1').x;
+      const p2X = this.players.getPlayer('player2').x;
 
       if (!stork.dropP1 && stork.x >= p1X) {
         this.releaseStorkCrate(1, p1X);
