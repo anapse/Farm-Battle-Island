@@ -180,7 +180,6 @@ export class ProjectileManager {
         p.x < -120 ||
         p.x > WorldConfig.WORLD_WIDTH + 120 ||
         p.y > WorldConfig.WORLD_HEIGHT + 80 ||
-        p.y < -240
       ) {
         p.isAlive = false;
       }
