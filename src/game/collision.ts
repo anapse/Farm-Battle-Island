@@ -174,7 +174,10 @@ export class CollisionSystem {
     targetX: number,
     blocks: TerrainBlock[]
   ): boolean {
-    const maxClimbHeight = WorldConfig.BLOCK_HEIGHT * 1.25;
+    // Tanks are rendered much larger than their 48px terrain cells. Allow them
+    // to climb a two-block stair (96px) plus a small tolerance, instead of
+    // treating every two-level step as an impassable wall.
+    const maxClimbHeight = WorldConfig.BLOCK_HEIGHT * 2.25;
 
     for (const b of blocks) {
       if (b.isDestroyed || b.heightLevel === 0) continue;
