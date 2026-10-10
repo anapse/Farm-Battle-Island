@@ -192,6 +192,7 @@ export async function createOnlineMatch(params: {
       angleDeg: 35
     },
     lastShot: null,
+    shotInProgress: false,
     lastImpact: null,
     winnerPlayerId: null,
     loserPlayerId: null,
