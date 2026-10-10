@@ -174,23 +174,24 @@ export class CollisionSystem {
     targetX: number,
     blocks: TerrainBlock[]
   ): boolean {
-    // Tanks are rendered much larger than their 48px terrain cells. Allow them
-    // to climb a two-block stair (96px) plus a small tolerance, instead of
-    // treating every two-level step as an impassable wall.
+    // Compare the player's current ground with only the top surface at the
+    // destination. Checking every block in a stack incorrectly treats lower
+    // blocks as walls and can trap a tank at the edge of a step.
     const maxClimbHeight = WorldConfig.BLOCK_HEIGHT * 2.25;
+    let targetGroundY = WorldConfig.DEATH_FLOOR_Y;
 
-    for (const b of blocks) {
-      if (b.isDestroyed || b.heightLevel === 0) continue;
-
-      if (targetX >= b.x && targetX <= b.x + b.width) {
-        // If block top is too high above current ground level, it's a solid blocking wall
-        const blockTopY = b.y;
-        if (currentY - blockTopY > maxClimbHeight) {
-          return false;
-        }
+    for (const block of blocks) {
+      if (block.isDestroyed || block.heightLevel === 0) continue;
+      // Keep the same half-open tile boundaries as horizontal movement so a
+      // shared edge does not select the taller neighboring column by accident.
+      if (targetX >= block.x && targetX < block.x + block.width) {
+        targetGroundY = Math.min(targetGroundY, block.y);
       }
     }
 
-    return true;
+    const climbHeight = currentY - targetGroundY;
+    // Uphill movement is limited; downhill movement is always permitted.
+    // The falling/support physics then settles the tank onto the lower step.
+    return climbHeight <= maxClimbHeight;
   }
 }
