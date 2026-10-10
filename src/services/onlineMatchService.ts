@@ -544,6 +544,10 @@ export async function sendShotOnline(params: {
 
     try {
       const matchRef = ref(rtdb, `activeMatches/${params.matchId}`);
+      // Prime the RTDB cache before the transaction. A first transaction can
+      // otherwise receive null for a room that already exists on the server.
+      const initialSnapshot = await get(matchRef);
+      if (!initialSnapshot.exists()) throw new Error('La partida ya no existe.');
       const transaction = await runTransaction(matchRef, (current) => {
         if (!current) return;
         const match = current as OnlineMatch;
@@ -705,6 +709,14 @@ export async function changeTurnOnline(
     }
 
     try {
+      // Prime the local RTDB cache and validate membership before transacting.
+      const initialSnapshot = await get(matchRef);
+      const initialMatch = initialSnapshot.exists() ? initialSnapshot.val() as OnlineMatch : null;
+      if (!initialMatch) throw new Error('La partida ya no existe.');
+      const isParticipant = [initialMatch.player1, initialMatch.player2]
+        .some(player => player?.authUid === auth?.currentUser?.uid);
+      if (!isParticipant) throw new Error('No estás autorizado para cambiar el turno de esta partida.');
+
       const transaction = await runTransaction(matchRef, (current) => {
         if (!current) return;
         const match = current as OnlineMatch;
